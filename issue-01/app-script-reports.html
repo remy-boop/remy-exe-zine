@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="view-transition" content="same-origin">
+<title>app script reports · remy.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+  /* Per-chapter signature override */
+  :root {
+    --sig:      var(--sig-orange);
+    --sig-deep: #c2410c;
+    --sig-glow: rgba(251, 146, 60, 0.35);
+    --sig-wash: rgba(251, 146, 60, 0.12);
+  }
+
+  /* Animations */
+  @keyframes panel-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 720px) {
+    body { padding: 16px 10px 32px; font-size: 17px; }
+    .strip { font-size: 9px; padding: 10px 14px; }
+    .chapter-cover { padding: 28px 22px 24px; }
+    .chapter-title { font-size: 26px; }
+    .chapter-tagline { font-size: 18px; }
+    .tabs { grid-template-columns: repeat(2, 1fr); }
+    .tab { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 8px 12px; }
+    .tab:nth-child(2) { border-right: none; }
+    .tab:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .tab:nth-last-child(-n+2) { border-bottom: none; }
+    .tab:last-child { border-right: none; }
+    .tab .tab-label { font-size: 9px; }
+    .tab .tab-sub   { font-size: 12px; }
+    .panel { padding: 24px 20px; }
+    .panel-h h2 { font-size: 13px; }
+    .stat-row { grid-template-columns: 1fr; }
+    .cause-grid { grid-template-columns: 1fr; }
+    .fix-grid { grid-template-columns: 1fr; }
+    .prompt-io { grid-template-columns: 1fr; }
+    .xp-heading { font-size: 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  @view-transition { navigation: auto; }
+
+  /* Chapter-specific styles */
+  .shot-placeholder-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--fg-faint);
+    letter-spacing: 0.06em;
+  }
+  .prompt-box {
+    background: var(--bg-deep);
+    border: 2px solid var(--sig-deep);
+    border-left: 4px solid var(--sig);
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .prompt-box-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--sig);
+    display: block;
+    margin-bottom: 18px;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 8px var(--sig-glow);
+  }
+  .prompt-io {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .prompt-io-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .prompt-io-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-io-label.input { color: var(--wip); }
+  .prompt-io-label.output { color: var(--ok); }
+  .prompt-io-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prompt-io-list li {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--fg-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .prompt-io-list li::before {
+    content: '→';
+    color: var(--sig);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .prompt-how { border-top: 1px dashed var(--border); padding-top: 16px; }
+  .prompt-how-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--fg-mid);
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-how p {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--fg-soft);
+    margin-bottom: 10px;
+    max-width: none;
+    opacity: 1;
+  }
+  .prompt-how p:last-child { margin-bottom: 0; }
+  .xp-learning-desc:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="issue">
+
+  <header class="strip">
+    <a href="index.html" class="back"><span class="back-arrow">◂</span> BACK TO ISSUE</a>
+    <span class="crumb">CH 04</span>
+    <span class="tint">REMY.EXE</span>
+  </header>
+
+  <section class="chapter-cover">
+    <div class="chapter-kicker"><span class="chapter-num">04</span> CHAPTER FOUR</div>
+    <h1 class="chapter-title">APP SCRIPT<br>REPORTS</h1>
+    <p class="chapter-tagline">
+      CleverTap funnel data pulled into Google Sheets via Apps Script.
+      Scheduled, filtered and ready by 8am.
+    </p>
+    <div class="chapter-meta">
+      <span class="status-badge live">LIVE</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>shipped:</b> Apr 2026</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>platform:</b> Google Sheets</span>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Chapter sections">
+    <button class="tab" role="tab" aria-selected="true"  aria-controls="p-origin" data-target="p-origin">
+      <span class="tab-num">01</span><span class="tab-label">LEVEL 1 START</span><span class="tab-sub">the why</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-fix" data-target="p-fix">
+      <span class="tab-num">02</span><span class="tab-label">BOSS FIGHT</span><span class="tab-sub">the fix</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-stack" data-target="p-stack">
+      <span class="tab-num">03</span><span class="tab-label">INVENTORY</span><span class="tab-sub">the stack</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-xp" data-target="p-xp">
+      <span class="tab-num">04</span><span class="tab-label">XP GAINED</span><span class="tab-sub">learnings</span>
+    </button>
+  </nav>
+
+  <div class="panels">
+
+    <!-- 01 LEVEL 1 START -->
+    <section class="panel" id="p-origin" role="tabpanel" aria-hidden="false">
+      <div class="panel-h"><span class="p-num">01</span><h2>LEVEL 1 START</h2></div>
+
+      <p>
+        Data extraction for reporting, visualization, and decision-making is one of the
+        most underrated time sinks in product work. When the data lives in an external
+        platform, there is usually a visualization solution built into it. But getting to
+        that visualization requires someone to build the right query, configure the right
+        view, and maintain it when requirements change.
+      </p>
+
+      <p>
+        Regarding data, most of my work is in the context of A/B testing. Key data
+        for that lives in <em>CleverTap</em>, an engagement and analytics platform
+        that tracks user behavior across experiments, funnels, and events. It has a solid
+        dashboard. But that dashboard requires someone to configure the right views.
+      </p>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE SCENARIO</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        A/B testing compounds this pain fast. Four active experiments running at once,
+        each with up to five variants, across two countries and two operating systems.
+        To analyze results properly, every combination needs to be queried, updated
+        daily, stacked by date. That is not something a dashboard handles. It is
+        something that turns into a late night without warning.
+      </p>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE UNLOCK</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        CleverTap has an API. Every major analytics platform does. And <em>Google Apps
+        Script</em> is a scripting environment built directly into Google Sheets that
+        can call any API you have credentials for. No server, no deploy, no ticket.
+        Write a script, set a trigger, get fresh data in a spreadsheet on a schedule.
+      </p>
+
+      <div class="cause-grid">
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <rect x="5" y="1" width="2" height="2" fill="currentColor"/>
+              <rect x="4" y="3" width="4" height="1" fill="currentColor"/>
+              <rect x="3" y="4" width="6" height="4" fill="currentColor"/>
+              <rect x="4" y="5" width="1" height="2" fill="var(--bg-deep)"/>
+              <rect x="7" y="5" width="1" height="2" fill="var(--bg-deep)"/>
+              <rect x="4" y="8" width="4" height="1" fill="currentColor"/>
+              <rect x="5" y="9" width="2" height="2" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">ANY API, ANY SOURCE</div>
+            <div class="cause-desc">If a platform has an API and you have credentials, Apps Script can reach it. CleverTap, Google Ad Manager, Firebase, Amplitude: same pattern each time.</div>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <rect x="4" y="1" width="4" height="1" fill="currentColor"/>
+              <rect x="2" y="2" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="2" width="2" height="1" fill="currentColor"/>
+              <rect x="1" y="3" width="1" height="6" fill="currentColor"/>
+              <rect x="10" y="3" width="1" height="6" fill="currentColor"/>
+              <rect x="2" y="9" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="9" width="2" height="1" fill="currentColor"/>
+              <rect x="4" y="10" width="4" height="1" fill="currentColor"/>
+              <rect x="6" y="4" width="1" height="2" fill="currentColor"/>
+              <rect x="6" y="6" width="2" height="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">SCHEDULED + AUTOMATIC</div>
+            <div class="cause-desc">Set a trigger and the data refreshes on its own. No manual exports. No stale numbers from three days ago in a deck presented today.</div>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <rect x="1" y="9" width="10" height="1" fill="currentColor"/>
+              <rect x="2" y="6" width="2" height="3" fill="currentColor"/>
+              <rect x="5" y="4" width="2" height="5" fill="currentColor"/>
+              <rect x="8" y="2" width="2" height="7" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">MANIPULATE IT ANYWHERE</div>
+            <div class="cause-desc">Once the data is in Sheets, everything opens up. Formulas, pivot tables, Looker Studio, sharing with people who don't have platform access.</div>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <rect x="5" y="1" width="2" height="2" fill="currentColor"/>
+              <rect x="2" y="3" width="8" height="5" fill="currentColor"/>
+              <rect x="3" y="4" width="2" height="2" fill="var(--bg-deep)"/>
+              <rect x="7" y="4" width="2" height="2" fill="var(--bg-deep)"/>
+              <rect x="4" y="7" width="4" height="1" fill="var(--bg-deep)"/>
+              <rect x="1" y="4" width="1" height="3" fill="currentColor"/>
+              <rect x="10" y="4" width="1" height="3" fill="currentColor"/>
+              <rect x="3" y="8" width="2" height="3" fill="currentColor"/>
+              <rect x="7" y="8" width="2" height="3" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">AI WRITES THE GLUE</div>
+            <div class="cause-desc">Auth headers, pagination, retry logic, polling: all boilerplate. AI handles the typing. You handle the data model and the questions worth asking.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pull-quote">
+        "The dashboard shows you what the platform wanted you to see. The API lets you ask what you actually need to know, then take it wherever you want."
+      </div>
+
+      <p>
+        Working through this project, the pattern became clear: the whole process was
+        repeatable. Identifying an API, structuring the query, defining the output schema,
+        wiring up a trigger. The same steps regardless of the platform. That realization
+        turned one script into a method, and the method into a prompt that could produce
+        a working script for any data source, fast.
+      </p>
+
+    </section>
+
+    <!-- 02 BOSS FIGHT -->
+    <section class="panel" id="p-fix" role="tabpanel" aria-hidden="true">
+      <div class="panel-h"><span class="p-num">02</span><h2>BOSS FIGHT</h2></div>
+
+      <p>
+        The goal was straightforward: pull daily event counts for a 12-step funnel,
+        broken down by experiment variant, country, and operating system, within a
+        defined time frame, updated daily. CleverTap had all of it. The task was
+        writing a script that would actually hold up as a daily pipeline.
+      </p>
+
+      <p>
+        It did not go in a straight line. Each wall hit revealed something specific
+        about how the API actually worked versus what the dashboard suggested. This
+        is that story.
+      </p>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE ASYNC WALL</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The first call to CleverTap's Counts API came back with a <code>partial</code>
+        status and a job ID instead of data. The platform queues analytics queries
+        server-side and processes them asynchronously. You take the <code>req_id</code>,
+        poll a separate GET endpoint every 30 seconds, and wait for <code>success</code>.
+        That two-step cycle is the heartbeat of every interaction with this API.
+      </p>
+
+      <div class="walk-code">POST /counts/events.json → { "req_id": "164266", "status": "partial" } → GET ?req_id=164266 → { "count": 46097, "status": "success" }</div>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">⚠ GOTCHA · POLLING TOO FAST</span>
+        <p>Hitting the poll endpoint before the query finishes just returns another <code>partial</code>. The API needs time to process. The 30-second wait is not a workaround: it is the correct usage pattern.</p>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE WRONG SCOPE</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The first script Claude produced pulled raw event records, one row per event
+        occurrence, paginated across thousands of results. That was not what was needed.
+        The actual requirement was simpler: total count per event per day. One number.
+        Not every individual event. Fixing the scope meant switching from the export
+        API to the Counts API entirely, which also eliminated the pagination problem
+        that was crashing the script anyway.
+      </p>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">⚠ GOTCHA · UNDER-SPECIFIED PROMPT</span>
+        <p>The first version of the prompt asked for "the data." That is too vague. "One count per event per day per dimension combination" is the correct spec. The AI generates exactly what you ask for. If the output is wrong, the spec is wrong.</p>
+      </div>
+
+      <div class="win">
+        <span class="win-tag">✓ WIN · COUNTS OVER RECORDS</span>
+        <p>One number per day per dimension is all Looker Studio needs to build a funnel. Switching to the Counts API simplified the architecture and fixed two problems at once.</p>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE FIELD NAME WALL</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        Filtering by OS looked simple. The CleverTap dashboard shows "OS = Android" as
+        a user property filter. The API does not accept that syntax. The field lives
+        under a key called <code>technographics</code> inside <code>common_profile_properties</code>.
+        Country filtering is different still: it uses <code>geo_fields</code>, formatted
+        as nested arrays with full country names, not codes.
+      </p>
+
+      <div class="walk-code">common_profile_properties: { technographics: [{ name: "OS", value: "Android" }], geo_fields: [["United States"]] }</div>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">⚠ GOTCHA · DASHBOARD LABELS VS API FIELDS</span>
+        <p>The dashboard showed <code>Country = US</code>. The API required <code>geo_fields: [["United States"]]</code>. Every platform has this gap. Reading the documentation is not optional. Guessing from UI labels produces code that compiles and returns nothing.</p>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE EXPERIMENT BRIDGE</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The hardest conceptual piece: CleverTap does not tag funnel events with which
+        experiment a user belongs to. The bridge is a separate event called
+        <code>ab_test_audience</code> that fires when a user is enrolled in an experiment.
+        To count funnel events per variant, you filter to users who also fired that
+        enrollment event with the correct variant ID, expressed as
+        a nested query inside the main payload.
+      </p>
+
+      <div class="walk-code">advanced_query: { did_all: [{ event_name: "ab_test_audience", event_properties: [{ name: "Variant", operator: "contains", value: "59e747ae..." }] }] }</div>
+
+      <div class="win">
+        <span class="win-tag">✓ WIN · FILTER CONFIRMED</span>
+        <p>Tested on a single day: Baseline returned 1, Variant A returned 4. Different numbers, both non-zero. The segmentation was real and working.</p>
+      </div>
+      <div class="shot-section">
+        <div class="shot-label">▸ APPS SCRIPT IN ACTION</div>
+        <div class="shot-grid">
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch04-execution-log.png" alt="Apps Script execution log — script logging segment, day, variant, step count live as it pages through the API">
+            </div>
+            <div class="shot-caption">
+              <b>EXECUTION LOG</b>
+              the script logging live: segment, day, variant, step count. Pages through the API and writes each batch to the sheet.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE SPEED WALL</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The first working version ran all queries sequentially: fire one call, wait 30
+        seconds for the poll, write the result, fire the next. With over 2,600 total
+        queries across all experiments, variants, funnel steps, and days, that approach
+        translated to roughly 22 hours of pure wait time.
+      </p>
+
+      <div class="fix-grid">
+        <div class="fix-card before">
+          <span class="fix-tag">✗ BEFORE</span>
+          Call step 1 → wait 30s → write → call step 2 → wait 30s...<br><br>
+          12 steps × 30s = <strong>6 minutes per variant</strong>
+        </div>
+        <div class="fix-card after">
+          <span class="fix-tag">✓ AFTER</span>
+          Fire all 12 steps at once → wait 30s once → poll all 12 → write all 12<br><br>
+          12 steps + 1 wait = <strong>~40 seconds per variant</strong>
+        </div>
+      </div>
+
+      <div class="win">
+        <span class="win-tag">✓ WIN · 10X FASTER</span>
+        <p>Batching all 12 funnel steps per variant, waiting once, and polling all results together made the script roughly 10 times faster. The historical load finished across a few overnight runs instead of days.</p>
+      </div>
+      <div class="shot-section">
+        <div class="shot-label">▸ LOOKER STUDIO VISUALIZATION</div>
+        <div class="shot-grid">
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch04-looker-funnel.png" alt="Looker Studio funnel by variant — funnel steps on one axis, count on the other, drop-off visible across Baseline, A, B, C, D">
+            </div>
+            <div class="shot-caption">
+              <b>FUNNEL BY VARIANT</b>
+              the data in Looker Studio: funnel steps on one axis, count on the other, broken down by variant. Drop-off visible at a glance across Baseline, A, B, C, D.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ THE MASTER PROMPT</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        Somewhere in the middle of all of this, the pattern became visible. Every wall
+        came down to the same set of questions: how does this API handle async responses,
+        what are the actual field names for each filter dimension, how should the output
+        be structured so it works in Looker Studio without rework, and how does the
+        script stay alive across execution limits. Answer those four questions upfront
+        and the script writes itself.
+      </p>
+
+      <p>
+        That became a prompt. Not a general "help me write an Apps Script" prompt. A
+        structured discovery process specific to pulling CleverTap A/B test data that
+        front-loads the spec before generating any code. Think of it like a waiter taking
+        an order: they don't hand you the kitchen's full ingredient list. They ask the
+        right questions in the right order to get you what you actually want.
+      </p>
+
+      <div class="prompt-box">
+        <span class="prompt-box-label">◈ PROMPT SPEC · CLEVERTAP A/B TEST PIPELINE</span>
+        <div class="prompt-io">
+          <div class="prompt-io-card">
+            <span class="prompt-io-label input">INPUT · WHAT YOU BRING</span>
+            <ul class="prompt-io-list">
+              <li>CleverTap credentials and region</li>
+              <li>Experiment name and variant identifiers</li>
+              <li>Funnel events to measure, in order</li>
+              <li>Segmentation dimensions: country, OS</li>
+              <li>Date range and refresh cadence needed</li>
+            </ul>
+          </div>
+          <div class="prompt-io-card">
+            <span class="prompt-io-label output">OUTPUT · WHAT YOU GET</span>
+            <ul class="prompt-io-list">
+              <li>Working script with auth and retry built in</li>
+              <li>Correct CQL field names for each filter</li>
+              <li>Long-format schema ready for Looker Studio</li>
+              <li>Checkpoint system for large historical loads</li>
+              <li>Daily trigger configuration included</li>
+            </ul>
+          </div>
+        </div>
+        <div class="prompt-how">
+          <span class="prompt-how-label">HOW IT WORKS</span>
+          <p>The prompt opens with discovery questions before any code is written. It establishes whether the API response is synchronous or async, what the variant identifiers look like in the actual data, how the experiment filter connects to the funnel events via <code>ab_test_audience</code>, and what the output schema needs to be for Looker Studio. These are the variables that change between experiments, and the questions that produce zeros when skipped.</p>
+          <p>The second phase locks the data structure: long format, one row per dimension combination, with dimensions as columns and count as the metric. Once those decisions are made explicitly, the code is just execution of a spec that already exists.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 03 INVENTORY -->
+    <section class="panel" id="p-stack" role="tabpanel" aria-hidden="true">
+      <div class="panel-h"><span class="p-num">03</span><h2>INVENTORY</h2></div>
+
+      <div class="stack-section">
+        <div class="stack-label">▸ EQUIPMENT</div>
+        <div class="stack-grid">
+          <div class="chip">
+            <span class="chip-role">scripting env</span>
+            <span class="chip-name">Google Apps Script</span>
+            <span class="chip-detail">runs inside Sheets, no server or deploy needed</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">output</span>
+            <span class="chip-name">Google Sheets</span>
+            <span class="chip-detail">long format, one tab per segment</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">visualization</span>
+            <span class="chip-name">Looker Studio</span>
+            <span class="chip-detail">connected to Sheets, funnel charts by variant</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">data source</span>
+            <span class="chip-name">CleverTap</span>
+            <span class="chip-detail">Counts API · CQL payload · async req_id</span>
+            <span class="chip-cost paid">Paid</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">ai</span>
+            <span class="chip-name">Claude (Sonnet)</span>
+            <span class="chip-detail">script generation, debugging, API research</span>
+            <span class="chip-cost paid">Paid</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-section">
+        <div class="stack-label">▸ PIPELINE ARCHITECTURE</div>
+        <div class="diagram-container">
+          <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- CleverTap API -->
+            <rect x="20" y="80" width="150" height="70" rx="8" fill="#7c2d12" fill-opacity="0.25" stroke="#fb923c" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="95" y="108" text-anchor="middle">CleverTap</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="95" y="126" text-anchor="middle">Counts API</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="95" y="141" text-anchor="middle">CQL · async</text>
+
+            <!-- Bidirectional arrows: CleverTap <-> Apps Script -->
+            <line x1="170" y1="105" x2="248" y2="105" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="209" y="98" text-anchor="middle">API calls</text>
+            <line x1="248" y1="122" x2="170" y2="122" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="209" y="140" text-anchor="middle">req_id / data</text>
+
+            <!-- Google Apps Script (center) -->
+            <rect x="250" y="50" width="180" height="130" rx="8" fill="#2a2450" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="8" font-weight="700" fill="#ece4ff" x="340" y="76" text-anchor="middle">Apps Script</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#a89cf0" x="340" y="95" text-anchor="middle">batch + poll</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#a89cf0" x="340" y="111" text-anchor="middle">checkpoint resume</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#a89cf0" x="340" y="127" text-anchor="middle">rolling 7-day refresh</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#a89cf0" x="340" y="143" text-anchor="middle">OS · country · variant</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#a89cf0" x="340" y="159" text-anchor="middle">filters applied</text>
+
+            <!-- Trigger (below Apps Script) -->
+            <rect x="285" y="210" width="110" height="48" rx="8" fill="#064e3b" fill-opacity="0.3" stroke="#10b981" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="8" font-weight="700" fill="#ece4ff" x="340" y="230" text-anchor="middle">Trigger</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#6ee7b7" x="340" y="248" text-anchor="middle">daily schedule</text>
+            <line x1="340" y1="180" x2="340" y2="208" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+
+            <!-- Arrow: Apps Script -> Sheets -->
+            <line x1="430" y1="105" x2="508" y2="105" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="469" y="98" text-anchor="middle">writes rows</text>
+
+            <!-- Google Sheets -->
+            <rect x="510" y="65" width="150" height="80" rx="8" fill="#064e3b" fill-opacity="0.25" stroke="#10b981" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="8" font-weight="700" fill="#ece4ff" x="585" y="92" text-anchor="middle">Google Sheets</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#6ee7b7" x="585" y="110" text-anchor="middle">long format</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#6ee7b7" x="585" y="126" text-anchor="middle">4 tabs by segment</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#6ee7b7" x="585" y="142" text-anchor="middle">date refreshed daily</text>
+
+            <!-- Arrow: Sheets -> Looker -->
+            <line x1="585" y1="145" x2="585" y2="193" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+
+            <!-- Looker Studio -->
+            <rect x="510" y="195" width="150" height="64" rx="8" fill="#1e3a5f" fill-opacity="0.4" stroke="#22d3ee" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="8" font-weight="700" fill="#ece4ff" x="585" y="218" text-anchor="middle">Looker Studio</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#22d3ee" x="585" y="236" text-anchor="middle">funnel charts</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#22d3ee" x="585" y="252" text-anchor="middle">variant breakdown</text>
+
+            <text font-family="Press Start 2P, monospace" font-size="7" fill="#55507a" x="340" y="300" text-anchor="middle">APP SCRIPT REPORTS · HIGH LEVEL</text>
+          </svg>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:#fb923c"></span> data source</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#8b5cf6"></span> execution layer</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#10b981"></span> output / trigger</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#22d3ee"></span> visualization</span>
+        </div>
+      </div>
+
+      <div class="stack-section">
+        <div class="stack-label">▸ STEP-BY-STEP WALKTHROUGH</div>
+        <p>From zero to a working daily pipeline on any analytics platform.</p>
+        <div class="walkthrough">
+          <div class="walk-step">
+            <div class="walk-num">1</div>
+            <div class="walk-body">
+              <div class="walk-title">CREATE A GOOGLE SHEET</div>
+              <div class="walk-desc">One sheet per project. The script creates segment tabs automatically on the first run if they don't already exist.</div>
+            </div>
+          </div>
+          <div class="walk-step">
+            <div class="walk-num">2</div>
+            <div class="walk-body">
+              <div class="walk-title">OPEN APPS SCRIPT</div>
+              <div class="walk-desc">Extensions menu inside Google Sheets, then Apps Script. A code editor opens in the browser. No install required. Paste the script and save.</div>
+            </div>
+          </div>
+          <div class="walk-step">
+            <div class="walk-num">3</div>
+            <div class="walk-body">
+              <div class="walk-title">PROMPT CLAUDE WITH THE MASTER PROMPT</div>
+              <div class="walk-desc">Input the platform, the experiment details, the funnel events, and the segmentation dimensions. The output is a working script with auth, polling, batching, and checkpoint resume already built in.</div>
+            </div>
+          </div>
+          <div class="walk-step">
+            <div class="walk-num">4</div>
+            <div class="walk-body">
+              <div class="walk-title">TEST ONE CALL FIRST</div>
+              <div class="walk-desc">Add API credentials, run a single call for one day and one segment. Confirm the number matches what the source platform shows. Only then generalize to the full range.</div>
+            </div>
+          </div>
+          <div class="walk-step">
+            <div class="walk-num">5</div>
+            <div class="walk-body">
+              <div class="walk-title">SET THE DAILY TRIGGER</div>
+              <div class="walk-desc">Most analytics platforms update their previous day's data during early morning hours. Schedule the trigger to run after that window. The script runs on Google's servers, not your browser, so closing your laptop doesn't stop it.</div>
+            </div>
+          </div>
+          <div class="walk-step">
+            <div class="walk-num">6</div>
+            <div class="walk-body">
+              <div class="walk-title">CONNECT TO LOOKER STUDIO</div>
+              <div class="walk-desc">Add the sheet as a data source in Looker Studio. The long-format schema lets you filter by any dimension combination without reconfiguring anything. Build the funnel chart once and it updates itself every day.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 04 XP GAINED -->
+    <section class="panel" id="p-xp" role="tabpanel" aria-hidden="true">
+      <div class="panel-h"><span class="p-num">04</span><h2>XP GAINED</h2></div>
+
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+          <div class="xp-subhead">building with ai</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">READ THE DOCS BEFORE GENERATING CODE</div>
+              <p class="xp-learning-desc">AI writes confident code against APIs it partially knows. The CleverTap field names (<code>technographics</code>, <code>geo_fields</code>, <code>advanced_query</code>) are not guessable from general knowledge. They require reading the actual documentation. When that step was skipped, the output was plausible-looking code that returned zero results. The fix: prompt Claude to fetch and read the docs first, then write the code against what they actually say.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">TEST ONE CALL BEFORE LOOPING</div>
+              <p class="xp-learning-desc">Every working script in this chapter started as a single hardcoded test: one day, one variant, one event. Confirm the API responds correctly, confirm the filter works, confirm the number matches the source dashboard, then generalize into a loop. Looping first hides which variable is broken and turns a short debug into a long guessing session.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">THE SPEC IS THE ENGINEERING WORK</div>
+              <p class="xp-learning-desc">The iterations where Claude produced working code on the first try were the ones with a fully defined spec: exact field names confirmed, exact date range set, exact output schema decided. Vague inputs produce vague code. The prompt work and the spec work are the real work. The code is just execution of decisions that were already made.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+          <div class="xp-subhead">product thinking</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">DESIGN THE SCHEMA BEFORE THE SCRIPT</div>
+              <p class="xp-learning-desc">The most important decision in this project was choosing the output format before writing a single line of code. Long format means one row per unique combination of date, segment, variant, and funnel step. Every dimension is its own column. The count is the metric. This makes the data Looker Studio-ready, filter-friendly, and easy to extend without restructuring when a new experiment starts. Wide format (one column per day) breaks every time the date range changes. Schema first, code second.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">THE PATTERN COMPOUNDS</div>
+              <p class="xp-learning-desc">The meta-unlock is not CleverTap or Apps Script. It is the pattern itself. Any API with credentials, any data source, any question. A PM who builds this once can build it for any other analytics platform they work with. The skill transfers. The queue dependency on engineering does not come back.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+          <div class="xp-subhead">development learnings</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ASYNC APIS NEED POLLING, NOT WAITING</div>
+              <p class="xp-learning-desc">Many analytics APIs queue requests and return a job ID rather than data immediately. The correct pattern: fire requests in a batch, wait once, poll all results together, write all results. Sequential fire-wait-fire-wait is the intuitive approach and the slow one. In this project, batching was 12 times faster. The same principle applies to any async API regardless of the platform.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">SCRIPTING ENVIRONMENTS HAVE HARD EXECUTION LIMITS</div>
+              <p class="xp-learning-desc">Execution environments impose hard time ceilings per run. Any script handling a large date range will hit one. The solution is checkpointing: save progress after every unit of work, read it on the next run, resume exactly where you left off. Specifically in Apps Script, manually running a script from the browser stops when you close the tab. Only trigger-based executions run server-side and survive disconnects.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">DASHBOARD LABELS AND API FIELDS ARE DIFFERENT</div>
+              <p class="xp-learning-desc">Every platform has a gap between what the UI shows and what the API accepts. In this case the dashboard displayed <code>Country = US</code> and the API required <code>geo_fields: [["United States"]]</code>. The only reliable way to find real field names is to read the API documentation. Guessing from UI labels produces code that compiles fine and returns nothing.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ZEROS ARE DATA TOO</div>
+              <p class="xp-learning-desc">When certain segments returned zero counts across all variants, the first instinct was a script bug. The actual cause was upstream: those users were not enrolled in the experiment at all, an issue with how the app tagged audience events. The script was correct. The input data was wrong. Knowing what a working result looks like is how you tell the difference between a pipeline failure and a data quality problem.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+          <div class="xp-subhead">future iterations</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ADAPT THE PROMPT FOR OTHER PLATFORMS</div>
+              <p class="xp-learning-desc">The master prompt was built against CleverTap because that was the urgent case. The next test is applying the same pattern to another platform used daily: Google Ad Manager, Firebase, or any internal analytics endpoint. If the prompt holds without new discoveries specific to that platform, the method is genuinely portable across tools.</p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">AUTOMATE DOWNSTREAM WORKFLOWS</div>
+              <p class="xp-learning-desc">Right now the script pulls data and writes it. The next layer is action: send a Slack alert when a variant shows a count drop greater than 30% day-over-day. Flag anomalies before they surface in a weekly review. The data is already in Sheets. Adding a comparison formula and a webhook call turns a reporting tool into an early warning system without rebuilding anything.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </section>
+
+  </div>
+
+  <nav class="chapter-nav" aria-label="Chapter navigation">
+    <a href="wavelength.html" class="prev">
+      <span class="nav-dir">PREV CHAPTER</span>
+      <span><span class="nav-arrow">◂</span> WAVELENGTH</span>
+    </a>
+    <a href="remy-exe-zine.html" class="next">
+      <span class="nav-dir">NEXT CHAPTER</span>
+      <span>REMY.EXE ZINE <span class="nav-arrow">▸</span></span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+  (function(){
+    const tabs = document.querySelectorAll('[role="tab"]');
+    const panels = document.querySelectorAll('[role="tabpanel"]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', e => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        const arr = Array.from(tabs);
+        const i = arr.indexOf(tab);
+        const next = e.key === 'ArrowRight' ? arr[(i+1) % arr.length] : arr[(i-1+arr.length) % arr.length];
+        next.focus(); activate(next);
+      });
+    });
+    function activate(tab) {
+      const target = tab.dataset.target;
+      tabs.forEach(t => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+      panels.forEach(p => p.setAttribute('aria-hidden', p.id === target ? 'false' : 'true'));
+    }
+  })();
+</script>
+
+</body>
+</html>

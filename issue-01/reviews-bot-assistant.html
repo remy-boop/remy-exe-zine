@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="view-transition" content="same-origin">
+<title>reviews bot assistant · remy.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+  /* Per-chapter signature override */
+  :root {
+    --sig:      var(--sig-cyan);
+    --sig-deep: #0e7490;
+    --sig-glow: rgba(34, 211, 238, 0.35);
+    --sig-wash: rgba(34, 211, 238, 0.12);
+  }
+
+  /* Animations */
+  @keyframes panel-fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 720px) {
+    body { padding: 16px 10px 32px; font-size: 17px; }
+    .strip { font-size: 9px; padding: 10px 14px; }
+    .chapter-cover { padding: 28px 22px 24px; }
+    .chapter-title { font-size: 26px; }
+    .chapter-tagline { font-size: 18px; }
+
+    .tabs { grid-template-columns: repeat(2, 1fr); }
+    .tab {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 8px 12px;
+    }
+    .tab:nth-child(2) { border-right: none; }
+    .tab:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .tab:nth-last-child(-n+2) { border-bottom: none; }
+    .tab:last-child { border-right: none; }
+    .tab .tab-label { font-size: 9px; }
+    .tab .tab-sub   { font-size: 12px; }
+
+    .panel { padding: 24px 20px; }
+    .panel-h h2 { font-size: 13px; }
+    .panel-h .p-num { font-size: 9px; padding: 4px 8px; }
+    .panel p { font-size: 16px; }
+    .pull-quote { font-size: 18px; padding: 14px 18px; }
+
+    .stat-row { grid-template-columns: 1fr; }
+    .stat-num { font-size: 26px; }
+    .cause-grid { grid-template-columns: 1fr; }
+    .cause-card { grid-template-columns: 48px 1fr; gap: 12px; padding: 16px; }
+    .cause-icon-tile { width: 48px; height: 48px; }
+    .cause-icon-tile svg { width: 32px; height: 32px; }
+    .fix-grid { grid-template-columns: 1fr; }
+    
+    .walk-step { grid-template-columns: 28px 1fr; gap: 12px; }
+    .walk-num { width: 26px; height: 26px; font-size: 10px; }
+    .xp-heading { font-size: 11px; }
+    .xp-subhead { font-size: 15px; }
+    .data-table { font-size: 14px; }
+    .data-table tbody td:first-child { font-size: 14px; padding-right: 14px; }
+
+    .chapter-nav { flex-direction: column; }
+    .chapter-nav a.next { align-items: flex-start; text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @view-transition { navigation: auto; }
+</style>
+</head>
+<body>
+
+<div class="issue">
+
+  <header class="strip">
+    <a href="index.html" class="back">
+      <span class="back-arrow">◂</span> BACK TO ISSUE
+    </a>
+    <span class="crumb">CH 01</span>
+    <span class="tint">REMY.EXE</span>
+  </header>
+
+  <!-- COVER -->
+  <section class="chapter-cover">
+    <div class="chapter-kicker">
+      <span class="chapter-num">01</span>
+      CHAPTER ONE
+    </div>
+
+    <h1 class="chapter-title">REVIEWS BOT<br>ASSISTANT</h1>
+
+    <p class="chapter-tagline">
+      A Slack bot for Customer Support that drafts AI replies to App Store
+      and Play Store reviews, then routes them through an approval flow.
+    </p>
+
+    <div class="chapter-meta">
+      <span class="status-badge live">LIVE</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>shipped:</b> Mar 2026</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>platform:</b> Slack</span>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist" aria-label="Chapter sections">
+    <button class="tab" role="tab" aria-selected="true"  aria-controls="p-origin" data-target="p-origin">
+      <span class="tab-num">01</span>
+      <span class="tab-label">LEVEL 1 START</span>
+      <span class="tab-sub">the why</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-fix"    data-target="p-fix">
+      <span class="tab-num">02</span>
+      <span class="tab-label">BOSS FIGHT</span>
+      <span class="tab-sub">the fix</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-stack"  data-target="p-stack">
+      <span class="tab-num">03</span>
+      <span class="tab-label">INVENTORY</span>
+      <span class="tab-sub">the stack</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-xp"     data-target="p-xp">
+      <span class="tab-num">04</span>
+      <span class="tab-label">XP GAINED</span>
+      <span class="tab-sub">learnings</span>
+    </button>
+  </nav>
+
+  <div class="panels">
+
+    <!-- ====== 01 LEVEL 1 START ====== -->
+    <section class="panel" id="p-origin" role="tabpanel" aria-hidden="false">
+      <div class="panel-h">
+        <span class="p-num">01</span>
+        <h2>LEVEL 1 START</h2>
+      </div>
+
+      <p>
+        Across the app industry, store reviews are one of the highest-leverage
+        feedback channels a product has. They show up directly in the App Store
+        and Google Play listings, they shape ranking signals, and they're often
+        the first thing a future user reads before deciding to install. The
+        catch is that responding to them at scale is genuinely hard.
+      </p>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num">~18%</div>
+          <div class="stat-label">NEGATIVE REVIEWS<br>ANSWERED</div>
+          <div class="stat-context">
+            industry average for 1-2 star reviews on Google Play
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2-4 days</div>
+          <div class="stat-label">TYPICAL REPLY<br>TIME</div>
+          <div class="stat-context">
+            faster responses lift ratings, manual workflows rarely keep that pace
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">+0.4★</div>
+          <div class="stat-label">BOOST WHEN<br>CONSISTENT</div>
+          <div class="stat-context">
+            rating lift observed when 50%+ of reviews get a reply
+          </div>
+        </div>
+      </div>
+
+      <p>
+        The numbers tell you <em>that</em> there's a structural challenge.
+        The harder question is <em>why</em>, and that part doesn't really
+        have anything to do with effort or care from any specific team. It's
+        almost always one of four root causes:
+      </p>
+
+      <div class="cause-grid">
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <!-- pixel-art document — one-at-a-time manual work -->
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <!-- document outline -->
+              <rect x="2" y="1" width="7" height="10" fill="currentColor"/>
+              <!-- inner page -->
+              <rect x="3" y="2" width="5" height="8" fill="var(--bg-deep)"/>
+              <!-- top corner fold -->
+              <rect x="7" y="1" width="2" height="2" fill="var(--bg-deep)"/>
+              <rect x="8" y="2" width="1" height="1" fill="currentColor"/>
+              <!-- text lines -->
+              <rect x="4" y="3" width="3" height="1" fill="currentColor"/>
+              <rect x="4" y="5" width="3" height="1" fill="currentColor"/>
+              <rect x="4" y="7" width="2" height="1" fill="currentColor"/>
+              <!-- cursor / pen -->
+              <rect x="9" y="8" width="1" height="1" fill="currentColor"/>
+              <rect x="10" y="9" width="1" height="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">MANUAL PROCESS</div>
+            <p class="cause-desc">
+              Each store has its own dashboard. Replies happen one at a time,
+              one window at a time. There's no unified inbox.
+            </p>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <!-- pixel-art stack of papers — too many to handle -->
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <!-- back paper -->
+              <rect x="3" y="1" width="7" height="6" fill="currentColor"/>
+              <rect x="4" y="2" width="5" height="4" fill="var(--bg-deep)"/>
+              <rect x="5" y="3" width="3" height="1" fill="currentColor"/>
+              <rect x="5" y="5" width="2" height="1" fill="currentColor"/>
+              <!-- middle paper -->
+              <rect x="2" y="3" width="7" height="6" fill="currentColor"/>
+              <rect x="3" y="4" width="5" height="4" fill="var(--bg-deep)"/>
+              <rect x="4" y="5" width="3" height="1" fill="currentColor"/>
+              <rect x="4" y="7" width="2" height="1" fill="currentColor"/>
+              <!-- front paper -->
+              <rect x="1" y="5" width="7" height="6" fill="currentColor"/>
+              <rect x="2" y="6" width="5" height="4" fill="var(--bg-deep)"/>
+              <rect x="3" y="7" width="3" height="1" fill="currentColor"/>
+              <rect x="3" y="9" width="2" height="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">VOLUME OVERLOAD</div>
+            <p class="cause-desc">
+              Hundreds of reviews per week across two stores. Queue grows faster
+              than any team can answer it from scratch.
+            </p>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <!-- pixel-art speech bubble — voice/tone -->
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <!-- bubble body -->
+              <rect x="1" y="1" width="10" height="7" fill="currentColor"/>
+              <rect x="2" y="2" width="8" height="5" fill="var(--bg-deep)"/>
+              <!-- bubble tail -->
+              <rect x="3" y="8" width="3" height="1" fill="currentColor"/>
+              <rect x="3" y="9" width="2" height="1" fill="currentColor"/>
+              <rect x="3" y="10" width="1" height="1" fill="currentColor"/>
+              <!-- three dots inside (voice/lines) -->
+              <rect x="3" y="4" width="1" height="1" fill="currentColor"/>
+              <rect x="5" y="4" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="4" width="1" height="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">VOICE CONSISTENCY</div>
+            <p class="cause-desc">
+              Replies vary in tone depending on who's typing that day. Hard to
+              keep one brand voice across many hands.
+            </p>
+          </div>
+        </div>
+        <div class="cause-card">
+          <div class="cause-icon-tile">
+            <!-- pixel-art globe — multiple markets / languages -->
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+              <!-- top row -->
+              <rect x="4" y="1" width="4" height="1" fill="currentColor"/>
+              <!-- row 2 -->
+              <rect x="2" y="2" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="2" width="2" height="1" fill="currentColor"/>
+              <!-- row 3 -->
+              <rect x="1" y="3" width="2" height="1" fill="currentColor"/>
+              <rect x="5" y="3" width="2" height="1" fill="currentColor"/>
+              <rect x="9" y="3" width="2" height="1" fill="currentColor"/>
+              <!-- row 4 — middle line (equator) full -->
+              <rect x="1" y="4" width="10" height="1" fill="currentColor"/>
+              <!-- row 5 — meridian dots -->
+              <rect x="1" y="5" width="2" height="1" fill="currentColor"/>
+              <rect x="5" y="5" width="2" height="1" fill="currentColor"/>
+              <rect x="9" y="5" width="2" height="1" fill="currentColor"/>
+              <!-- row 6 -->
+              <rect x="1" y="6" width="1" height="1" fill="currentColor"/>
+              <rect x="3" y="6" width="2" height="1" fill="currentColor"/>
+              <rect x="7" y="6" width="2" height="1" fill="currentColor"/>
+              <rect x="10" y="6" width="1" height="1" fill="currentColor"/>
+              <!-- row 7 -->
+              <rect x="2" y="7" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="7" width="2" height="1" fill="currentColor"/>
+              <!-- row 8 -->
+              <rect x="2" y="8" width="2" height="1" fill="currentColor"/>
+              <rect x="8" y="8" width="2" height="1" fill="currentColor"/>
+              <!-- row 9 -->
+              <rect x="3" y="9" width="6" height="1" fill="currentColor"/>
+              <!-- row 10 base -->
+              <rect x="4" y="10" width="4" height="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cause-body">
+            <div class="cause-title">LANGUAGE BARRIERS</div>
+            <p class="cause-desc">
+              Reviews come in Spanish, Portuguese, French, and more. Native
+              replies in every market take resources most teams don't have.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ AT TREBEL</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The Customer Support team has been carrying all four of those weights at
+        once. Multiple stores, multiple markets (Mexico and the US as the
+        biggest, with reviews in both English and Spanish), and a steady weekly
+        volume that grows with the user base. The team has been doing the
+        thoughtful, hand-typed replies the brand deserves, but the math gets
+        impossible past a certain queue size.
+      </p>
+
+      <p>
+        At the same time, the brand has spent years building exactly the kind
+        of material that should make replies easier. Brand voice docs.
+        Tone-by-market guidance. Escalation rules. Standard responses for the
+        most common topics. All of it lives in shared docs that any human
+        reading them could write a great reply.
+      </p>
+
+      <div class="pull-quote">
+        So the real question wasn't <em>"how do we reply faster"</em>, it was
+        <em>"why is a human still typing every reply from scratch when the
+        playbook is already written?"</em>
+      </div>
+
+      <p>
+        The idea: feed that knowledge base into AI, let it draft a first
+        response per review, and put a Slack approval flow on top so the
+        Customer Support team can approve, edit, or skip with one click. Keep
+        the judgment human. Hand the typing to the machine.
+      </p>
+    </section>
+
+    <!-- ====== 02 BOSS FIGHT ====== -->
+    <section class="panel" id="p-fix" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">02</span>
+        <h2>BOSS FIGHT</h2>
+      </div>
+
+      <p>
+        How do you give the Customer Support team autonomy and control instead
+        of replacing them with a black box that posts replies for them?
+        Replacement was off the table from day one. Auto-posting AI replies
+        without a human review would have eroded the trust the bot was
+        supposed to build.
+      </p>
+
+      <p>
+        The win condition was different: build a tool that does 80% of the
+        work so the 20% that still needs human judgment (tone calls,
+        escalations, edits) gets the attention it deserves.
+      </p>
+
+      <div class="fix-grid">
+        <div class="fix-card before">
+          <span class="fix-tag">✗ BEFORE</span>
+          Open App Store Connect or Play Console. Re-read the review.
+          Translate to the right language. Watch the character counter.
+          Submit. Repeat 40 times.
+          <br><br>
+          <b>Per review:</b> 3 to 8 minutes of focused work. High cognitive
+          load. Inconsistent voice across teammates. No batch handling.
+        </div>
+        <div class="fix-card after">
+          <span class="fix-tag">✓ AFTER</span>
+          A draft appears in Slack. On-brand. In the reviewer's language.
+          Under the character limit. Agent reads, hits Approve or Edit.
+          Card updates to show who sent what.
+          <br><br>
+          <b>Per review:</b> under 30 seconds. No context switch. Consistent
+          tone across the team. Triage and ship in one place.
+        </div>
+      </div>
+
+      <p>
+        The autonomy showed up in three product decisions:
+      </p>
+
+      <p>
+        <b>Fetch on demand, not always-on.</b> The Customer Support team
+        types <code>/fetch-reviews</code> with the params they want (store,
+        country, ratings, lookback). They decide when to triage, what to
+        triage, how much to triage. The bot doesn't push, it pulls when
+        asked.
+      </p>
+
+      <p>
+        <b>Edit always available.</b> Every card has Edit, not just Approve.
+        If the draft is 90% right, the agent fixes the last 10% in a modal
+        and submits. The bot is a starting point, not an answer.
+      </p>
+
+      <p>
+        <b>The voice rules are the team's, not the bot's.</b> Tone,
+        escalation phrases, language, brand do's and don'ts, all live in a
+        <code>knowledge-base.md</code> file Claude reads on every draft.
+        Update the file, the voice updates everywhere. The team owns the
+        output even when the machine writes it.
+      </p>
+
+      <!-- SCREENSHOTS -->
+      <div class="shot-section">
+        <div class="shot-label">▸ THE BOT IN PRODUCTION</div>
+        <div class="shot-grid">
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch01-slack-card-4star.png" alt="Slack card showing an App Store review with an AI-drafted reply in Spanish and Approve and Edit buttons">
+            </div>
+            <div class="shot-caption">
+              <b>APP STORE</b>
+              draft in Spanish, ready to ship. Approve and Edit visible.
+            </div>
+          </div>
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch01-slack-card-googleplay.png" alt="Slack card showing a Google Play review in English with an AI-drafted reply">
+            </div>
+            <div class="shot-caption">
+              <b>GOOGLE PLAY</b>
+              English reviewer, English draft. Same loop, both stores.
+            </div>
+          </div>
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch01-slack-error.png" alt="Slack error message showing invalid parameters with usage help">
+            </div>
+            <div class="shot-caption">
+              <b>ERROR HANDLING</b>
+              bad params get a usage hint, not a 500.
+            </div>
+          </div>
+          <div class="shot">
+            <div class="shot-img-wrap">
+              <img src="images/ch01-slack-card-1star-sent.png" alt="Slack card showing a review with the reply already sent">
+            </div>
+            <div class="shot-caption">
+              <b>REVIEW SENT</b>
+              card updates to "✅ Sent by @user" after one-click approval.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOTCHAs -->
+      <div class="gotcha">
+        <span class="gotcha-tag">⚠ GOTCHA · APP STORE TERRITORY FILTER</span>
+        <p>
+          The App Store Connect API accepts a <code>filter[territory]</code>
+          query param, documents it, and returns 0 results when you use it.
+          Fix: remove the param, paginate fully, filter client-side via
+          <code>attributes.territory</code>. Google Play had no equivalent
+          issue, which made the silence on Apple's side especially confusing
+          for an afternoon.
+        </p>
+      </div>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">⚠ GOTCHA · MISSING_SCOPE WAS SLACK, NOT THE STORES</span>
+        <p>
+          Approve clicks were failing with a <code>missing_scope</code>
+          error. First instinct: store-side API key roles, since that's
+          where the reply gets posted. Wrong. The error was actually on
+          Slack's side. Updating a posted card after a button click needs
+          <code>channels:history</code>, <code>groups:history</code>, and
+          <code>im:history</code>, scopes that weren't in the original
+          OAuth set. I figured it out by adding a <code>console.log</code>
+          right before the store API call. When the log showed clean data
+          going out and the store call <em>succeeding</em>, the failure
+          had to be the Slack-side update path. Lesson: log before you
+          guess.
+        </p>
+      </div>
+
+      <!-- WIN — API-level reply check shipped -->
+      <div class="win">
+        <span class="win-tag">✓ WIN · API-LEVEL REPLY CHECK SHIPPED</span>
+        <p>
+          Early on, the bot only checked the local DB to decide if a review
+          was already answered. That meant manual replies posted directly in
+          Play Console or App Store Connect would still surface in Slack on
+          the next fetch, doubling work and confusing the team. I closed
+          that loop by checking <code>DeveloperComment</code> on Google Play
+          and <code>customerReviewResponse</code> on Apple at fetch time.
+          Reviews replied to anywhere, by anyone, now drop out of the queue
+          before the bot ever drafts a response.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====== 03 INVENTORY ====== -->
+    <section class="panel" id="p-stack" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">03</span>
+        <h2>INVENTORY</h2>
+      </div>
+
+      <p>Free-tier where it works, paid where it matters.</p>
+
+      <!-- EQUIPMENT chips (restored) -->
+      <div class="stack-section">
+        <div class="stack-label">▸ EQUIPMENT</div>
+        <div class="stack-grid">
+          <div class="chip">
+            <span class="chip-role">server</span>
+            <span class="chip-name">Render</span>
+            <span class="chip-detail">Node.js 18 + TypeScript</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">database</span>
+            <span class="chip-name">Neon</span>
+            <span class="chip-detail">Postgres 17 · 4 tables</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">ai</span>
+            <span class="chip-name">Anthropic</span>
+            <span class="chip-detail">Claude Sonnet 4.5</span>
+            <span class="chip-cost paid">~$0.01/review</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">bot</span>
+            <span class="chip-name">Slack Bolt SDK</span>
+            <span class="chip-detail">webhook + actions</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">source control</span>
+            <span class="chip-name">GitHub</span>
+            <span class="chip-detail">push → auto deploy</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HIGH-LEVEL DIAGRAM -->
+      <div class="stack-section">
+        <div class="stack-label">▸ HIGH-LEVEL ARCHITECTURE</div>
+        <div class="diagram-container">
+          <svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+            <rect x="30" y="60" width="150" height="60" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="11" font-weight="700" fill="#ece4ff" x="105" y="88" text-anchor="middle">Slack</text>
+            <text font-family="VT323, monospace" font-size="14" fill="#22d3ee" x="105" y="108" text-anchor="middle">#app-reviews-ai</text>
+            <rect x="265" y="60" width="150" height="60" rx="8" fill="#fb923c" fill-opacity="0.2" stroke="#fb923c" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="11" font-weight="700" fill="#ece4ff" x="340" y="88" text-anchor="middle">Render</text>
+            <text font-family="VT323, monospace" font-size="14" fill="#fb923c" x="340" y="108" text-anchor="middle">Node.js · Express</text>
+            <rect x="500" y="60" width="150" height="60" rx="8" fill="#a3e635" fill-opacity="0.2" stroke="#a3e635" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="11" font-weight="700" fill="#ece4ff" x="575" y="88" text-anchor="middle">Stores</text>
+            <text font-family="VT323, monospace" font-size="14" fill="#a3e635" x="575" y="108" text-anchor="middle">Google · Apple</text>
+            <line x1="180" y1="82" x2="263" y2="82" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="221" y="74" text-anchor="middle">fetch · approve</text>
+            <line x1="263" y1="98" x2="180" y2="98" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="221" y="116" text-anchor="middle">post card</text>
+            <line x1="415" y1="82" x2="498" y2="82" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="456" y="74" text-anchor="middle">fetch · reply</text>
+            <line x1="498" y1="98" x2="415" y2="98" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="456" y="116" text-anchor="middle">reviews</text>
+            <rect x="140" y="230" width="150" height="60" rx="8" fill="#c71560" fill-opacity="0.25" stroke="#ff3d8f" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="11" font-weight="700" fill="#ece4ff" x="215" y="258" text-anchor="middle">Claude</text>
+            <text font-family="VT323, monospace" font-size="14" fill="#ff3d8f" x="215" y="278" text-anchor="middle">Sonnet 4.5</text>
+            <rect x="390" y="230" width="150" height="60" rx="8" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text font-family="Press Start 2P, monospace" font-size="11" font-weight="700" fill="#ece4ff" x="465" y="258" text-anchor="middle">Neon</text>
+            <text font-family="VT323, monospace" font-size="14" fill="#c4b5fd" x="465" y="278" text-anchor="middle">Postgres DB</text>
+            <path d="M305 120 L305 180 L215 180 L215 228" fill="none" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="254" y="174" text-anchor="middle">review text</text>
+            <path d="M230 228 L230 196 L340 196 L340 120" fill="none" stroke="#ff3d8f" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ff3d8f" x="292" y="210" text-anchor="middle">draft reply</text>
+            <path d="M370 120 L370 180 L465 180 L465 228" fill="none" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="424" y="174" text-anchor="middle">write</text>
+            <path d="M450 228 L450 196 L355 196 L355 120" fill="none" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+            <text font-family="VT323, monospace" font-size="13" fill="#ece4ff" x="400" y="210" text-anchor="middle">read</text>
+            <text font-family="Press Start 2P, monospace" font-size="8" fill="#55507a" x="340" y="325" text-anchor="middle">REVIEWS BOT ASSISTANT · HIGH LEVEL</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- FULL DATA PIPELINE DIAGRAM -->
+      <div class="stack-section">
+        <div class="stack-label">▸ FULL DATA PIPELINE</div>
+        <div class="diagram-container">
+          <svg viewBox="0 0 720 1260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- DEV LAYER -->
+            <rect x="20" y="24" width="106" height="52" rx="8" fill="#c71560" fill-opacity="0.2" stroke="#ff3d8f" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="73" y="46" text-anchor="middle">Claude</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#ff3d8f" x="73" y="64" text-anchor="middle">AI design</text>
+            <line x1="126" y1="50" x2="148" y2="50" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <rect x="150" y="24" width="120" height="52" rx="8" fill="#6d28d9" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="210" y="46" text-anchor="middle">Claude Code</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="210" y="64" text-anchor="middle">VS Code · dev agent</text>
+            <line x1="270" y1="50" x2="292" y2="50" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <rect x="294" y="24" width="110" height="52" rx="8" fill="#6d28d9" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="349" y="46" text-anchor="middle">GitHub</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="349" y="64" text-anchor="middle">trebel-review-bot</text>
+            <line x1="404" y1="50" x2="426" y2="50" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="415" y="42" text-anchor="middle">push</text>
+            <rect x="428" y="24" width="100" height="52" rx="8" fill="#fb923c" fill-opacity="0.2" stroke="#fb923c" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="478" y="46" text-anchor="middle">Render</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="478" y="64" text-anchor="middle">auto-deploys</text>
+            <line x1="20" y1="92" x2="540" y2="92" stroke="#3d3560" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+            <!-- CS AGENT -->
+            <rect x="210" y="104" width="240" height="52" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="126" text-anchor="middle">CS agent</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="330" y="144" text-anchor="middle">types /fetch-reviews in Slack</text>
+            <line x1="330" y1="156" x2="330" y2="178" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- PARAMS -->
+            <rect x="210" y="180" width="240" height="96" rx="8" fill="#fb923c" fill-opacity="0.18" stroke="#fb923c" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="202" text-anchor="middle">Slash command params</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="220" text-anchor="middle">store: google_play / app_store / both</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="236" text-anchor="middle">ratings: 1,2,3,4,5 · days: lookback</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="252" text-anchor="middle">e.g. country: mx · max: 2</text>
+            <line x1="330" y1="276" x2="330" y2="298" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="354" y="290">HTTP POST</text>
+
+            <!-- RENDER SERVER 1 -->
+            <rect x="210" y="300" width="240" height="52" rx="8" fill="#fb923c" fill-opacity="0.2" stroke="#fb923c" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="322" text-anchor="middle">Render server</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="340" text-anchor="middle">Node.js · parses params</text>
+            <line x1="210" y1="326" x2="152" y2="326" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <line x1="450" y1="326" x2="488" y2="326" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- GOOGLE PLAY -->
+            <rect x="20" y="294" width="130" height="72" rx="8" fill="#a3e635" fill-opacity="0.18" stroke="#a3e635" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="85" y="316" text-anchor="middle">Google Play</text>
+            <line x1="30" y1="324" x2="140" y2="324" stroke="#a3e635" stroke-width="0.5" opacity="0.6"/>
+            <text font-family="VT323, monospace" font-size="11" fill="#a3e635" x="85" y="340" text-anchor="middle">GET 200/hr</text>
+            <text font-family="VT323, monospace" font-size="11" fill="#a3e635" x="85" y="354" text-anchor="middle">POST 2000/day</text>
+
+            <!-- APPLE -->
+            <rect x="490" y="294" width="170" height="72" rx="8" fill="#a3e635" fill-opacity="0.18" stroke="#a3e635" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="575" y="316" text-anchor="middle">Apple App Store</text>
+            <line x1="500" y1="324" x2="650" y2="324" stroke="#a3e635" stroke-width="0.5" opacity="0.6"/>
+            <text font-family="VT323, monospace" font-size="11" fill="#a3e635" x="575" y="340" text-anchor="middle">GET ~3600/hr</text>
+            <text font-family="VT323, monospace" font-size="11" fill="#a3e635" x="575" y="354" text-anchor="middle">POST shared pool</text>
+            <path d="M85 366 L85 412 L328 412" fill="none" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <path d="M575 366 L575 412 L332 412" fill="none" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="330" y="408" text-anchor="middle">unanswered only</text>
+
+            <!-- SAVE TO DB -->
+            <rect x="210" y="418" width="240" height="52" rx="8" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="440" text-anchor="middle">Save reviews to DB</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="330" y="458" text-anchor="middle">reviews · replied = false</text>
+            <line x1="330" y1="470" x2="330" y2="492" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- CLAUDE + KB -->
+            <rect x="210" y="494" width="240" height="52" rx="8" fill="#c71560" fill-opacity="0.2" stroke="#ff3d8f" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="516" text-anchor="middle">Anthropic Claude</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#ff3d8f" x="330" y="534" text-anchor="middle">draft · lang · 350 char cap</text>
+            <rect x="20" y="494" width="150" height="52" rx="8" fill="#c71560" fill-opacity="0.2" stroke="#ff3d8f" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="95" y="516" text-anchor="middle">knowledge-base</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#ff3d8f" x="95" y="534" text-anchor="middle">tone · rules · brand</text>
+            <line x1="170" y1="520" x2="208" y2="520" stroke="#ff3d8f" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <line x1="330" y1="546" x2="330" y2="568" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="364" y="560">in payload</text>
+
+            <!-- SLACK CARD POSTED -->
+            <rect x="210" y="570" width="240" height="52" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="592" text-anchor="middle">Slack card posted</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="330" y="610" text-anchor="middle">#app-reviews-ai · draft in payload</text>
+            <rect x="20" y="570" width="150" height="52" rx="8" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="95" y="592" text-anchor="middle">slack_messages</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="95" y="610" text-anchor="middle">msg ID for routing</text>
+            <line x1="170" y1="596" x2="208" y2="596" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <line x1="330" y1="622" x2="330" y2="644" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- AGENT DECIDES -->
+            <rect x="210" y="646" width="240" height="52" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="668" text-anchor="middle">Agent decides</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="330" y="686" text-anchor="middle">Approve · Edit via modal</text>
+            <line x1="330" y1="698" x2="330" y2="720" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <text font-family="VT323, monospace" font-size="12" fill="#8e86ae" x="364" y="712">/slack/actions</text>
+
+            <!-- RENDER SERVER 2 -->
+            <rect x="210" y="722" width="240" height="64" rx="8" fill="#fb923c" fill-opacity="0.2" stroke="#fb923c" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="746" text-anchor="middle">Render server</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="764" text-anchor="middle">looks up review + msg ID</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#fb923c" x="330" y="780" text-anchor="middle">from slack_messages</text>
+            <line x1="330" y1="786" x2="330" y2="808" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- REPLY TO STORE -->
+            <rect x="210" y="810" width="240" height="64" rx="8" fill="#a3e635" fill-opacity="0.18" stroke="#a3e635" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="832" text-anchor="middle">Reply posted to store</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#a3e635" x="330" y="850" text-anchor="middle">Google Play: instant</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#a3e635" x="330" y="866" text-anchor="middle">App Store: 2 to 24 hrs</text>
+            <line x1="330" y1="874" x2="330" y2="896" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- DB UPDATE -->
+            <rect x="210" y="898" width="240" height="64" rx="8" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="920" text-anchor="middle">reviews table updated</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="330" y="938" text-anchor="middle">replied=true · replied_by · replied_at</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#c4b5fd" x="330" y="954" text-anchor="middle">sent_response = exact text sent</text>
+            <line x1="330" y1="962" x2="330" y2="984" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+            <!-- SLACK CARD UPDATED -->
+            <rect x="210" y="986" width="240" height="52" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="330" y="1008" text-anchor="middle">Slack card updated</text>
+            <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="330" y="1026" text-anchor="middle">✅ Sent by @user · msg ID used</text>
+
+            <!-- DB SCHEMA BOX -->
+            <rect x="20" y="1062" width="680" height="172" rx="10" fill="#12102a" stroke="#3d3560" stroke-width="1" stroke-dasharray="3 3"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#8e86ae" x="40" y="1082">DB · Neon Postgres · 4 tables</text>
+
+            <rect x="30" y="1092" width="148" height="120" rx="6" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="104" y="1112" text-anchor="middle">reviews</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="104" y="1130" text-anchor="middle">id · store · rating</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="104" y="1146" text-anchor="middle">replied · replied_by</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="104" y="1162" text-anchor="middle">replied_at</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="104" y="1178" text-anchor="middle">sent_response</text>
+
+            <rect x="188" y="1092" width="148" height="120" rx="6" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="262" y="1112" text-anchor="middle">response_drafts</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="262" y="1130" text-anchor="middle">id · review_id FK</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="262" y="1146" text-anchor="middle">draft_text</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="262" y="1162" text-anchor="middle">status</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="262" y="1178" text-anchor="middle">created_at</text>
+
+            <rect x="346" y="1092" width="148" height="120" rx="6" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="420" y="1112" text-anchor="middle">slack_messages</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="420" y="1130" text-anchor="middle">id · review_id FK</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="420" y="1146" text-anchor="middle">slack_message_id</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="420" y="1162" text-anchor="middle">channel_id</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="420" y="1178" text-anchor="middle">created_at</text>
+
+            <rect x="504" y="1092" width="176" height="120" rx="6" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1"/>
+            <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="592" y="1112" text-anchor="middle">sent_replies</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="592" y="1130" text-anchor="middle">id · review_id FK</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="592" y="1146" text-anchor="middle">reply_text · sent_by</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="592" y="1162" text-anchor="middle">sent_at · edited</text>
+            <text font-family="VT323, monospace" font-size="12" fill="#c4b5fd" x="592" y="1178" text-anchor="middle">store · review_id_ext</text>
+
+            <text font-family="Press Start 2P, monospace" font-size="8" fill="#55507a" x="360" y="1248" text-anchor="middle">REVIEWS BOT ASSISTANT · FULL DATA PIPELINE</text>
+          </svg>
+        </div>
+        <div class="legend" aria-label="Diagram legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:#ff3d8f"></span> AI</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#8b5cf6"></span> Dev tools / data</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#fb923c"></span> Server / compute</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#a3e635"></span> Store APIs</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#22d3ee"></span> Slack / human</span>
+        </div>
+      </div>
+
+      <!-- WALKTHROUGH -->
+      <div class="stack-section">
+        <div class="stack-label">▸ STEP-BY-STEP WALKTHROUGH</div>
+        <p>End-to-end flow from slash command to reply posted in the store.</p>
+        <div class="walkthrough">
+
+          <div class="walk-step">
+            <div class="walk-num">1</div>
+            <div class="walk-body">
+              <div class="walk-title">CS AGENT RUNS /FETCH-REVIEWS IN SLACK</div>
+              <div class="walk-desc">
+                Command typed in <code>#app-reviews-ai</code> with parameters
+                controlling what to fetch.
+              </div>
+              <div class="walk-code">/fetch-reviews store:both country:mx ratings:1,2 days:7 max:2</div>
+              <div class="walk-tags">
+                <span class="walk-tag">ratings · star filter</span>
+                <span class="walk-tag">days · lookback (≤30)</span>
+                <span class="walk-tag">store · google_play / app_store / both</span>
+                <span class="walk-tag">country · ISO code</span>
+                <span class="walk-tag">max · 1-100, default 20</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">2</div>
+            <div class="walk-body">
+              <div class="walk-title">SLACK SENDS THE COMMAND TO RENDER</div>
+              <div class="walk-desc">
+                Slack POSTs to the bot's <code>/slack/commands</code> endpoint.
+                The server wakes up if cold (30 to 60s on free tier), then
+                parses the params.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">Slack Bolt SDK</span>
+                <span class="walk-tag">Node.js 18 + TS on Render</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">3</div>
+            <div class="walk-body">
+              <div class="walk-title">FETCH FROM GOOGLE PLAY</div>
+              <div class="walk-desc">
+                Authenticated via Service Account JSON from Google Cloud.
+                Reviews matching the ratings + days filters fetched directly
+                from the API.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">googleapis npm</span>
+                <span class="walk-tag">GET 200 req/hr</span>
+                <span class="walk-tag">POST 2,000 req/day</span>
+                <span class="walk-tag">reply: instant</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">4</div>
+            <div class="walk-body">
+              <div class="walk-title">FETCH FROM APPLE APP STORE</div>
+              <div class="walk-desc">
+                Authenticated via short-lived JWT (RS256, 20-min expiry).
+                Territory filter happens client-side after pagination, since
+                the API returns 0 results when you pass
+                <code>filter[territory]</code> directly.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">App Store Connect API</span>
+                <span class="walk-tag">JWT RS256</span>
+                <span class="walk-tag">GET ~3,600 req/hr</span>
+                <span class="walk-tag">client-side territory filter</span>
+                <span class="walk-tag">reply: 2-24 hrs</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">5</div>
+            <div class="walk-body">
+              <div class="walk-title">DB FILTERS OUT ALREADY-ANSWERED</div>
+              <div class="walk-desc">
+                The server checks <code>sent_replies</code> in Postgres. Any
+                review with an existing reply is dropped. Only genuinely
+                unanswered reviews move forward.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">Neon Postgres</span>
+                <span class="walk-tag">sent_replies table</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">6</div>
+            <div class="walk-body">
+              <div class="walk-title">SAVE NEW REVIEWS TO DB</div>
+              <div class="walk-desc">
+                Each new review is written to <code>reviews</code> with
+                <code>replied=false</code>. A draft slot is created in
+                <code>response_drafts</code>, ready for the AI response.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">reviews table</span>
+                <span class="walk-tag">response_drafts table</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">7</div>
+            <div class="walk-body">
+              <div class="walk-title">CLAUDE GENERATES ONE DRAFT PER REVIEW</div>
+              <div class="walk-desc">
+                The server calls the Anthropic API with the review text plus
+                <code>knowledge-base.md</code> as context. Claude writes a
+                brand-appropriate response, matched to the reviewer's
+                language. Reply capped at 350 characters (Google Play hard
+                limit).
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">claude-sonnet-4-5</span>
+                <span class="walk-tag">~$0.01/review</span>
+                <span class="walk-tag">knowledge-base.md</span>
+                <span class="walk-tag">350 char limit enforced</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">8</div>
+            <div class="walk-body">
+              <div class="walk-title">BOT POSTS EACH REVIEW CARD TO SLACK</div>
+              <div class="walk-desc">
+                One Slack message per review. Shows store, rating, review
+                text, AI draft, and action buttons. The Slack message ID is
+                stored in <code>slack_messages</code> so the server can route button
+                clicks and update the card later.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">✅ Approve & Send</span>
+                <span class="walk-tag">✏️ Edit</span>
+                <span class="walk-tag">slack_messages table</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">9</div>
+            <div class="walk-body">
+              <div class="walk-title">CS AGENT READS THE DRAFT AND DECIDES</div>
+              <div class="walk-desc">
+                Approve sends the AI draft as-is. Edit opens a Slack modal
+                with the draft pre-filled. The agent edits and submits. The
+                server enforces the 350-char limit on submission too, not
+                just on generation.
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-step">
+            <div class="walk-num">10</div>
+            <div class="walk-body">
+              <div class="walk-title">RENDER POSTS REPLY TO STORE</div>
+              <div class="walk-desc">
+                Slack sends the click or modal submission to
+                <code>/slack/actions</code>. Render looks up the review,
+                calls the store API to submit, writes to
+                <code>sent_replies</code>, and updates the Slack card to
+                <em>✅ Sent (by @user)</em>.
+              </div>
+              <div class="walk-tags">
+                <span class="walk-tag">Google Play: instant</span>
+                <span class="walk-tag">App Store: 2-24 hrs</span>
+                <span class="walk-tag">sent_replies updated</span>
+                <span class="walk-tag">Slack card updated via msg ID</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- KB BLOCK -->
+      <div class="stack-section">
+        <div class="stack-label">▸ AI CONTEXT FILE</div>
+        <div class="kb-block">
+          <div class="kb-title">knowledge-base.md</div>
+          <div class="kb-desc">
+            Lives on Render at project root. Loaded at server startup.
+            Controls Claude's tone, language detection, escalation rules,
+            and brand voice. Edit the file and redeploy to update AI
+            behavior without touching code.
+          </div>
+        </div>
+      </div>
+
+      <!-- OAUTH SCOPES -->
+      <div class="stack-section">
+        <div class="stack-label">▸ SLACK OAUTH SCOPES</div>
+        <div class="scope-pills">
+          <span class="scope-pill">chat:write</span>
+          <span class="scope-pill">chat:write.public</span>
+          <span class="scope-pill">commands</span>
+          <span class="scope-pill">reactions:write</span>
+          <span class="scope-pill new">channels:history</span>
+          <span class="scope-pill new">groups:history</span>
+          <span class="scope-pill new">im:history</span>
+        </div>
+        <p class="scope-note">Added March 2026 to support card updates after Approve / Edit.</p>
+      </div>
+
+      <!-- DB SCHEMA TABLE -->
+      <div class="stack-section">
+        <div class="stack-label">▸ NEON DB SCHEMA</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 200px;">TABLE</th>
+              <th>WHAT IT STORES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>reviews</td>
+              <td>Raw review. store, rating, country, language, date, review ID, replied status, sent_response.</td>
+            </tr>
+            <tr>
+              <td>response_drafts</td>
+              <td>AI-generated reply text per review, linked to review ID.</td>
+            </tr>
+            <tr>
+              <td>slack_messages</td>
+              <td>Slack message ID per review for button routing and card updates.</td>
+            </tr>
+            <tr>
+              <td>sent_replies</td>
+              <td>What was sent, when, by which Slack user, whether it was edited. Used for dedup on next fetch.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SOURCE APIs TABLE -->
+      <div class="stack-section">
+        <div class="stack-label">▸ SOURCE APIS</div>
+        <table class="data-table sources">
+          <thead>
+            <tr>
+              <th>STORE</th>
+              <th>AUTH</th>
+              <th>TERRITORY FILTER</th>
+              <th>GET LIMIT</th>
+              <th>REPLY SPEED</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Google Play</td>
+              <td class="cell-mono">Service account JSON</td>
+              <td class="cell-mono">API-level (country param)</td>
+              <td class="cell-mono">200 req/hr</td>
+              <td class="cell-mono">Instant</td>
+            </tr>
+            <tr>
+              <td>Apple App Store</td>
+              <td class="cell-mono">JWT RS256 · 20 min expiry</td>
+              <td class="cell-mono">Client-side via attributes.territory</td>
+              <td class="cell-mono">~3,600 req/hr</td>
+              <td class="cell-mono">2-24 hrs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ====== 04 XP GAINED ====== -->
+    <section class="panel" id="p-xp" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">04</span>
+        <h2>XP GAINED</h2>
+      </div>
+
+      <!-- AI POWER-UPS -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+          <div class="xp-subhead">building with ai</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ANTHROPIC API, NOT CHAT PROMPTING</div>
+              <p class="xp-learning-desc">
+                First project where I went past the chat window and built
+                directly against the Anthropic API. Streaming responses,
+                system prompts committed to a repo, token costs in
+                production. The mental model shifts from <em>"I'm asking
+                Claude"</em> to <em>"Claude is a function I'm calling, and I
+                own everything around the call."</em>
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">KNOWLEDGE-BASE.MD AS THE LEVER</div>
+              <p class="xp-learning-desc">
+                A shared markdown file is the single biggest lever for AI
+                output quality. Tone rules, escalation phrases, language
+                per market, brand do's and don'ts. All in one place. Change
+                the voice by editing a file, not by rewriting prompts.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">TWO-CLAUDE WORKFLOW HACK</div>
+              <p class="xp-learning-desc">
+                Ran Claude Code (the dev agent in VS Code) and Claude in
+                chat side by side, both as coding assistants. Claude Code
+                wrote and ran the actual code in the repo. Claude in chat
+                got the same diffs and acted as a second pair of eyes:
+                spot-checking logic, suggesting edge cases, drafting
+                alternative implementations. Two AI coders cross-referencing
+                each other instead of one black box. Faster than either
+                alone.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- PRODUCT SPECIAL MOVES -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+          <div class="xp-subhead">product thinking</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">AUTONOMY, NOT REPLACEMENT</div>
+              <p class="xp-learning-desc">
+                The product framing that stuck. Every decision flowed from
+                it. Fetch on demand, not always-on. Edit always available,
+                not just Approve. Voice rules owned by the team in a
+                markdown file, not buried in code. Whenever I drifted
+                toward "just let it post automatically," I caught myself.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">THE BOT IS THE TYPIST, NOT THE EDITOR</div>
+              <p class="xp-learning-desc">
+                The right division of labor. Machine does the boring 80%
+                (drafting, language matching, character counting). Human
+                does the 20% that needs judgment (tone calls, escalations,
+                edits). Once that framing was clear, the UI almost designed
+                itself.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- DEV SECRETS DISCOVERED -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+          <div class="xp-subhead">development learnings</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">FULL-STACK FROM PM SEAT</div>
+              <p class="xp-learning-desc">
+                First time I owned the full stack end-to-end as PM. Server
+                setup on Render, Postgres schema and migrations on Neon,
+                Slack app config and OAuth scopes, both store API
+                integrations (Google Play + Apple), CI through GitHub
+                pushes, environment variables, deploys. Things I would
+                have handed off, I owned here. The shape of "what's
+                actually hard about shipping" looks different from this seat.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">LOG BEFORE YOU GUESS</div>
+              <p class="xp-learning-desc">
+                Most "is it our code or theirs?" debates can be settled by
+                one <code>console.log</code> at the boundary, printing the
+                exact payload going out before the third-party call. Stop
+                guessing, see real data. This was the cheapest, highest-
+                leverage debugging discipline I picked up on this build.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">USE CLAUDE TO DEBUG CLAUDE</div>
+              <p class="xp-learning-desc">
+                Applied the log-first principle on the missing_scope bug.
+                Asked Claude Code to add the boundary log before the store
+                API call, redeployed, and saw clean data going out and
+                <em>succeeding</em>, which narrowed the failure to the
+                Slack-side update path. Five minutes from "we're stuck" to
+                "it's the Slack OAuth scopes." The dev craft is knowing
+                where the log goes. Claude just made it instant to put it
+                there.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">TWO STORE APIS, TWO AUTH FLOWS</div>
+              <p class="xp-learning-desc">
+                Google Play uses Service Account JWT, App Store uses RS256
+                JWT with 20-minute expiry. They look similar but are
+                different enough that copy-pasting one to the other is a
+                trap. Keep them in separate modules. Don't abstract
+                prematurely.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ENFORCE CONSTRAINTS TWICE</div>
+              <p class="xp-learning-desc">
+                Belt and suspenders on every constraint that touches a
+                third-party API. App Store caps replies at 350 chars. The
+                first enforcement happens at draft generation, the second
+                at modal submission. Without the second one, an edited
+                reply could go over and the API would reject silently.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SIDE QUESTS -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+          <div class="xp-subhead">future iterations</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">REJECT BUTTON THAT FEEDS BACK</div>
+              <p class="xp-learning-desc">
+                Today the agent has Approve and Edit. Adding Reject with a
+                one-line reason ("wrong tone," "missed the issue,"
+                "hallucinated a feature") would turn every rejection into a
+                labeled training signal for the knowledge base.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">CLOSE THE FEEDBACK LOOP</div>
+              <p class="xp-learning-desc">
+                Track rejection rate over time. Watch it drop as the
+                knowledge base learns. Once acceptance hits ~95% on routine
+                reviews, automate that batch (still with audit), and let
+                the team focus on the 5% that needs judgment. Same
+                autonomy framing, just shifted upstream.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </section>
+
+  </div>
+
+  <!-- PREV/NEXT -->
+  <nav class="chapter-nav" aria-label="Chapter navigation">
+    <a href="index.html" class="prev">
+      <span class="nav-dir">BACK</span>
+      <span><span class="nav-arrow">◂</span> TO ISSUE</span>
+    </a>
+    <a href="horoscope-roast-bot.html" class="next">
+      <span class="nav-dir">NEXT CHAPTER</span>
+      <span>HOROSCOPE ROAST BOT <span class="nav-arrow">▸</span></span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+  (function () {
+    const tabs = document.querySelectorAll('[role="tab"]');
+    const panels = document.querySelectorAll('[role="tabpanel"]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        const arr = Array.from(tabs);
+        const i = arr.indexOf(tab);
+        const next = e.key === 'ArrowRight'
+          ? arr[(i + 1) % arr.length]
+          : arr[(i - 1 + arr.length) % arr.length];
+        next.focus();
+        activate(next);
+      });
+    });
+    function activate(tab) {
+      const target = tab.dataset.target;
+      tabs.forEach(t => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+      panels.forEach(p => p.setAttribute('aria-hidden', p.id === target ? 'false' : 'true'));
+    }
+  })();
+</script>
+
+</body>
+</html>

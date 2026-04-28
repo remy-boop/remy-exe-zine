@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="view-transition" content="same-origin">
+<title>remy.exe zine · remy.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+  /* Per-chapter signature override */
+  :root {
+    --sig:      var(--sig-cyan);
+    --sig-deep: #0e7490;
+    --sig-glow: rgba(34, 211, 238, 0.35);
+    --sig-wash: rgba(34, 211, 238, 0.12);
+  }
+
+  /* Animations */
+  @keyframes panel-fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 720px) {
+    body { padding: 16px 10px 32px; font-size: 17px; }
+    .strip { font-size: 9px; padding: 10px 14px; }
+    .chapter-cover { padding: 28px 22px 24px; }
+    .chapter-title { font-size: 26px; }
+    .chapter-tagline { font-size: 18px; }
+
+    .tabs { grid-template-columns: repeat(2, 1fr); }
+    .tab {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 8px 12px;
+    }
+    .tab:nth-child(2) { border-right: none; }
+    .tab:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .tab:nth-last-child(-n+2) { border-bottom: none; }
+    .tab:last-child { border-right: none; }
+    .tab .tab-label { font-size: 9px; }
+    .tab .tab-sub   { font-size: 12px; }
+
+    .panel { padding: 24px 20px; }
+    .panel-h h2 { font-size: 13px; }
+    .panel-h .p-num { font-size: 9px; padding: 4px 8px; }
+    .panel p { font-size: 16px; }
+    .pull-quote { font-size: 18px; padding: 14px 18px; }
+
+    .stat-row { grid-template-columns: 1fr; }
+    .stat-num { font-size: 26px; }
+    .cause-grid { grid-template-columns: 1fr; }
+    .cause-card { grid-template-columns: 48px 1fr; gap: 12px; padding: 16px; }
+    .cause-icon-tile { width: 48px; height: 48px; }
+    .cause-icon-tile svg { width: 32px; height: 32px; }
+    .fix-grid { grid-template-columns: 1fr; }
+    
+    .walk-step { grid-template-columns: 28px 1fr; gap: 12px; }
+    .walk-num { width: 26px; height: 26px; font-size: 10px; }
+    .xp-heading { font-size: 11px; }
+    .xp-subhead { font-size: 15px; }
+    .data-table { font-size: 14px; }
+    .data-table tbody td:first-child { font-size: 14px; padding-right: 14px; }
+
+    .chapter-nav { flex-direction: column; }
+    .chapter-nav a.next { align-items: flex-start; text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @view-transition { navigation: auto; }
+  @keyframes mast-blink-anim { 50% { opacity: 0; } }
+  @keyframes cover-btn-pulse {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+    50% { filter: brightness(1.18) drop-shadow(0 0 12px rgba(253, 242, 3, 0.55)); }
+  }
+  @keyframes coin-blink-anim {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+  }
+
+  /* Chapter-specific styles */
+  .comp-block { margin: 28px 0 36px; }
+  .comp-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border: 1px solid var(--sig-deep);
+    background: var(--sig-wash);
+    letter-spacing: 0.04em;
+  }
+  .comp-caption {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--fg-soft);
+    margin-top: 14px;
+    font-style: italic;
+    max-width: 62ch;
+  }
+  .section-divider-sample {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-divider-sample .divider-line {
+    flex: 1;
+    height: 0;
+    border-top: 1px dashed var(--border);
+  }
+  .section-divider-sample .divider-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .kb {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    padding: 4px 10px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-strong);
+    border-bottom: 2px solid var(--border-strong);
+    color: var(--fg);
+    border-radius: 3px;
+  }
+  .kb-plus {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--fg-mid);
+  }
+  .oauth-pills {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .oauth-pill {
+    font-family: 'VT323', monospace;
+    font-size: 15px;
+    padding: 6px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    color: var(--fg);
+    border-radius: 100px;
+  }
+  .oauth-arrow {
+    color: var(--sig);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+  }
+  .data-table-demo {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+  }
+  .data-table-demo th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg-deep);
+    color: var(--sig);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--sig);
+  }
+  .data-table-demo td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg);
+  }
+  .data-table-demo tr:last-child td { border-bottom: none; }
+  .personality-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .personality-list li {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--fg-soft);
+    padding: 10px 0 10px 22px;
+    border-bottom: 1px dashed var(--border);
+    position: relative;
+  }
+  .personality-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--sig);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    top: 14px;
+  }
+  .personality-list li:last-child { border-bottom: none; }
+  .personality-list li b { color: var(--fg); font-weight: 600; }
+  .mast-demo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 38px;
+    line-height: 1.05;
+    color: var(--fg);
+    text-shadow: 3px 3px 0 var(--sig), 6px 6px 0 var(--purple);
+    word-break: break-word;
+    padding: 14px 0;
+  }
+  .mast-blink {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.85em;
+    background: var(--yellow);
+    margin-left: 6px;
+    vertical-align: -0.05em;
+    animation: mast-blink-anim 1s steps(2, start) infinite;
+  }
+  .tldr-demo {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    color: var(--fg);
+    padding: 6px 0;
+  }
+  .tldr-tag {
+    color: var(--yellow);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+  .bio-hl { color: var(--yellow); font-weight: 600; }
+  .yellow-accent-demo {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--fg);
+    padding: 14px 18px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+  }
+  .hl-yellow { color: var(--yellow); font-weight: 600; }
+  .hl-yellow-italic {
+    color: var(--yellow);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .hl-yellow-bold {
+    color: var(--yellow);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(253, 242, 3, 0.3);
+  }
+  .pull-quote-yellow {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--fg);
+    padding: 16px 22px;
+    border-left: 3px solid var(--yellow);
+    background: rgba(253, 242, 3, 0.06);
+    max-width: 56ch;
+  }
+  .cover-btn {
+    background: var(--purple);
+    color: var(--fg);
+    padding: 12px 18px;
+    border: 2px solid var(--purple-deep);
+    box-shadow: 3px 3px 0 var(--purple-deep);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    animation: cover-btn-pulse 2.7s ease-in-out infinite;
+  }
+  .pill-row-demo {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 18px 0 8px;
+  }
+  .pill {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--yellow);
+    background: transparent;
+    border: 2px solid var(--yellow);
+    box-shadow: inset 0 0 0 2px var(--bg-elev), inset 0 0 0 4px var(--yellow);
+    white-space: nowrap;
+    position: relative;
+  }
+  .pill.active {
+    color: var(--bg);
+    background: var(--yellow);
+    box-shadow:
+      inset 0 0 0 2px var(--yellow),
+      inset 0 0 0 4px var(--bg),
+      0 0 24px rgba(253, 242, 3, 0.4);
+  }
+  .pill.active::before {
+    content: '▾';
+    position: absolute;
+    top: -16px;
+    left: 18px;
+    font-size: 10px;
+    color: var(--yellow);
+  }
+  .pill.soon {
+    color: #b8a800;
+    border-color: #b8a800;
+    box-shadow: inset 0 0 0 2px var(--bg-elev), inset 0 0 0 4px #b8a800;
+    opacity: 0.55;
+  }
+  .pill .sep { opacity: 0.5; }
+  .pill .label { font-size: 8px; letter-spacing: 0.08em; }
+  .yellow-strip-demo {
+    background: var(--yellow);
+    color: var(--bg-deep);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+  .gameboy-demo {
+    background: #b8b2a0;
+    border: 2px solid #2b3a1f;
+    padding: 16px 14px 18px;
+    width: 200px;
+    position: relative;
+    box-shadow:
+      inset 2px 2px 0 #cfc8b3,
+      inset -2px -2px 0 #908a78,
+      6px 6px 0 rgba(43, 58, 31, 0.55);
+  }
+  .gameboy-demo::before {
+    content: '★ GAME BOY VISUALIZER WITH CRITTER';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #b8b2a0;
+    padding: 2px 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 5px;
+    color: #2b3a1f;
+    letter-spacing: 0.06em;
+    border: 2px solid #2b3a1f;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .gameboy-screen {
+    background: #9bbc0f;
+    border: 3px solid #2b3a1f;
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+    position: relative;
+  }
+  .gameboy-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(43, 58, 31, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 58, 31, 0.12) 1px, transparent 1px);
+    background-size: calc(100% / 16) calc(100% / 16);
+    pointer-events: none;
+  }
+  .critter {
+    grid-column: 7 / span 5;
+    grid-row: 7 / span 5;
+    background: #2b3a1f;
+    clip-path: polygon(
+      0% 40%, 20% 40%, 20% 20%, 80% 20%, 80% 40%, 100% 40%,
+      100% 80%, 80% 80%, 80% 100%, 20% 100%, 20% 80%, 0% 80%
+    );
+  }
+  .insert-coin-demo {
+    background: rgba(18, 16, 42, 0.94);
+    padding: 36px 24px 24px;
+    border: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+  .insert-coin-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--yellow);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 12px rgba(253, 242, 3, 0.6);
+    animation: coin-blink-anim 0.8s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  .insert-coin-sub {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--fg-mid);
+    letter-spacing: 0.08em;
+  }
+  .konami-toast-demo {
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--yellow);
+    color: var(--bg);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 32px rgba(253, 242, 3, 0.5);
+  }
+  .roll-credits-btn-demo {
+    background: var(--purple);
+    color: var(--fg);
+    padding: 14px 24px;
+    border: 2px solid var(--purple-deep);
+    box-shadow: 3px 3px 0 var(--purple-deep);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .credits-roll-demo {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    padding: 20px 16px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 2;
+    color: var(--fg);
+    max-width: 360px;
+  }
+  .credits-roll-demo .ch {
+    color: var(--yellow);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .credits-roll-demo .role { color: var(--fg-mid); font-size: 9px; }
+  .credits-roll-demo .name { color: var(--yellow); font-size: 9px; }
+  .credits-roll-demo .arrow {
+    color: var(--yellow);
+    margin: 0 4px;
+    font-size: 8px;
+  }
+  .credits-roll-demo .spc { height: 10px; }
+  .taste-card-demo {
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    max-width: 280px;
+  }
+  .taste-card-demo .taste-label {
+    display: block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--yellow);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .taste-card-demo .taste-list {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--fg);
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="issue">
+
+  <header class="strip">
+    <a href="index.html" class="back">
+      <span class="back-arrow">◂</span> BACK TO ISSUE
+    </a>
+    <span class="crumb">CH 05</span>
+    <span class="tint">REMY.EXE</span>
+  </header>
+
+  <!-- COVER -->
+  <section class="chapter-cover">
+    <div class="chapter-kicker">
+      <span class="chapter-num">05</span>
+      CHAPTER FIVE
+    </div>
+
+    <h1 class="chapter-title">REMY.EXE<br>ZINE</h1>
+
+    <p class="chapter-tagline">
+      The chapter about this site. The color system, the typography rules,
+      the 8-bit critter. Why any of this looks the way it does.
+    </p>
+
+    <div class="chapter-meta">
+      <span class="status-badge live">LIVE</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>shipped:</b> Apr 2026</span>
+      <span class="sep">·</span>
+      <span class="meta-txt"><b>platform:</b> web</span>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist" aria-label="Chapter sections">
+    <button class="tab" role="tab" aria-selected="true"  aria-controls="p-origin" data-target="p-origin">
+      <span class="tab-num">01</span>
+      <span class="tab-label">LEVEL 1 START</span>
+      <span class="tab-sub">the why</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-fix"    data-target="p-fix">
+      <span class="tab-num">02</span>
+      <span class="tab-label">BOSS FIGHT</span>
+      <span class="tab-sub">the fix</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-stack"  data-target="p-stack">
+      <span class="tab-num">03</span>
+      <span class="tab-label">INVENTORY</span>
+      <span class="tab-sub">the stack</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-xp"     data-target="p-xp">
+      <span class="tab-num">04</span>
+      <span class="tab-label">XP GAINED</span>
+      <span class="tab-sub">learnings</span>
+    </button>
+  </nav>
+
+  <div class="panels">
+
+    <!-- ====== 01 LEVEL 1 START ====== -->
+    <section class="panel" id="p-origin" role="tabpanel" aria-hidden="false">
+      <div class="panel-h">
+        <span class="p-num">01</span>
+        <h2>LEVEL 1 START</h2>
+      </div>
+
+      <p>
+        I needed a site to document all my AI projects. But I wasn't going
+        to build a run-of-the-mill site. I needed something that oozes
+        personality and my taste, where I could provide creative direction
+        in collaboration with AI to create it.
+      </p>
+
+      <p>
+        This is the proof I can not only build functional stuff, but also
+        awesome-looking design.
+      </p>
+
+      <div class="pull-quote">
+        A site without a point of view is a CV in different fonts.
+      </div>
+
+      <p>
+        The framing landed quickly: a zine. Not a portfolio, not a blog,
+        not a Notion page. A digital magazine, with me as editor, writer,
+        designer, and developer. Issues come out at the cadence the work
+        ships. Each chapter documents one project with the same template
+        (LEVEL 1 START / BOSS FIGHT / INVENTORY / XP GAINED) and a
+        different signature color. The whole site is one of the projects.
+        This chapter is the one about how it got built.
+      </p>
+    </section>
+
+    <!-- ====== 02 BOSS FIGHT ====== -->
+    <section class="panel" id="p-fix" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">02</span>
+        <h2>BOSS FIGHT</h2>
+      </div>
+
+      <p>
+        Most websites get built around a content model. You decide what
+        kinds of things go on the site (posts, projects, products), then
+        design a layout that makes those things look right.
+      </p>
+
+      <p>
+        This one went the other way. The design language landed first. I
+        wanted the site to feel like a videogame-flavored digital
+        magazine. Pixel fonts where they could carry weight, a serif for
+        body copy, a monospace terminal font for system messages.
+        Signature colors per chapter, like a magazine using a different
+        ink for each section. A pixel-art mascot, because of course.
+      </p>
+
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">▸ ASTRO + TAILWIND</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p>
+        The stack picked itself once the framing was clear.
+      </p>
+
+      <p>
+        Astro because the site is content-driven, not app-driven. Each
+        chapter is a markdown document with components inline. Static
+        output, fast loads, no client-side framework runtime to ship. The
+        site is a magazine, not a SPA. Astro is the closest thing to
+        "publishing platform that respects HTML."
+      </p>
+
+      <p>
+        Tailwind because the design system needed tokens (signature
+        colors, type scale, spacing rhythm) and Tailwind is the cleanest
+        way to lock those tokens at the config level and reuse them across
+        components without writing CSS files for every variant. The static
+        version of the site was a 60KB single HTML file with a 1,000-line
+        <code>&lt;style&gt;</code> block. Migrating to Tailwind let the
+        same design tokens live in one config file and propagate
+        everywhere.
+      </p>
+
+      <p>
+        Other things considered: Next.js (overkill, app-shaped not
+        content-shaped), plain HTML/CSS (the static version, fine until I
+        needed to scale to multiple chapters), Eleventy (good fit, but
+        Astro's component model felt closer to where I wanted the chapter
+        templates to live).
+      </p>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">▸ GOTCHA</span>
+        <p>
+          Press Start 2P, the pixel-art font that does most of the loud
+          typography on the site, doesn't have accented character glyphs.
+          When the credits roll spelled my name as <code>RÉMY</code> in
+          the pixel font, the <code>É</code> rendered as a smaller
+          lowercase <code>é</code> from the browser's fallback font,
+          sitting between an uppercase <code>R</code> and <code>MY</code>.
+          It looked like the accent had been dropped in mid-render. The
+          fix was to drop the accent in pixel-font contexts (the credits
+          roll uses <code>REMY</code>) and keep it in body-text contexts
+          where Fraunces handles diacritics fine. Real takeaway: pixel
+          fonts encode the language they're designed for, usually
+          English-only ASCII. Worth checking before falling in love with
+          one.
+        </p>
+      </div>
+
+      <div class="gotcha">
+        <span class="gotcha-tag">▸ GOTCHA</span>
+        <p>
+          The first four chapters were built one at a time, each with its full design system embedded in a <code>&lt;style&gt;</code> block at the top of the HTML file. By chapter five, the same 800 lines of CSS had been duplicated five times. Changing the cyan signature color now meant editing five files. Adding a new component meant five edits. The mistake wasn't writing it that way once. The mistake was not stopping at chapter two and pulling the shared rules into a single <code>shared/style.css</code>. The fix was a single extraction pass after all five chapters were homologated, when the design system was finally locked. Lesson: the cost of duplication grows linearly. The cost of extraction stays roughly flat. Extract early, even when "early" feels premature.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====== 03 INVENTORY ====== -->
+    <section class="panel" id="p-stack" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">03</span>
+        <h2>INVENTORY</h2>
+      </div>
+
+      <p>
+        Other chapters' INVENTORY documents the tech behind the project.
+        This one documents the design system the site is built on.
+      </p>
+
+      <!-- STACK -->
+      <div class="stack-section">
+        <div class="stack-label">▸ STACK</div>
+        <div class="stack-grid">
+          <div class="chip">
+            <span class="chip-role">framework</span>
+            <span class="chip-name">Astro</span>
+            <span class="chip-detail">content-driven · static</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">styling</span>
+            <span class="chip-name">Tailwind</span>
+            <span class="chip-detail">design tokens · utility</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">dev partner</span>
+            <span class="chip-name">Claude Code</span>
+            <span class="chip-detail">Max plan 5×</span>
+            <span class="chip-cost paid">Subscription</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">deploy</span>
+            <span class="chip-name">GitHub Pages</span>
+            <span class="chip-detail">push to publish</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">source control</span>
+            <span class="chip-name">GitHub</span>
+            <span class="chip-detail">private repo</span>
+            <span class="chip-cost free">Free</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT AND DESIGN SEPARATED -->
+      <div class="stack-section">
+        <div class="stack-label">▸ CONTENT AND DESIGN SEPARATED</div>
+        <p>
+          Every chapter's design lives in one shared stylesheet (<code>shared/style.css</code>). Every chapter's content lives in its own HTML file. Changing a color is a one-line edit in the stylesheet and every chapter, current and future, picks it up. Authoring a new chapter is a content task, not a styling task.
+        </p>
+        <p>
+          This separation is the architecture. The marginal cost of adding a new chapter is the cost of writing its content. There's no system-rebuilding tax.
+        </p>
+      </div>
+
+      <!-- TYPOGRAPHY -->
+      <div class="stack-section">
+        <div class="stack-label">▸ TYPOGRAPHY</div>
+        <div class="stack-grid">
+          <div class="chip">
+            <span class="chip-role">display</span>
+            <span class="chip-name" style="font-family: 'Press Start 2P', monospace; font-size: 13px;">PRESS START 2P</span>
+            <span class="chip-detail">pixel · structural</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">body</span>
+            <span class="chip-name">Fraunces</span>
+            <span class="chip-detail">serif · long-form</span>
+          </div>
+          <div class="chip">
+            <span class="chip-role">system</span>
+            <span class="chip-name" style="font-family: 'VT323', monospace; font-size: 19px;">VT323</span>
+            <span class="chip-detail">mono · captions</span>
+          </div>
+        </div>
+        <p class="comp-caption">Three families, three registers. Pixel for structural elements, serif for body copy, mono for system messages and code.</p>
+      </div>
+
+      <!-- SIGNATURE INK -->
+      <div class="stack-section">
+        <div class="stack-label">▸ SIGNATURE INK</div>
+        <div class="stack-grid">
+          <div class="chip" style="border-top: 4px solid #22d3ee;">
+            <span class="chip-role" style="color: #22d3ee;">cyan</span>
+            <span class="chip-name">Chapters 01, 05</span>
+            <span class="chip-detail">#22d3ee</span>
+          </div>
+          <div class="chip" style="border-top: 4px solid #ff3d8f;">
+            <span class="chip-role" style="color: #ff3d8f;">magenta</span>
+            <span class="chip-name">Chapter 02</span>
+            <span class="chip-detail">#ff3d8f</span>
+          </div>
+          <div class="chip" style="border-top: 4px solid #a3e635;">
+            <span class="chip-role" style="color: #a3e635;">lime</span>
+            <span class="chip-name">Chapter 03</span>
+            <span class="chip-detail">#a3e635</span>
+          </div>
+          <div class="chip" style="border-top: 4px solid #fb923c;">
+            <span class="chip-role" style="color: #fb923c;">orange</span>
+            <span class="chip-name">Chapter 04</span>
+            <span class="chip-detail">#fb923c</span>
+          </div>
+        </div>
+        <p class="comp-caption">Four signature colors used as "ink" per chapter. Cyan repeats across chapters 01 and 05 because there are five chapters and four colors.</p>
+      </div>
+
+      <!-- COVER COMPONENTS -->
+      <div class="stack-section">
+        <div class="stack-label">▸ COVER COMPONENTS</div>
+        <p>Cover-only UI: components that live on the index page and don't appear inside chapters.</p>
+
+        <div class="comp-block">
+          <span class="comp-tag">MASTHEAD</span>
+          <div class="mast-demo">REMY<br>.EXE<span class="mast-blink"></span></div>
+          <p class="comp-caption">The giant blocky title with cyan + purple drop-shadow stack and a yellow blinking cursor. Cover-only. Sets the issue's nameplate.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">TLDR-TAG + BIO</span>
+          <div class="tldr-demo">
+            <span class="tldr-tag">TL;DR:</span> <span class="bio-hl">Rémy</span>. Human. Product leader 10+ years. Smash the flashing buttons below for the long version.
+          </div>
+          <p class="comp-caption">Pixel-font yellow <code>TL;DR:</code> tag inline with serif bio prose. Yellow <code>bio-hl</code> spans highlight key terms.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">YELLOW ACCENTS</span>
+          <div class="yellow-accent-demo">
+            The site's argument is that <span class="hl-yellow">taste is the input</span>. AI is the new
+            <em class="hl-yellow-italic">creative technologist</em>. <span class="hl-yellow-bold">The bar moved.</span> This is what crossing it looks like.
+          </div>
+          <p class="comp-caption">Three inline-text variants used inside cover panels. <code>hl-yellow</code> for emphasis, <code>hl-yellow-italic</code> for italic terms, <code>hl-yellow-bold</code> for closer beats with a soft glow.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">YELLOW PULL-QUOTE</span>
+          <div class="pull-quote-yellow">
+            The yellow-bordered variant of the standard pull-quote, used inside cover panels where the cover's accent is yellow instead of a chapter signature ink.
+          </div>
+          <p class="comp-caption">Same shape as the chapter PULL-QUOTE. Yellow border replaces signature-color border. Subtle yellow wash background.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">COVER PANEL BUTTON</span>
+          <div style="padding: 8px 0;">
+            <button class="cover-btn">▸ SAMPLE LABEL</button>
+          </div>
+          <p class="comp-caption">Chunky pixel button with purple chassis and a 3px drop shadow. Idle state pulses subtly via brightness + drop-shadow filter (not box-shadow, so the chassis volume stays intact). On the cover, three of these flash in staggered sequence.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">PILL ROW</span>
+          <div class="pill-row-demo">
+            <a href="#" class="pill active"><span class="num">▸ ISSUE 01</span></a>
+            <span class="pill soon">
+              <span class="num">ISSUE 02</span>
+              <span class="sep">·</span>
+              <span class="label">SOON</span>
+            </span>
+          </div>
+          <p class="comp-caption">Issue selector above the table of contents. Active state filled yellow with a small drop-marker (▾). Soon state ghosted with no hover behavior. Scrolls horizontally if more issues are added.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">YELLOW STRIP</span>
+          <div class="yellow-strip-demo">
+            <span>▸ IN THIS ISSUE</span>
+            <span>05 CHAPTERS</span>
+          </div>
+          <p class="comp-caption">Loud yellow divider above the table of contents. The cover's equivalent of the chapter-level SECTION-DIVIDER, but louder and reserved for one job.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">TASTE-CARD</span>
+          <div class="taste-card-demo">
+            <span class="taste-label">▸ TASTE LABEL</span>
+            <p class="taste-list">A short list of items, separated by periods. Three or four entries usually.</p>
+          </div>
+          <p class="comp-caption">Small card used inside the WHO IS THIS GUY panel for the films / video games / music / books grid. Yellow pixel-label above a serif list.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">GAME BOY VISUALIZER</span>
+          <div style="padding: 18px 0 8px;">
+            <div class="gameboy-demo">
+              <div class="gameboy-screen">
+                <div class="critter"></div>
+              </div>
+            </div>
+          </div>
+          <p class="comp-caption">Static representation. The cover version is a 16×16 dot-matrix grid hosting a 5×5 pixel critter that walks toward the cursor. Built as a canvas animation. The chassis label is baked into the device border.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">INSERT COIN PROMPT</span>
+          <div class="insert-coin-demo">
+            <div class="insert-coin-text">INSERT COIN TO CONTINUE</div>
+            <div class="insert-coin-sub">▸ click anywhere</div>
+          </div>
+          <p class="comp-caption">Boot-prompt overlay that appears the first time the WHY THIS EXISTS panel is opened. Yellow pixel text with a blinking attract-mode animation. Click anywhere to dismiss.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">KONAMI TOAST</span>
+          <div style="padding: 14px 0;">
+            <div class="konami-toast-demo">★ EXTRA LIFE GRANTED</div>
+          </div>
+          <p class="comp-caption">Notification that fires when the Konami code is entered. Slides down from the top of the viewport, holds for ~2s, slides back up.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">ROLL CREDITS BUTTON</span>
+          <div style="padding: 14px 0;">
+            <button class="roll-credits-btn-demo">▸ ROLL CREDITS</button>
+          </div>
+          <p class="comp-caption">The single button at the bottom of the cover. Same chunky pixel-button language as the cover panel buttons. On click, hides the button and plays the credits roll.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">CREDITS ROLL</span>
+          <div style="padding: 14px 0;">
+            <div class="credits-roll-demo">
+              <div class="ch">★ &nbsp; REMY.EXE &nbsp; ★</div>
+              <div class="spc"></div>
+              <div><span class="role">WRITTEN BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+              <div><span class="role">DESIGNED BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+              <div><span class="role">BUILT BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+            </div>
+          </div>
+          <p class="comp-caption">Static frozen frame. The cover version scrolls vertically over 16 seconds with credits, build stack, and special thanks. Loops back to the ROLL CREDITS button when complete.</p>
+        </div>
+      </div>
+
+      <!-- CHAPTER COMPONENTS -->
+      <div class="stack-section">
+        <div class="stack-label">▸ CHAPTER COMPONENTS</div>
+        <p>The components used inside chapter tabs. Same vocabulary across all chapters, swapping the signature ink per chapter.</p>
+
+        <div class="comp-block">
+          <span class="comp-tag">STAT-ROW</span>
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="stat-num">42%</div>
+              <div class="stat-label">A METRIC<br>WITH UNITS</div>
+              <div class="stat-context">a one-line context note about where this number comes from</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">3.5×</div>
+              <div class="stat-label">ANOTHER<br>METRIC</div>
+              <div class="stat-context">describes what the number measures and why it matters</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">~7d</div>
+              <div class="stat-label">A TIME<br>VALUE</div>
+              <div class="stat-context">duration with a tilde when the number is approximate</div>
+            </div>
+          </div>
+          <p class="comp-caption">Three stat cards in a row. Used in LEVEL 1 START to anchor an industry claim with data.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">CAUSE-GRID</span>
+          <div class="cause-grid">
+            <div class="cause-card">
+              <div class="cause-icon-tile">
+                <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                  <rect x="2" y="2" width="8" height="8" fill="currentColor"/>
+                  <rect x="3" y="3" width="6" height="6" fill="var(--bg-deep)"/>
+                  <rect x="4" y="4" width="4" height="1" fill="currentColor"/>
+                  <rect x="4" y="6" width="4" height="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <div class="cause-title">FIRST CAUSE</div>
+                <div class="cause-desc">A short description of one structural reason the problem exists.</div>
+              </div>
+            </div>
+            <div class="cause-card">
+              <div class="cause-icon-tile">
+                <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                  <rect x="1" y="1" width="3" height="3" fill="currentColor"/>
+                  <rect x="8" y="1" width="3" height="3" fill="currentColor"/>
+                  <rect x="1" y="8" width="3" height="3" fill="currentColor"/>
+                  <rect x="8" y="8" width="3" height="3" fill="currentColor"/>
+                  <rect x="5" y="5" width="2" height="2" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <div class="cause-title">SECOND CAUSE</div>
+                <div class="cause-desc">Another root cause, explained in one or two short sentences.</div>
+              </div>
+            </div>
+            <div class="cause-card">
+              <div class="cause-icon-tile">
+                <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                  <rect x="2" y="3" width="8" height="6" fill="currentColor"/>
+                  <rect x="3" y="4" width="6" height="4" fill="var(--bg-deep)"/>
+                  <rect x="5" y="9" width="2" height="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <div class="cause-title">THIRD CAUSE</div>
+                <div class="cause-desc">Each card carries a tiny pixel-art icon, a title, and a short description.</div>
+              </div>
+            </div>
+            <div class="cause-card">
+              <div class="cause-icon-tile">
+                <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                  <rect x="5" y="1" width="2" height="10" fill="currentColor"/>
+                  <rect x="1" y="5" width="10" height="2" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <div class="cause-title">FOURTH CAUSE</div>
+                <div class="cause-desc">Used in LEVEL 1 START to break a problem into its load-bearing reasons.</div>
+              </div>
+            </div>
+          </div>
+          <p class="comp-caption">2×2 grid with pixel-art icons. Names the structural causes behind the problem the chapter solves.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">FIX-GRID</span>
+          <div class="fix-grid">
+            <div class="fix-card before">
+              <span class="fix-tag">✗ BEFORE</span>
+              The state of the world before the project shipped. Slow, manual, error-prone, expensive, or all four.
+            </div>
+            <div class="fix-card after">
+              <span class="fix-tag">✓ AFTER</span>
+              The state after the project shipped. Faster, lighter, cleaner, automated, or some combination.
+            </div>
+          </div>
+          <p class="comp-caption">A BEFORE/AFTER pair used in BOSS FIGHT. Two cards, one red-bordered, one green-bordered.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">PULL-QUOTE</span>
+          <div class="pull-quote">
+            A line that earned its place. Used at most once per panel. Not every section gets one.
+          </div>
+          <p class="comp-caption">Italic serif callout with a signature-color left border. Reserved for sentences that carry the section.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">SECTION-DIVIDER</span>
+          <div class="section-divider-sample">
+            <div class="divider-line"></div>
+            <span class="divider-label">▸ SECTION LABEL</span>
+            <div class="divider-line"></div>
+          </div>
+          <p class="comp-caption">A horizontal beat with a leading triangle. Breaks long sections into navigable parts. The labels you see throughout this section are SECTION-DIVIDERs.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">GOTCHA</span>
+          <div class="gotcha">
+            <span class="gotcha-tag">▸ GOTCHA</span>
+            <p>A yellow-bordered callout for things that broke in unexpected ways. Used in BOSS FIGHT to flag a non-obvious failure mode and how it got resolved.</p>
+          </div>
+          <p class="comp-caption">The "I didn't see that coming" callout. Yellow border, terminal-monospace tag.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">WIN</span>
+          <div class="win">
+            <span class="win-tag">▸ WIN</span>
+            <p>A green-bordered callout for things that landed well. The mirror of GOTCHA: same shape, opposite mood.</p>
+          </div>
+          <p class="comp-caption">For shipped fixes that worked the first time. Used sparingly, otherwise it loses meaning.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">WALK-STEP</span>
+          <div class="walk-step">
+            <div class="walk-num">1</div>
+            <div>
+              <div class="walk-title">A NUMBERED STEP</div>
+              <div class="walk-desc">A procedural step with a numbered tile, a title in pixel font, and a body in serif. Used when a chapter needs a step-by-step walkthrough.</div>
+              <span class="walk-code">example: terminal command or code line</span>
+            </div>
+          </div>
+          <p class="comp-caption">For ordered procedures. Numbered tile in signature color.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">KB-BLOCK</span>
+          <div style="padding: 8px 0;">
+            <span class="kb-block">
+              <span class="kb">⌘</span>
+              <span class="kb-plus">+</span>
+              <span class="kb">SHIFT</span>
+              <span class="kb-plus">+</span>
+              <span class="kb">P</span>
+            </span>
+          </div>
+          <p class="comp-caption">Keyboard shortcut renders. Skeuomorphic pixel-key style. Used inline in walkthroughs and tips.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">OAUTH-PILLS</span>
+          <div class="oauth-pills">
+            <span class="oauth-pill">App</span>
+            <span class="oauth-arrow">▸</span>
+            <span class="oauth-pill">Provider</span>
+            <span class="oauth-arrow">▸</span>
+            <span class="oauth-pill">Token</span>
+            <span class="oauth-arrow">▸</span>
+            <span class="oauth-pill">API</span>
+          </div>
+          <p class="comp-caption">A horizontal chain of provider pills with arrows. Used to show auth flows or service handoff sequences.</p>
+        </div>
+
+        <div class="comp-block">
+          <span class="comp-tag">DATA-TABLE</span>
+          <table class="data-table-demo">
+            <thead>
+              <tr>
+                <th>COLUMN A</th>
+                <th>COLUMN B</th>
+                <th>COLUMN C</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>row one</td><td>value</td><td>note</td></tr>
+              <tr><td>row two</td><td>value</td><td>note</td></tr>
+              <tr><td>row three</td><td>value</td><td>note</td></tr>
+            </tbody>
+          </table>
+          <p class="comp-caption">For tabular data. Pixel-font headers in signature color, serif rows. Has a <code>.sources</code> variant for crediting where the numbers came from.</p>
+        </div>
+      </div>
+
+      <!-- EDITORIAL RULES -->
+      <div class="stack-section">
+        <div class="stack-label">▸ EDITORIAL RULES</div>
+        <ul class="personality-list">
+          <li><b>No em-dashes.</b> Anywhere in body copy. Periods, commas, parentheses, semicolons instead. Em-dashes are a known AI-writing tell.</li>
+          <li><b>First-person singular.</b> Everything written from "I." No "we," no "the team."</li>
+          <li><b>Tab subtitles are fixed.</b> <em>the why</em> / <em>the fix</em> / <em>the stack</em> / <em>learnings</em>. Same in every chapter.</li>
+          <li><b>Industry-then-project structure</b> in LEVEL 1 START when applicable. Industry framing first, then <code>▸ AT [PROJECT]</code> divider, then project-specific framing.</li>
+          <li><b>Status tags.</b> <code>LIVE</code> for everything currently shipping. <code>WIP</code> for genuinely in-progress chapters that should be readable but flagged.</li>
+        </ul>
+      </div>
+
+      <!-- PERSONALITY -->
+      <div class="stack-section">
+        <div class="stack-label">▸ PERSONALITY</div>
+        <ul class="personality-list">
+          <li><b>The 5×5 pixel critter</b> on the cover, walking around its dot-matrix display when the cursor moves. Built as a canvas animation.</li>
+          <li><b>The staggered button flash</b> on the cover, cycling left to right through the three panel buttons. Game Boy boot-attract-mode vibe.</li>
+          <li><b>The issue pill row</b> above the contents. <code>▸ ISSUE 01</code> active, <code>ISSUE 02 · SOON</code> ghosted.</li>
+          <li><b>The INSERT COIN prompt</b> that appears the first time you click into WHY THIS EXISTS. Click anywhere to dismiss.</li>
+          <li><b>The Konami code easter egg</b> (<code>↑ ↑ ↓ ↓ ← → ← → B A</code>) hinted at the bottom of the WHO IS THIS GUY panel. Triggers an <code>EXTRA LIFE GRANTED</code> toast.</li>
+          <li><b>The ROLL CREDITS button</b> at the bottom of the cover. Scrolls a 16-second pixel-art credits roll.</li>
+        </ul>
+        <p class="comp-caption">Optional layer. The site works without any of it. They're there because a magazine without personality is a directory.</p>
+      </div>
+    </section>
+
+    <!-- ====== 04 XP GAINED ====== -->
+    <section class="panel" id="p-xp" role="tabpanel" aria-hidden="true">
+      <div class="panel-h">
+        <span class="p-num">04</span>
+        <h2>XP GAINED</h2>
+      </div>
+
+      <!-- AI POWER-UPS -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+          <div class="xp-subhead">building with ai</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">MOCKUPS BEFORE PROMPTS</div>
+              <p class="xp-learning-desc">
+                When building visual UI with AI, sketching the screen as
+                text-only first (just labels and arrows on a page, no
+                pixels) gets dramatically better results than describing
+                it in prose. The AI can see the information architecture
+                before it has to invent layout. Skip the IA step and the
+                AI fills the gap with whatever generic SaaS pattern is
+                statistically average.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">DESIGN LANGUAGE AS A BRIEF</div>
+              <p class="xp-learning-desc">
+                Loading the AI with the design tokens, font choices,
+                signature colors, and editorial rules upfront means every
+                component request lands in the same visual register.
+                Without that, components drift toward whatever framework
+                the AI saw most often. Front-load the brief, save hours of
+                back-and-forth corrections.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">SHOW, DON'T TELL</div>
+              <p class="xp-learning-desc">
+                Pasting an existing component as a reference produces
+                faster, more accurate variants than describing one from
+                scratch. The AI is much better at "make this but for that
+                case" than at "build me a card with these properties." Use
+                the components you already have as the language.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">AI WON'T VOLUNTEER ARCHITECTURE</div>
+              <p class="xp-learning-desc">
+                When you're shipping fast with AI, it ships fast with you.
+                It will happily duplicate a 1,000-line stylesheet across
+                five files if you ask it to build five files. It will not
+                interrupt the flow to say "this is going to be painful in
+                three months." That's the human's job. The lesson: at
+                every milestone (second chapter, third feature, second
+                similar component), pause and explicitly ask the AI to
+                flag any structural decisions you're about to lock in by
+                default. Otherwise you'll keep shipping and accumulate
+                debt that only becomes visible when scale forces a
+                refactor.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- PRODUCT SPECIAL MOVES -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+          <div class="xp-subhead">product thinking</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">THE WRAPPER IS A PRODUCT</div>
+              <p class="xp-learning-desc">
+                Most PMs treat their portfolio as a packaging exercise:
+                pick a template, drop in case studies, ship. Treating the
+                wrapper as one of the projects forces the same product
+                thinking on it (audience, frame, point of view) and that
+                thinking is what makes the difference between a
+                fungible site and a memorable one.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">A SYSTEM IS CHEAPER THAN A PAGE</div>
+              <p class="xp-learning-desc">
+                Building chapter 01 took longer than chapters 02-05
+                combined, because the first chapter had to invent the
+                template every other chapter would inherit. The right unit
+                of work was always the system, not the page. Same lesson
+                that applies to building products: the second feature is
+                cheap if the first one was built right.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- DEV SECRETS DISCOVERED -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+          <div class="xp-subhead">development learnings</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">SEPARATE FORMAT FROM CONTENT</div>
+              <p class="xp-learning-desc">
+                Tailwind utility classes locked the design tokens at the
+                config level so individual components don't carry their
+                own styling state. Migrating from a 1,000-line
+                <code>&lt;style&gt;</code> block to Tailwind config wasn't
+                refactoring. It was finally putting the design system in
+                its own layer, where editing tokens means everything
+                downstream updates without touching component markup.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">MARKDOWN IS THE RIGHT BACKEND</div>
+              <p class="xp-learning-desc">
+                Each chapter as a markdown file with components inline is
+                the right separation. The writing lives in plain text. The
+                styling lives in components. Authoring a new chapter
+                doesn't require touching CSS, and refactoring a component
+                doesn't require touching prose. Every CMS gets re-invented
+                to recover this property.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">CLAUDE CODE FOR REPETITION, ME FOR DECISIONS</div>
+              <p class="xp-learning-desc">
+                Once the design system was locked, building a new chapter
+                was a Claude Code task: feed the existing template, paste
+                the chapter's content, run. The hours that would have
+                gone into typing went into the decisions that mattered:
+                which fonts, which colors, which copy, which gotcha to
+                document. Right division of labor.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SIDE QUESTS -->
+      <section class="xp-section">
+        <div class="xp-heading-row">
+          <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+          <div class="xp-subhead">future iterations</div>
+        </div>
+        <ul class="xp-learnings">
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">ISSUE 02 AS THE TEST</div>
+              <p class="xp-learning-desc">
+                The real test of whether the system works is shipping
+                issue 02. If new chapters in issue 02 take meaningfully
+                less time than chapters in issue 01, the system earned
+                itself. If not, the design language is doing less work
+                than it looks like.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">DARK MODE / LIGHT MODE SWITCHER</div>
+              <p class="xp-learning-desc">
+                Currently dark-mode-only. A light-mode variant would test
+                how robust the design tokens really are. Most design
+                systems break under inversion because too many components
+                hardcode their colors instead of referencing tokens. Worth
+                shipping as a forcing function on cleanup.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">A REAL MASCOT NAME</div>
+              <p class="xp-learning-desc">
+                Still no name for the critter. Submission rules are out
+                (LinkedIn, under 8 chars, pronounceable). When the right
+                one shows up, ship it.
+              </p>
+            </div>
+          </li>
+          <li class="xp-learning">
+            <div class="xp-learning-body">
+              <div class="xp-learning-title">INTERACTIVE COMPONENT DOCS</div>
+              <p class="xp-learning-desc">
+                This INVENTORY section is a static documentation page. A
+                version where each component is editable in-place, with
+                the prop interface visible, would make handoff to a real
+                dev team trivial. Storybook-shaped, but living inside the
+                zine.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </section>
+
+  </div>
+
+  <!-- PREV/NEXT -->
+  <nav class="chapter-nav" aria-label="Chapter navigation">
+    <a href="app-script-reports.html" class="prev">
+      <span class="nav-dir">PREV CHAPTER</span>
+      <span><span class="nav-arrow">◂</span> APP SCRIPT REPORTS</span>
+    </a>
+    <a href="index.html" class="next">
+      <span class="nav-dir">BACK</span>
+      <span>TO ISSUE <span class="nav-arrow">▸</span></span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+  (function () {
+    const tabs = document.querySelectorAll('[role="tab"]');
+    const panels = document.querySelectorAll('[role="tabpanel"]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        const arr = Array.from(tabs);
+        const i = arr.indexOf(tab);
+        const next = e.key === 'ArrowRight'
+          ? arr[(i + 1) % arr.length]
+          : arr[(i - 1 + arr.length) % arr.length];
+        next.focus();
+        activate(next);
+      });
+    });
+    function activate(tab) {
+      const target = tab.dataset.target;
+      tabs.forEach(t => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+      panels.forEach(p => p.setAttribute('aria-hidden', p.id === target ? 'false' : 'true'));
+    }
+  })();
+</script>
+
+</body>
+</html>
