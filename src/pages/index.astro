@@ -1,5 +1,5 @@
 ---
-
+import "../styles/global.css";
 ---
 
 <html lang="en">
@@ -7,9 +7,60 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>REMY.EXE m2 token check</title>
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="bg-bg text-fg min-h-screen p-8">
+		<h1 class="font-pixel text-xl mb-6">m2 token sanity check</h1>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">FONTS</h2>
+			<p class="font-serif text-lg">Fraunces serif body sample.</p>
+			<p class="font-pixel text-xs">PRESS START 2P PIXEL DISPLAY.</p>
+			<p class="font-mono text-base">VT323 mono caption sample.</p>
+		</section>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">BACKGROUNDS</h2>
+			<div class="bg-bg-elev p-2">bg-bg-elev</div>
+			<div class="bg-bg-card p-2">bg-bg-card</div>
+			<div class="bg-bg-deep p-2">bg-bg-deep</div>
+		</section>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">FOREGROUNDS</h2>
+			<div class="text-fg">text-fg</div>
+			<div class="text-fg-soft">text-fg-soft</div>
+			<div class="text-fg-mid">text-fg-mid</div>
+			<div class="text-fg-faint">text-fg-faint</div>
+		</section>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">SIG INKS</h2>
+			<div class="text-sig-cyan">text-sig-cyan</div>
+			<div class="text-sig-magenta">text-sig-magenta</div>
+			<div class="text-sig-lime">text-sig-lime</div>
+			<div class="text-sig-orange">text-sig-orange</div>
+			<div class="text-yellow">text-yellow</div>
+		</section>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">STATUS</h2>
+			<div class="text-ok">text-ok</div>
+			<div class="text-wip">text-wip</div>
+			<div class="text-danger">text-danger</div>
+		</section>
+
+		<section class="mb-6">
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">BORDERS</h2>
+			<div class="border border-border p-2 mb-2">border (default --color-border)</div>
+			<div class="border-2 border-border-strong p-2">border-border-strong</div>
+		</section>
+
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-2">RUNTIME SIG (default cyan)</h2>
+			<div class="p-3" style="background: var(--sig-wash); border-left: 4px solid var(--sig); color: var(--sig);">
+				var(--sig), var(--sig-wash), var(--sig-deep), var(--sig-glow) live outside @theme.
+			</div>
+		</section>
 	</body>
 </html>

@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-bg: #1a1530;
+  --color-bg-elev: #252046;
+  --color-bg-card: #2f2955;
+  --color-bg-deep: #12102a;
+
+  /* Foregrounds */
+  --color-fg: #ece4ff;
+  --color-fg-soft: #beb4d8;
+  --color-fg-mid: #8e86ae;
+  --color-fg-faint: #55507a;
+
+  /* Purple accent */
+  --color-purple: #8b5cf6;
+  --color-purple-deep: #6d28d9;
+
+  /* Yellow accent */
+  --color-yellow: #fdf203;
+
+  /* Signature inks (per chapter) */
+  --color-sig-cyan: #22d3ee;
+  --color-sig-magenta: #ff3d8f;
+  --color-sig-lime: #a3e635;
+  --color-sig-orange: #fb923c;
+
+  /* Status */
+  --color-ok: #10b981;
+  --color-wip: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Borders */
+  --color-border: #3d3560;
+  --color-border-strong: #5a4d85;
+
+  /* Font families */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-mono: 'VT323', monospace;
+}
+
+/*
+  Runtime signature variables. These are NOT Tailwind tokens.
+  Each chapter overrides --sig, --sig-deep, --sig-glow, --sig-wash
+  in its own scoped style block to flip the chapter's accent color.
+  Default below is cyan (chapters 01 and 05, plus the cover).
+*/
+:root {
+  --sig: var(--color-sig-cyan);
+  --sig-deep: #0e7490;
+  --sig-glow: rgba(34, 211, 238, 0.35);
+  --sig-wash: rgba(34, 211, 238, 0.12);
+}
