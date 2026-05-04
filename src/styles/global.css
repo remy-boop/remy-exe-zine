@@ -53,3 +53,74 @@
   --sig-glow: rgba(34, 211, 238, 0.35);
   --sig-wash: rgba(34, 211, 238, 0.12);
 }
+
+/*
+  Per-chapter sig palettes. Set [data-sig="..."] on <html> (BaseLayout does this
+  via the sigColor prop) to flip all four sig variables together. Values match
+  the existing chapter overrides in the legacy HTML byte for byte.
+*/
+[data-sig="cyan"] {
+  --sig: var(--color-sig-cyan);
+  --sig-deep: #0e7490;
+  --sig-glow: rgba(34, 211, 238, 0.35);
+  --sig-wash: rgba(34, 211, 238, 0.12);
+}
+[data-sig="magenta"] {
+  --sig: var(--color-sig-magenta);
+  --sig-deep: #c71560;
+  --sig-glow: rgba(255, 61, 143, 0.35);
+  --sig-wash: rgba(255, 61, 143, 0.12);
+}
+[data-sig="lime"] {
+  --sig: var(--color-sig-lime);
+  --sig-deep: #4d7c0f;
+  --sig-glow: rgba(163, 230, 53, 0.35);
+  --sig-wash: rgba(163, 230, 53, 0.12);
+}
+[data-sig="orange"] {
+  --sig: var(--color-sig-orange);
+  --sig-deep: #c2410c;
+  --sig-glow: rgba(251, 146, 60, 0.35);
+  --sig-wash: rgba(251, 146, 60, 0.12);
+}
+
+/*
+  Body shell. Two radial corner glows plus a fixed-position scanline overlay,
+  ported from shared/style.css lines 40-65. Applied via @layer base so utility
+  classes still win where they conflict.
+*/
+@layer base {
+  body {
+    background: var(--color-bg);
+    background-image:
+      radial-gradient(ellipse 40% 30% at -5% -5%, var(--sig-glow) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 105% 105%, rgba(59, 130, 246, 0.22) 0%, transparent 60%);
+    color: var(--color-fg);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 32px 16px 56px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.006) 0px,
+      rgba(255, 255, 255, 0.006) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+    z-index: 100;
+  }
+  ::selection {
+    background: var(--sig);
+    color: var(--color-bg-deep);
+  }
+}
