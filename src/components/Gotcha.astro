@@ -1,0 +1,12 @@
+---
+interface Props {
+	tag?: string;
+}
+
+const { tag = "▸ GOTCHA" } = Astro.props;
+---
+
+<div class="gotcha">
+	<span class="gotcha-tag">{tag}</span>
+	<slot />
+</div>

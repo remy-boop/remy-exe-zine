@@ -1,0 +1,245 @@
+---
+/*
+  M4 Batch A component showcase. Each component appears twice:
+    1) under the page's default sigColor (cyan, set by BaseLayout)
+    2) inside a [data-sig="magenta"] wrapper, to verify the palette
+       attribute selector propagates through component composition
+*/
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Panel from "../components/Panel.astro";
+import Gotcha from "../components/Gotcha.astro";
+import PullQuote from "../components/PullQuote.astro";
+import Shot from "../components/Shot.astro";
+import Chip from "../components/Chip.astro";
+import WalkCode from "../components/WalkCode.astro";
+import ChapterNav from "../components/ChapterNav.astro";
+import CauseIconTile from "../components/CauseIconTile.astro";
+---
+
+<BaseLayout title="REMY.EXE component showcase">
+	<main class="mt-6 space-y-12">
+		<header class="space-y-2">
+			<h1 class="font-pixel text-base">m4 batch a · component showcase</h1>
+			<p class="font-serif text-base text-fg-soft max-w-[62ch]">
+				Each component appears twice. First under the page's default sig
+				(cyan). Second inside a magenta wrapper, to verify the
+				<code class="font-mono text-base">[data-sig]</code> attribute
+				selector propagates through component composition.
+			</p>
+		</header>
+
+		{/* PANEL */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ PANEL</h2>
+			<Panel num="01" title="LEVEL 1 START">
+				<p>
+					Default cyan. The panel header has a sig-colored num tile
+					and a fg-colored h2.
+				</p>
+				<p>
+					Body paragraphs use Fraunces serif at 17px, max width 62ch,
+					full-opacity first-of-type and 0.92 thereafter.
+				</p>
+				<p>
+					Inline <em>emphasis is sig-colored</em> and inline
+					<code>code uses VT323</code> on a deep-bg pill.
+				</p>
+			</Panel>
+			<div data-sig="magenta">
+				<Panel num="02" title="BOSS FIGHT">
+					<p>
+						Magenta variant. Same component, different wrapper
+						<code>data-sig</code> attribute.
+					</p>
+					<p>
+						<em>Emphasis</em> and <code>code</code> follow the
+						magenta sig.
+					</p>
+				</Panel>
+			</div>
+		</section>
+
+		{/* GOTCHA */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ GOTCHA</h2>
+			<Gotcha>
+				<p>
+					Yellow-bordered callout for things that broke unexpectedly.
+					Tag uses pixel font.
+				</p>
+			</Gotcha>
+			<Gotcha tag="⚠ GOTCHA · CUSTOM TAG">
+				<p>
+					Custom tag string. Same yellow border. Pure-yellow accent
+					so this doesn't change with sig.
+				</p>
+			</Gotcha>
+			<div data-sig="magenta">
+				<Gotcha>
+					<p>
+						Inside <code>[data-sig="magenta"]</code>. Yellow accent
+						stays yellow because gotcha doesn't reference sig.
+					</p>
+				</Gotcha>
+			</div>
+		</section>
+
+		{/* PULLQUOTE */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ PULLQUOTE</h2>
+			<PullQuote>
+				A line that earned its place. Used at most once per panel.
+			</PullQuote>
+			<div data-sig="magenta">
+				<PullQuote>
+					Same component, magenta sig. Border-left and background
+					flip with sig-wash.
+				</PullQuote>
+			</div>
+		</section>
+
+		{/* SHOT */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ SHOT</h2>
+			<div class="shot-section">
+				<div class="shot-grid">
+					<Shot
+						src="ch01-slack-card-4star.png"
+						alt="Slack card showing a 4-star review"
+						label="DEFAULT SIG"
+						caption="Image inside a default-sig (cyan) shot frame."
+					/>
+				</div>
+			</div>
+			<div data-sig="magenta">
+				<div class="shot-section">
+					<div class="shot-grid">
+						<Shot
+							src="ch01-slack-card-4star.png"
+							alt="Slack card showing a 4-star review"
+							label="MAGENTA SIG"
+							caption="Same image, magenta wrapper. Caption label uses the magenta sig."
+						/>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* CHIP */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ CHIP</h2>
+			<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+				<Chip
+					role="server"
+					name="Render"
+					detail="Node.js 18 + TS"
+					cost="Free"
+					costTier="free"
+				/>
+				<Chip
+					role="ai"
+					name="Anthropic"
+					detail="Claude Sonnet 4.6"
+					cost="~$0.01/call"
+					costTier="paid"
+				/>
+				<Chip
+					role="source control"
+					name="GitHub"
+					detail="push to deploy"
+					cost="Free"
+					costTier="free"
+				/>
+			</div>
+			<div
+				data-sig="magenta"
+				class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3"
+			>
+				<Chip
+					role="server"
+					name="Render"
+					detail="Node.js 18 + TS"
+					cost="Free"
+					costTier="free"
+				/>
+				<Chip
+					role="ai"
+					name="Anthropic"
+					detail="Claude Sonnet 4.6"
+					cost="~$0.01/call"
+					costTier="paid"
+				/>
+				<Chip
+					role="source control"
+					name="GitHub"
+					detail="push to deploy"
+					cost="Free"
+					costTier="free"
+				/>
+			</div>
+		</section>
+
+		{/* WALKCODE */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ WALKCODE</h2>
+			<WalkCode>join expect-spirit → +1 415 523 8886</WalkCode>
+			<div data-sig="magenta">
+				<WalkCode>
+					POST /counts/events.json &rarr; {`{ "req_id": "164266", "status": "partial" }`}
+				</WalkCode>
+			</div>
+		</section>
+
+		{/* CHAPTERNAV */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ CHAPTERNAV</h2>
+			<ChapterNav
+				prevHref="#"
+				prevLabel="REVIEWS BOT ASSISTANT"
+				nextHref="#"
+				nextLabel="WAVELENGTH"
+			/>
+			<div data-sig="magenta" class="mt-3">
+				<ChapterNav
+					prevHref="#"
+					prevLabel="REVIEWS BOT ASSISTANT"
+					nextHref="#"
+					nextLabel="WAVELENGTH"
+				/>
+			</div>
+		</section>
+
+		{/* CAUSEICONTILE */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ CAUSEICONTILE</h2>
+			<div class="flex gap-4 items-start">
+				<CauseIconTile>
+					<svg
+						viewBox="0 0 12 12"
+						xmlns="http://www.w3.org/2000/svg"
+						shape-rendering="crispEdges"
+					>
+						<rect x="2" y="2" width="8" height="8" fill="currentColor" />
+						<rect x="3" y="3" width="6" height="6" fill="var(--color-bg-deep)" />
+						<rect x="4" y="4" width="4" height="1" fill="currentColor" />
+						<rect x="4" y="6" width="4" height="1" fill="currentColor" />
+					</svg>
+				</CauseIconTile>
+				<div data-sig="magenta">
+					<CauseIconTile>
+						<svg
+							viewBox="0 0 12 12"
+							xmlns="http://www.w3.org/2000/svg"
+							shape-rendering="crispEdges"
+						>
+							<rect x="2" y="2" width="8" height="8" fill="currentColor" />
+							<rect x="3" y="3" width="6" height="6" fill="var(--color-bg-deep)" />
+							<rect x="4" y="4" width="4" height="1" fill="currentColor" />
+							<rect x="4" y="6" width="4" height="1" fill="currentColor" />
+						</svg>
+					</CauseIconTile>
+				</div>
+			</div>
+		</section>
+	</main>
+</BaseLayout>

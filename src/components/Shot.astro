@@ -1,0 +1,27 @@
+---
+interface Props {
+	src: string;
+	alt: string;
+	label?: string;
+	caption?: string;
+}
+
+const { src, alt, label, caption } = Astro.props;
+
+const resolvedSrc =
+	src.startsWith("/") || src.startsWith("http")
+		? src
+		: `/issue-01/images/${src}`;
+---
+
+<div class="shot">
+	<div class="shot-img-wrap">
+		<img src={resolvedSrc} alt={alt} />
+	</div>
+	{(label || caption) && (
+		<div class="shot-caption">
+			{label && <b>{label}</b>}
+			{caption}
+		</div>
+	)}
+</div>

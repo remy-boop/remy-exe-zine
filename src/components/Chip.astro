@@ -1,0 +1,20 @@
+---
+interface Props {
+	name: string;
+	role: string;
+	detail: string;
+	cost?: string;
+	costTier?: "free" | "paid";
+}
+
+const { name, role, detail, cost, costTier } = Astro.props;
+---
+
+<div class="chip">
+	<span class="chip-role">{role}</span>
+	<span class="chip-name">{name}</span>
+	<span class="chip-detail">{detail}</span>
+	{cost && (
+		<span class={`chip-cost ${costTier ?? ""}`.trim()}>{cost}</span>
+	)}
+</div>
