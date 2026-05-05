@@ -1374,3 +1374,74 @@
     }
   }
 }
+
+/* === Chapter 02 specifics: Horoscope Roast Bot (chat-bubble layout) === */
+
+@layer components {
+  .convo-flow {
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 52ch;
+  }
+  .convo-msg {
+    padding: 10px 14px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .convo-msg.user {
+    background: var(--color-purple-deep);
+    border: 1px solid var(--color-purple);
+    color: var(--color-fg);
+    align-self: flex-end;
+    text-align: right;
+  }
+  .convo-msg.bot {
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg-soft);
+    align-self: flex-start;
+  }
+  .convo-msg.bot em {
+    color: var(--sig);
+    font-style: italic;
+  }
+  .convo-label {
+    font-family: var(--font-pixel);
+    font-size: 7px;
+    color: var(--color-fg-faint);
+    margin-bottom: 3px;
+    letter-spacing: 0.04em;
+  }
+  .convo-label.right {
+    text-align: right;
+  }
+
+  /* Shot placeholder. Defined globally; ch02 inline style had these rules but
+     no markup uses them. Kept here for any future placeholder shots. */
+  .shot-placeholder {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 180px;
+  }
+  .shot-placeholder-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg-faint);
+    letter-spacing: 0.06em;
+  }
+  .shot-placeholder-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--color-fg-faint);
+  }
+}

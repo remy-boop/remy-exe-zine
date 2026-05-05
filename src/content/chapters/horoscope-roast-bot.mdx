@@ -1,0 +1,601 @@
+---
+chapter: 2
+title: "HOROSCOPE|ROAST BOT"
+sig: magenta
+status: live
+tagline: "A WhatsApp bot that reads your day like a passive-aggressive PM mentor, then hands you a fake-but-plausible KPI."
+shipped: "Mar 2026"
+platform: "WhatsApp"
+prevChapter: "reviews-bot-assistant"
+nextChapter: "wavelength"
+---
+
+import Panel from "../../components/Panel.astro";
+import PullQuote from "../../components/PullQuote.astro";
+import Gotcha from "../../components/Gotcha.astro";
+import Win from "../../components/Win.astro";
+import Shot from "../../components/Shot.astro";
+import Chip from "../../components/Chip.astro";
+import CauseIconTile from "../../components/CauseIconTile.astro";
+
+<Panel id="p-origin" num="01" title="LEVEL 1 START" open>
+
+After shipping the Reviews Bot I needed a palette cleanser. Something built purely for the joy of doing it, and to satisfy my quirky, weird sense of humor. No stakeholder. No ticket. No KPI to report.
+
+I also wanted to push further into integrating the Anthropic API into platforms beyond the ones I already knew. That's when I started thinking about *WhatsApp*. And if WhatsApp, why not horoscopes. And if horoscopes, why not make them *sharp*.
+
+<PullQuote>
+What if the stars knew about your product backlog?
+</PullQuote>
+
+The concept: you opt in with your zodiac sign, the bot asks how your day is going, and then it roasts you for your answer. Three rounds over a few days, like one of those old SMS subscription services you'd sign up for and half-forget about. Each round ends with a PM KPI, a fake but painfully plausible metric calibrated to whatever you just typed. After round three the bot says goodbye and goes quiet.
+
+The goal wasn't a plain chatbot interaction where you prompt and it answers. It was a small recurring experience with a real arc. Something that got a little more accurate each time and knew when to stop.
+
+<div class="cause-grid">
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect x="2" y="1" width="8" height="10" fill="currentColor"/>
+        <rect x="3" y="2" width="6" height="8" fill="var(--bg-deep)"/>
+        <rect x="4" y="3" width="4" height="1" fill="currentColor"/>
+        <rect x="4" y="5" width="3" height="1" fill="currentColor"/>
+        <rect x="4" y="7" width="2" height="1" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">OPT IN WITH YOUR SIGN</div>
+      <p class="cause-desc">Text your zodiac sign to register. The bot already has a read on you before you say anything else.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect x="1" y="1" width="10" height="7" fill="currentColor"/>
+        <rect x="2" y="2" width="8" height="5" fill="var(--bg-deep)"/>
+        <rect x="3" y="8" width="3" height="1" fill="currentColor"/>
+        <rect x="3" y="9" width="2" height="1" fill="currentColor"/>
+        <rect x="3" y="10" width="1" height="1" fill="currentColor"/>
+        <rect x="3" y="4" width="1" height="1" fill="currentColor"/>
+        <rect x="5" y="4" width="2" height="1" fill="currentColor"/>
+        <rect x="8" y="4" width="1" height="1" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">HOW'S YOUR DAY GOING?</div>
+      <p class="cause-desc">One open question. You answer in natural language. Whatever you type becomes the material.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect x="1" y="5" width="10" height="2" fill="currentColor"/>
+        <rect x="5" y="1" width="2" height="10" fill="currentColor"/>
+        <rect x="3" y="3" width="2" height="2" fill="currentColor"/>
+        <rect x="7" y="3" width="2" height="2" fill="currentColor"/>
+        <rect x="3" y="7" width="2" height="2" fill="currentColor"/>
+        <rect x="7" y="7" width="2" height="2" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">THE ROAST LANDS</div>
+      <p class="cause-desc">Sign dysfunction plus your own words, used against you. Ends with a PM KPI. No template, generated fresh every time.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect x="2" y="2" width="3" height="3" fill="currentColor"/>
+        <rect x="7" y="2" width="3" height="3" fill="currentColor"/>
+        <rect x="2" y="7" width="3" height="3" fill="currentColor"/>
+        <rect x="7" y="7" width="3" height="3" fill="currentColor"/>
+        <rect x="5" y="5" width="2" height="2" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">THREE ROUNDS, THEN DONE</div>
+      <p class="cause-desc">Before the session window closes, the bot nudges you that a new roast is ready. After round three it says goodbye and goes quiet. No open-ended loop.</p>
+    </div>
+  </div>
+</div>
+
+</Panel>
+
+<Panel id="p-fix" num="02" title="BOSS FIGHT">
+
+I found I could use the Twilio sandbox to play around and build a real experience inside *WhatsApp* without needing a paid account or business approval. A sandbox number, a join keyword, and you're in. Good enough to ship something real.
+
+The design challenge split into two fronts. Getting the tone right. And getting the mechanics right. Both took longer than expected.
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ GETTING THE TONE RIGHT</span>
+  <div class="divider-line"></div>
+</div>
+
+The question was how to make an AI horoscope feel funny and controlled instead of generic and weird. The first attempts read like a corporate chatbot introducing itself. Warm. Safe. Nobody was going to screenshot that.
+
+<div class="fix-grid">
+  <div class="fix-card before">
+    <span class="fix-tag">✗ FIRST ATTEMPT</span>
+    "Welcome! You registered as Scorpio. How's your day going?"
+    <br/><br/>
+    The sign meant nothing. Could have been sent by any chatbot ever built.
+  </div>
+  <div class="fix-card after">
+    <span class="fix-tag">✓ WHAT LANDED</span>
+    "You've already read everyone in the room, decided who to trust (no one)... How's your day going?"
+    <br/><br/>
+    One sentence. Sign-specific. Makes a Scorpio feel seen before they've typed a word.
+  </div>
+</div>
+
+The key was to stop treating the opener as a greeting. The bot has already made a judgment. It's just telling you what it noticed. That same framing carried into the roast: not reacting to what you said, but confirming what it already suspected.
+
+The opener is generated by Claude on every registration. Same sign, different line each time. The prompt gives Claude the sign's specific work dysfunction and tells it to write one sentence that sounds like it already knew you were coming. No hardcoded strings.
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ BUILDING THE ROAST</span>
+  <div class="divider-line"></div>
+</div>
+
+Early roast outputs felt like therapy sessions. Helpful. Reframing. Offering perspective. Completely wrong vibe. The prompt went through six iterations before the output started landing consistently.
+
+<div class="shot-section">
+  <div class="shot-grid">
+    <Shot
+      src="ch02-early-output.png"
+      alt="Screenshot of an early roast output — creepy, off-tone, wrong vibe"
+      label="EARLY OUTPUT"
+      caption="before the iterations landed. weird or (and) creepy, not funny."
+    />
+  </div>
+</div>
+
+The first fix was tone direction. Instead of asking Claude to "write a funny horoscope roast," the prompt described the character: a senior PM who has seen this pattern a thousand times and is not impressed. Dry. Deadpan. No warmth. No hedging. Just the verdict. The second fix was structure: give Claude the sign's specific work dysfunction AND the user's exact answer, and tell it to use one against the other. That combination is what makes it land.
+
+After those iterations the roast bot finally started delivering genuinely funny, screenshottable experiences. The combination of sign dysfunction plus the user's own words used against them was the unlock.
+
+<div class="shot-section">
+  <div class="shot-grid">
+    <Shot
+      src="ch02-roast-in-the-wild.png"
+      alt="Screenshot of a roast that landed — real WhatsApp output"
+      label="THE ROAST IN THE WILD"
+      caption="sign dysfunction + user's own words + PM KPI. The thing people forward."
+    />
+  </div>
+</div>
+
+Here's what the full exchange looks like in practice:
+
+<div class="convo-flow">
+  <div class="convo-label right">USER</div>
+  <div class="convo-msg user">scorpio</div>
+  <div class="convo-label">BOT</div>
+  <div class="convo-msg bot">
+    (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ Welcome to Remy's Horoscope Prediction<br/><br/>
+    <em>The stars predict you've been sitting on a decision for three weeks and calling it due diligence.</em><br/><br/>
+    How's your day going?
+  </div>
+  <div class="convo-label right">USER</div>
+  <div class="convo-msg user">still working at night trying to finish an executive presentation</div>
+  <div class="convo-label">BOT</div>
+  <div class="convo-msg bot">
+    You're not working late because you're dedicated. Every earlier hour got sacrificed to meetings <em>about</em> the presentation instead of making it. Sleep is just unscheduled downtime you'll deprioritize until Q5. ⚠️<br/><br/>
+    ★★★☆☆ Decision Latency: 11.5 hours
+  </div>
+  <div class="convo-label right">USER (8 HRS LATER, NUDGE)</div>
+  <div class="convo-msg bot">Scorpio. The stars have been waiting 8 hours. Your backlog hasn't gotten any shorter.</div>
+  <div class="convo-label right">USER</div>
+  <div class="convo-msg user">roast</div>
+</div>
+
+Each roast closes with a PM KPI — a fake but plausible metric with a specific number, calibrated to what the user described. No explanation. No context. Just the readout, dropped like a dashboard diagnosis.
+
+<div class="convo-flow">
+  <div class="convo-msg bot">
+    You're not working late because you're dedicated. Every earlier hour got sacrificed to meetings <em>about</em> the presentation instead of making it. Sleep is just unscheduled downtime you'll deprioritize until Q5. ⚠️<br/><br/>
+    ★★★☆☆ Decision Latency: 11.5 hours
+  </div>
+</div>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ THE SESSION WINDOW PROBLEM</span>
+  <div class="divider-line"></div>
+</div>
+
+WhatsApp has a platform rule enforced by Twilio: you can only send free-form messages if the user texted you first within the last 24 hours. That window opens on inbound, lasts 24 hours, then closes. The original plan was a daily 8am push. The bot reaches out, asks how your day is going. The window rule killed it. You can't initiate outside an active session.
+
+So the product flipped to pull-based: the user texts <code>roast</code> to trigger the next round. What looked like a platform limitation became the core mechanic. The user controls the pace. That's actually a better product than an alarm that goes off whether you want it or not.
+
+The nudge still works within the window. The user just texted to get the roast, which opens a fresh 24 hours. At hour 23, before the window closes, the bot sends a heads-up: "The stars have a new roast ready in 1 hour. Send roast to begin." The user texts <code>roast</code>, the window resets, and round 2 begins. The full arc looks like this:
+
+<div class="convo-flow">
+  <div class="convo-label right" style="color:var(--fg-soft)">USER OPTS IN</div>
+  <div class="convo-msg user">scorpio</div>
+  <div class="convo-label" style="color:var(--fg-soft)">BOT — ROAST 1</div>
+  <div class="convo-msg bot">Sign-specific opener + question + answer + roast + KPI</div>
+  <div class="convo-label" style="color:var(--fg-soft)">BOT — 23H NUDGE (window still open)</div>
+  <div class="convo-msg bot">The stars have a new roast ready in 1 hour. Send roast to begin.</div>
+  <div class="convo-label right" style="color:var(--fg-soft)">USER</div>
+  <div class="convo-msg user">roast</div>
+  <div class="convo-label" style="color:var(--fg-soft)">BOT — ROAST 2</div>
+  <div class="convo-msg bot">Question + answer + roast + KPI</div>
+  <div class="convo-label" style="color:var(--fg-soft)">BOT — 23H NUDGE (window still open)</div>
+  <div class="convo-msg bot">The stars have a new roast ready in 1 hour. Send roast to begin.</div>
+  <div class="convo-label right" style="color:var(--fg-soft)">USER</div>
+  <div class="convo-msg user">roast</div>
+  <div class="convo-label" style="color:var(--fg-soft)">BOT — ROAST 3 + GOODBYE</div>
+  <div class="convo-msg bot">Final roast + KPI. "The stars have roasted you 3 times. Trial complete. Go fix your backlog."</div>
+</div>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ KEEPING THE NUDGE ALIVE</span>
+  <div class="divider-line"></div>
+</div>
+
+The nudge had to be sent before the 24h session window closed, not after. Sending it at hour 23 meant the message was guaranteed to land within the active session the user opened when they got their roast. A simple DB queue: when a roast fires, insert a row with <code>send_at = now + 23 hours</code>. A cron queries pending nudges every 60 minutes, fires them via Twilio outbound, marks them sent. Server restarts don't matter because the schedule lives in the database, not in memory.
+
+The 24h cooldown on <code>roast</code> requests also needed a message. If the user texts <code>roast</code> too soon after their last one, the bot replies: "the stars need 24 hours to recover from your last answer." Clean state machine, no silent failures.
+
+<Gotcha tag="⚠ GOTCHA · TWIML IS NOT HTTP">
+Twilio webhook replies require <code>Content-Type: text/xml</code> and a TwiML envelope: <code>&lt;Response&gt;&lt;Message&gt;...&lt;/Message&gt;&lt;/Response&gt;</code>. Regular JSON responses are silently ignored and Twilio falls back to its own default demo reply with no error, no warning. Outbound messages like the nudge use a completely different path: <code>twilio.messages.create()</code>, not TwiML. Two reply mechanisms on the same platform. One of them fails invisibly.
+</Gotcha>
+
+<Win tag="✓ WIN · SCHEDULE IN THE DB, NOT MEMORY">
+Persisting the nudge queue in Postgres instead of memory meant the cron survived every server restart cleanly. A row with <code>send_at</code> and <code>sent = false</code> is a reliable job. A <code>setTimeout</code> in a process that can get killed at any point is not.
+</Win>
+
+</Panel>
+
+<Panel id="p-stack" num="03" title="INVENTORY">
+
+Free-tier where it works, Twilio sandbox for WhatsApp testing.
+
+<div class="stack-section">
+  <div class="stack-label">▸ EQUIPMENT</div>
+  <div class="stack-grid">
+    <Chip role="server" name="Render" detail="Node.js 18 + TypeScript" cost="Free" costTier="free" />
+    <Chip role="database" name="Neon" detail="Postgres 17 · 2 tables" cost="Free" costTier="free" />
+    <Chip role="ai" name="Anthropic" detail="Claude Sonnet 4.6" cost="~$0.01/roast" costTier="paid" />
+    <Chip role="messaging" name="Twilio" detail="WhatsApp sandbox" cost="Free (sandbox)" costTier="free" />
+    <Chip role="source control" name="GitHub" detail="push to auto-deploy" cost="Free" costTier="free" />
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ HIGH-LEVEL ARCHITECTURE</div>
+  <div class="diagram-container">
+    <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <rect x="20" y="50" width="130" height="60" rx="8" fill="#6d28d9" fill-opacity="0.25" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="85" y="76" text-anchor="middle">User</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#c4b5fd" x="85" y="96" text-anchor="middle">WhatsApp</text>
+      <rect x="200" y="50" width="130" height="60" rx="8" fill="#fb923c" fill-opacity="0.2" stroke="#fb923c" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="265" y="76" text-anchor="middle">Twilio</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#fb923c" x="265" y="96" text-anchor="middle">WA gateway</text>
+      <rect x="380" y="50" width="130" height="60" rx="8" fill="#22d3ee" fill-opacity="0.15" stroke="#22d3ee" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="445" y="76" text-anchor="middle">Render</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#22d3ee" x="445" y="96" text-anchor="middle">Node + Express</text>
+      <line x1="150" y1="72" x2="198" y2="72" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <text font-family="VT323, monospace" font-size="12" fill="#beb4d8" x="174" y="65" text-anchor="middle">msg</text>
+      <line x1="198" y1="88" x2="150" y2="88" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <text font-family="VT323, monospace" font-size="12" fill="#beb4d8" x="174" y="106" text-anchor="middle">reply</text>
+      <line x1="330" y1="72" x2="378" y2="72" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <text font-family="VT323, monospace" font-size="12" fill="#beb4d8" x="354" y="65" text-anchor="middle">webhook</text>
+      <line x1="378" y1="88" x2="330" y2="88" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <text font-family="VT323, monospace" font-size="12" fill="#beb4d8" x="354" y="106" text-anchor="middle">TwiML</text>
+      <rect x="380" y="175" width="130" height="60" rx="8" fill="#0e7490" fill-opacity="0.25" stroke="#22d3ee" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="445" y="200" text-anchor="middle">Neon Postgres</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#22d3ee" x="445" y="220" text-anchor="middle">users · nudges</text>
+      <line x1="445" y1="110" x2="445" y2="173" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <line x1="437" y1="173" x2="437" y2="110" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <rect x="200" y="175" width="130" height="60" rx="8" fill="#c71560" fill-opacity="0.2" stroke="#ff3d8f" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="9" font-weight="700" fill="#ece4ff" x="265" y="200" text-anchor="middle">Anthropic</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#ff3d8f" x="265" y="220" text-anchor="middle">roast + nudge gen</text>
+      <line x1="380" y1="200" x2="332" y2="200" stroke="#ff3d8f" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <line x1="332" y1="210" x2="380" y2="210" stroke="#ff3d8f" stroke-width="1.5" marker-end="url(#arrowH)"/>
+      <text font-family="Press Start 2P, monospace" font-size="8" fill="#55507a" x="340" y="282" text-anchor="middle">HOROSCOPE ROAST BOT · HIGH LEVEL</text>
+    </svg>
+  </div>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-swatch" style="background:#8b5cf6"></span> User / WhatsApp</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#fb923c"></span> Twilio</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#22d3ee"></span> Server / Data</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#ff3d8f"></span> AI</span>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ STEP-BY-STEP WALKTHROUGH</div>
+
+  End-to-end flow from first message to trial complete.
+
+  <div class="walkthrough">
+    <div class="walk-step">
+      <div class="walk-num">1</div>
+      <div class="walk-body">
+        <div class="walk-title">USER JOINS TWILIO SANDBOX</div>
+        <div class="walk-desc">User sends the join keyword to the sandbox number on WhatsApp. Twilio confirms the session. Without this step the bot cannot send or receive anything.</div>
+        <div class="walk-code">join expect-spirit → +1 415 523 8886</div>
+        <div class="walk-tags">
+          <span class="walk-tag">one-time setup</span>
+          <span class="walk-tag">sandbox only</span>
+          <span class="walk-tag">session lasts 72 hrs</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">2</div>
+      <div class="walk-body">
+        <div class="walk-title">USER TEXTS THEIR ZODIAC SIGN</div>
+        <div class="walk-desc">Twilio POSTs the inbound message to the Render webhook. Server checks if the message matches a valid sign and if the phone number exists in the DB. New user: register. Existing user: ignore silently.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">12 valid signs</span>
+          <span class="walk-tag">case-insensitive match</span>
+          <span class="walk-tag">Neon users table</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">3</div>
+      <div class="walk-body">
+        <div class="walk-title">BOT SENDS SIGN-SPECIFIC OPENER</div>
+        <div class="walk-desc">Claude generates a one-line opener based on the sign's work dysfunction. Generated fresh on every registration — no hardcoded strings. Preceded by the welcome header.</div>
+        <div class="walk-code">{`(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ Welcome to Remy's Horoscope Prediction\n\nThe stars predict you've been sitting on a decision for three weeks and calling it due diligence.\n\nHow's your day going?`}</div>
+        <div class="walk-tags">
+          <span class="walk-tag">Claude-generated</span>
+          <span class="walk-tag">state: awaiting_answer</span>
+          <span class="walk-tag">TwiML reply</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">4</div>
+      <div class="walk-body">
+        <div class="walk-title">USER ANSWERS IN NATURAL LANGUAGE</div>
+        <div class="walk-desc">Any text while in <code>awaiting_answer</code> state is treated as the answer. Gibberish included. Server saves <code>last_answer</code> and calls Claude to generate the roast.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">free-form input</span>
+          <span class="walk-tag">gibberish = valid signal</span>
+          <span class="walk-tag">saved to last_answer</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">5</div>
+      <div class="walk-body">
+        <div class="walk-title">CLAUDE GENERATES THE ROAST</div>
+        <div class="walk-desc">System prompt combines the sign's work dysfunction with the user's own words turned against them. Output: 2-3 punchy sentences plus one PM KPI metric with a specific calibrated number.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">sign dysfunction + user words</span>
+          <span class="walk-tag">PM KPI metric</span>
+          <span class="walk-tag">claude-sonnet-4-6</span>
+          <span class="walk-tag">~$0.01/call</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">6</div>
+      <div class="walk-body">
+        <div class="walk-title">ROAST SENT, NUDGE QUEUED</div>
+        <div class="walk-desc">Server sends the roast via TwiML, increments <code>trial_day</code>, sets state to <code>active</code>, and inserts a row into <code>nudges</code> with <code>send_at = now + 23 hours</code>. If this is day 3, the goodbye message fires instead and <code>trial_complete = true</code>.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">trial_day incremented</span>
+          <span class="walk-tag">nudge row: send_at = now + 23h</span>
+          <span class="walk-tag">last_roast_at = now</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">7</div>
+      <div class="walk-body">
+        <div class="walk-title">CRON FIRES NUDGE AT HOUR 23</div>
+        <div class="walk-desc"><code>node-cron</code> runs every 60 minutes. Queries <code>nudges WHERE send_at &lt;= now AND sent = false</code>. If rows found, Twilio sends the nudge via <code>messages.create()</code> while the session window is still open. Row marked <code>sent = true</code>.</div>
+        <div class="walk-code">The stars have a new roast ready in 1 hour. Send roast to begin.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">60-min cron</span>
+          <span class="walk-tag">twilio.messages.create()</span>
+          <span class="walk-tag">within 24h window</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">8</div>
+      <div class="walk-body">
+        <div class="walk-title">USER TEXTS 'ROAST' TO CONTINUE</div>
+        <div class="walk-desc">If state is <code>active</code>, <code>trial_day &lt; 3</code>, and <code>last_roast_at</code> was more than 24 hours ago, bot asks the daily question again. Under 24 hours: cooldown reply. Repeat steps 4 to 7 for days 2 and 3.</div>
+        <div class="walk-code">the stars need 24 hours to recover from your last answer.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">24h cooldown check</span>
+          <span class="walk-tag">state: awaiting_answer</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">9</div>
+      <div class="walk-body">
+        <div class="walk-title">TRIAL ENDS AFTER ROAST 3</div>
+        <div class="walk-desc">On <code>trial_day = 3</code>, the goodbye message fires instead of a nudge. <code>trial_complete = true</code> is set. All subsequent messages from this phone are silently ignored.</div>
+        <div class="walk-code">The stars have roasted you 3 times. They need a break. So do you. Trial complete. Go fix your backlog.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">trial_complete = true</span>
+          <span class="walk-tag">no nudge inserted</span>
+          <span class="walk-tag">silent ignore after</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ AI CONTEXT FILE</div>
+  <div class="kb-block">
+    <div class="kb-title">Roast system prompt</div>
+    <div class="kb-desc">The prompt is the product. It runs on every roast call and tells Claude three things: the sign's specific work dysfunction to use as the weapon, the instruction to turn the user's own words against them, and the PM KPI format to close with. Tone direction: dry, deadpan, like someone who has seen this pattern a thousand times and is not impressed. No warmth. No hedging. Just the verdict. Adjusting the prompt changes the entire character of the output without touching any code.</div>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ NEON DB SCHEMA</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width:180px;">TABLE</th>
+        <th>WHAT IT STORES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>users</td>
+        <td>Phone, sign, state (awaiting_answer / active), trial_day (0-3), trial_complete, last_roast_at, last_answer.</td>
+      </tr>
+      <tr>
+        <td>nudges</td>
+        <td>Scheduled outbound messages. Phone, sign, send_at timestamp, sent boolean. Queried every 60 minutes by cron.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ TWILIO API</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width:180px;">ENDPOINT</th>
+        <th>WHAT IT DOES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Webhook inbound</td>
+        <td>Twilio POSTs to <code>/webhook</code> on every inbound message. Body and From parsed from URL-encoded form data.</td>
+      </tr>
+      <tr>
+        <td>TwiML reply</td>
+        <td>Synchronous reply within the webhook response. Must be <code>text/xml</code> with a TwiML envelope. Used for all in-conversation replies.</td>
+      </tr>
+      <tr>
+        <td>messages.create()</td>
+        <td>Outbound API call for nudges sent outside the webhook flow. Requires active 24h session window. Used by the cron job.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</Panel>
+
+<Panel id="p-xp" num="04" title="XP GAINED">
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+    <div class="xp-subhead">building with ai</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">SPECIFICITY IS THE PRODUCT</div>
+        <p class="xp-learning-desc">Generic prompts produce generic outputs. What made the roast land was combining the sign's specific work dysfunction with the user's own words turned against them. <em>"You've spent three days emotionally processing the idea of making it"</em> hits differently than <em>"you seem stressed about your deadline."</em> One uses what they said. The other could have been written for anyone. The prompt is the product.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">DESCRIBE THE VOICE, NOT THE OUTPUT</div>
+        <p class="xp-learning-desc">When the prompt included specific example lines, Claude copied their structure instead of inventing. When the prompt described the voice without examples, "dry, deadpan, like you've seen this sign a thousand times and you're not impressed," Claude generated sharper, more varied material every time. The direction is more useful than the sample.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+    <div class="xp-subhead">product thinking</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">FIRST IMPRESSIONS ARE PROMPTS</div>
+        <p class="xp-learning-desc">The welcome message went through six iterations. Every version that felt off shared the same problem: too generic, too warm, or too on-the-nose. The right version sounds like the bot already knew you were coming. That is not a copywriting problem. It is a product question about what the user should feel in the first second of interaction.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">GIBBERISH IS CONTENT</div>
+        <p class="xp-learning-desc">When a user sends nonsense, that is not invalid input. It is a signal about their state. Someone who sends <em>asdkjhaslkd</em> is either testing the bot, avoiding the question, or having a day so bad they can't form words. All three are roastable. The bot treats the non-answer as data and responds accordingly.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">DESIGN AROUND SESSION WINDOWS, NOT AGAINST THEM</div>
+        <p class="xp-learning-desc">WhatsApp's session window rule meant cold daily pushes were impossible on sandbox. The user had to initiate each round by texting <code>roast</code>. But once they did, the window was open for 24 hours. Sending the nudge at hour 23 meant it landed within that window, re-engaged the user, and kept the arc alive without needing any special permissions. Understanding the constraint precisely is what made both the pull mechanic and the nudge possible at the same time.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+    <div class="xp-subhead">development learnings</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">MESSAGING PLATFORMS HAVE TWO REPLY PATHS</div>
+        <p class="xp-learning-desc">Most messaging APIs have a synchronous reply path (responding directly to an inbound webhook) and an asynchronous outbound path (initiating a message independently). They often have different formats, authentication, and constraints. Treating them as the same thing is a common source of silent failures.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">SCHEDULED JOBS BELONG IN THE DATABASE</div>
+        <p class="xp-learning-desc">In-memory timers die when the process dies. A row in a database with a <code>send_at</code> timestamp and a <code>sent</code> flag survives restarts, crashes, and redeployments. A lightweight polling loop that reads and processes pending rows is the foundation pattern behind every production job queue.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">AN IDLE POLLER COSTS NOTHING</div>
+        <p class="xp-learning-desc">A process that checks a queue every 60 minutes sounds expensive until you realize that finding zero rows costs essentially nothing. The query is the guard. When there is no work, there is no work done. This pattern scales naturally from a single user to thousands without changing the architecture.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+    <div class="xp-subhead">future iterations</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">THE SUBSCRIPTION MODEL</div>
+        <p class="xp-learning-desc">The three-round trial arc is already shaped like an old SMS subscription service. You opt in, get content over a few days, and it ends. The natural next version is a renewable subscription: after the trial, the user gets a weekly roast if they stay subscribed. Renewal is a single message. Churn is silence. The product already has the infrastructure for it.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">STATEFUL USERS OVER ASYNC CHANNELS</div>
+        <p class="xp-learning-desc">Managing a multi-step user journey through a channel with no persistent connection is a distinct engineering challenge. Every message arrives cold. State has to be reconstructed from storage on every request. Session windows, cooldown logic, and arc completion all live in the database. This pattern applies anywhere a product needs to maintain continuity with a user across a channel that has no memory of its own.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">THE LEARNING LAYER</div>
+        <p class="xp-learning-desc">Right now each roast starts from scratch. A future version extracts structured signals from every answer, energy level, avoidance pattern, the one concrete thing mentioned, and stores them per user. Roast three references what you said in roast one. The product gets more accurate the more you use it. That is a meaningfully different product.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+</Panel>
