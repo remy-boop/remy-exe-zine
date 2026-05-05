@@ -1,0 +1,18 @@
+---
+interface Props {
+	heading: string;
+	subhead: string;
+}
+
+const { heading, subhead } = Astro.props;
+---
+
+<section class="xp-section">
+	<div class="xp-heading-row">
+		<h3 class="xp-heading">{heading}</h3>
+		<div class="xp-subhead">{subhead}</div>
+	</div>
+	<ul class="xp-learnings">
+		<slot />
+	</ul>
+</section>

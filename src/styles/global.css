@@ -463,3 +463,277 @@
     opacity: 0.4;
   }
 }
+
+@layer components {
+  /* Tabs */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    margin-bottom: -2px;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    color: var(--color-fg-mid);
+    cursor: pointer;
+    padding: 16px 10px 14px;
+    text-align: center;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    font-family: inherit;
+  }
+  .tab:last-child {
+    border-right: none;
+  }
+  .tab .tab-num {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.02em;
+  }
+  .tab .tab-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-fg-soft);
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .tab .tab-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .tab:hover {
+    background: var(--color-bg-card);
+  }
+  .tab:hover .tab-label {
+    color: var(--color-fg);
+  }
+  .tab:hover .tab-sub {
+    color: var(--color-fg-soft);
+  }
+  .tab:hover .tab-num {
+    color: var(--color-fg-soft);
+  }
+  .tab[aria-selected="true"] {
+    background: var(--sig-wash);
+  }
+  .tab[aria-selected="true"] .tab-num {
+    color: var(--sig);
+  }
+  .tab[aria-selected="true"] .tab-label {
+    color: var(--sig);
+  }
+  .tab[aria-selected="true"] .tab-sub {
+    color: var(--color-fg);
+    opacity: 0.9;
+  }
+  .tab[aria-selected="true"]::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--sig);
+    box-shadow: 0 0 12px var(--sig-glow);
+  }
+  .tab:focus-visible {
+    outline: 2px solid var(--color-yellow);
+    outline-offset: -2px;
+    z-index: 2;
+  }
+
+  /* Panels (the container around the four chapter panels) */
+  .panels {
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    min-height: 400px;
+  }
+
+  /* Win (sibling of Gotcha, green-bordered) */
+  .win {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--ok-wash);
+    border: 1px solid var(--color-ok);
+    border-left: 4px solid var(--color-ok);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .win-tag {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-ok);
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .win p {
+    font-size: 16px;
+    margin-bottom: 0;
+    max-width: none;
+  }
+
+  /* XPSection / XPLearning */
+  .xp-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px dashed var(--color-border);
+  }
+  .xp-section:first-of-type {
+    margin-top: 16px;
+    padding-top: 0;
+    border-top: none;
+  }
+  .xp-heading-row {
+    margin-bottom: 18px;
+  }
+  .xp-heading {
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    color: var(--sig);
+    text-shadow: 0 0 8px var(--sig-glow);
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .xp-subhead {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--color-fg-soft);
+    letter-spacing: 0.01em;
+  }
+  .xp-learnings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .xp-learning {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px dotted var(--color-border);
+  }
+  .xp-learning:last-child {
+    border-bottom: none;
+  }
+  .xp-learning::before {
+    content: '▸';
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 12px;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .xp-learning-body {
+    min-width: 0;
+  }
+  .xp-learning-title {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-fg);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  /* Body paragraphs: covers both legacy <p class="xp-learning-desc">
+     and plain <p> rendered from MDX markdown inside <XPLearning>. */
+  .xp-learning-body p,
+  .xp-learning-desc {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin: 0;
+  }
+  .xp-learning-body p code,
+  .xp-learning-desc code {
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+  .xp-learning-body p em,
+  .xp-learning-desc em {
+    font-style: italic;
+    color: var(--sig);
+    font-weight: 500;
+  }
+
+  /* DataTable. Dual selectors so .data-table-wrap > table (used by the
+     <DataTable> component when wrapping markdown tables) gets the same
+     treatment as a hand-written <table class="data-table">. */
+  .data-table,
+  .data-table-wrap > table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    color: var(--color-fg);
+  }
+  .data-table thead th,
+  .data-table-wrap > table thead th {
+    text-align: left;
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    padding: 0 14px 12px 0;
+    border-bottom: 2px solid var(--sig-deep);
+  }
+  .data-table tbody tr,
+  .data-table-wrap > table tbody tr {
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .data-table tbody tr:last-child,
+  .data-table-wrap > table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .data-table tbody td,
+  .data-table-wrap > table tbody td {
+    padding: 14px 14px 14px 0;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .data-table tbody td:first-child,
+  .data-table-wrap > table tbody td:first-child {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--sig);
+    font-weight: 700;
+    white-space: nowrap;
+    padding-right: 24px;
+  }
+  /* "sources" variant — only triggers on hand-written class="data-table sources". */
+  .data-table.sources tbody td {
+    font-size: 14px;
+    padding: 12px 12px 12px 0;
+  }
+  .data-table.sources tbody td:first-child {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg);
+    font-weight: 700;
+  }
+  .data-table.sources tbody td.cell-mono {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--color-fg-soft);
+  }
+}

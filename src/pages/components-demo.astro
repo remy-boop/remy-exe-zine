@@ -14,6 +14,12 @@ import Chip from "../components/Chip.astro";
 import WalkCode from "../components/WalkCode.astro";
 import ChapterNav from "../components/ChapterNav.astro";
 import CauseIconTile from "../components/CauseIconTile.astro";
+import Tabs from "../components/Tabs.astro";
+import Tab from "../components/Tab.astro";
+import Win from "../components/Win.astro";
+import XPSection from "../components/XPSection.astro";
+import XPLearning from "../components/XPLearning.astro";
+import DataTable from "../components/DataTable.astro";
 ---
 
 <BaseLayout title="REMY.EXE component showcase">
@@ -239,6 +245,165 @@ import CauseIconTile from "../components/CauseIconTile.astro";
 						</svg>
 					</CauseIconTile>
 				</div>
+			</div>
+		</section>
+
+		{/* TABS / TAB / PANELS */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ TABS / TAB / PANELS</h2>
+			<Tabs>
+				<Tab num="01" label="LEVEL 1 START" sub="the why" target="demo-cyan-origin" open />
+				<Tab num="02" label="BOSS FIGHT" sub="the fix" target="demo-cyan-fix" />
+				<Tab num="03" label="INVENTORY" sub="the stack" target="demo-cyan-stack" />
+				<Tab num="04" label="XP GAINED" sub="learnings" target="demo-cyan-xp" />
+			</Tabs>
+			<div class="panels">
+				<Panel id="demo-cyan-origin" num="01" title="LEVEL 1 START" open>
+					<p>Click a tab above to switch panels. Default cyan group.</p>
+				</Panel>
+				<Panel id="demo-cyan-fix" num="02" title="BOSS FIGHT">
+					<p>The fix panel.</p>
+				</Panel>
+				<Panel id="demo-cyan-stack" num="03" title="INVENTORY">
+					<p>The stack panel.</p>
+				</Panel>
+				<Panel id="demo-cyan-xp" num="04" title="XP GAINED">
+					<p>The learnings panel.</p>
+				</Panel>
+			</div>
+			<div data-sig="magenta" class="mt-6">
+				<Tabs>
+					<Tab num="01" label="LEVEL 1 START" sub="the why" target="demo-mag-origin" open />
+					<Tab num="02" label="BOSS FIGHT" sub="the fix" target="demo-mag-fix" />
+					<Tab num="03" label="INVENTORY" sub="the stack" target="demo-mag-stack" />
+					<Tab num="04" label="XP GAINED" sub="learnings" target="demo-mag-xp" />
+				</Tabs>
+				<div class="panels">
+					<Panel id="demo-mag-origin" num="01" title="LEVEL 1 START" open>
+						<p>Magenta group. Independent of the cyan tabs above.</p>
+					</Panel>
+					<Panel id="demo-mag-fix" num="02" title="BOSS FIGHT">
+						<p>The fix panel, magenta sig.</p>
+					</Panel>
+					<Panel id="demo-mag-stack" num="03" title="INVENTORY">
+						<p>The stack panel, magenta sig.</p>
+					</Panel>
+					<Panel id="demo-mag-xp" num="04" title="XP GAINED">
+						<p>The learnings panel, magenta sig.</p>
+					</Panel>
+				</div>
+			</div>
+		</section>
+
+		{/* WIN */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ WIN</h2>
+			<Win>
+				<p>
+					Green-bordered callout. Sibling of Gotcha, opposite mood.
+					Tag uses pixel font, ok-color text.
+				</p>
+			</Win>
+			<Win tag="✓ WIN · CUSTOM TAG">
+				<p>Custom tag string.</p>
+			</Win>
+			<div data-sig="magenta">
+				<Win>
+					<p>
+						Inside <code>[data-sig="magenta"]</code>. Green stays
+						green; Win doesn't reference sig.
+					</p>
+				</Win>
+			</div>
+		</section>
+
+		{/* XPSECTION / XPLEARNING */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ XPSECTION / XPLEARNING</h2>
+			<XPSection heading="▸ AI POWER-UPS" subhead="building with ai">
+				<XPLearning title="SPECIFICITY IS THE PRODUCT">
+					<p>
+						Generic prompts produce generic outputs. The combination
+						of specific signal and tight prompt is what makes the
+						output land.
+					</p>
+				</XPLearning>
+				<XPLearning title="DESCRIBE THE VOICE, NOT THE OUTPUT">
+					<p>
+						Specific examples bias the model. <em>Describing</em>
+						the voice produces sharper output every time.
+					</p>
+					<p>
+						Multi-paragraph learning. Second paragraph follows
+						directly under the same line-height rhythm as the
+						first.
+					</p>
+				</XPLearning>
+			</XPSection>
+			<div data-sig="magenta">
+				<XPSection
+					heading="▸ MAGENTA POWER-UPS"
+					subhead="same component, magenta sig"
+				>
+					<XPLearning title="HEADING AND BULLET FLIP TO MAGENTA">
+						<p>
+							The xp-heading text shadow, the bullet ▸, and any
+							inline <em>em</em> all use the magenta sig.
+						</p>
+					</XPLearning>
+				</XPSection>
+			</div>
+		</section>
+
+		{/* DATATABLE */}
+		<section>
+			<h2 class="font-pixel text-xs text-fg-mid mb-3">▸ DATATABLE</h2>
+			<DataTable>
+				<table>
+					<thead>
+						<tr>
+							<th style="width: 180px">TABLE</th>
+							<th>WHAT IT STORES</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>users</td>
+							<td>
+								Phone, sign, state (awaiting_answer / active),
+								trial_day (0-3).
+							</td>
+						</tr>
+						<tr>
+							<td>nudges</td>
+							<td>
+								Scheduled outbound messages. Phone, sign,
+								send_at timestamp, sent boolean.
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</DataTable>
+			<div data-sig="magenta" class="mt-6">
+				<DataTable>
+					<table>
+						<thead>
+							<tr>
+								<th style="width: 180px">TABLE</th>
+								<th>WHAT IT STORES</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>users</td>
+								<td>
+									Magenta variant. First column flips to
+									magenta, header underline flips too.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</DataTable>
 			</div>
 		</section>
 	</main>

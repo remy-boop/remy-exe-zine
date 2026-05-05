@@ -1,0 +1,51 @@
+---
+---
+
+<nav class="tabs" role="tablist" aria-label="Chapter sections">
+	<slot />
+</nav>
+
+<script>
+	(function () {
+		const groups = document.querySelectorAll<HTMLElement>("nav.tabs");
+		groups.forEach((group) => {
+			const tabs = group.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+			tabs.forEach((tab) => {
+				tab.addEventListener("click", () => activate(tabs, tab));
+				tab.addEventListener("keydown", (e: KeyboardEvent) => {
+					if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+					e.preventDefault();
+					const arr = Array.from(tabs);
+					const i = arr.indexOf(tab);
+					const next =
+						e.key === "ArrowRight"
+							? arr[(i + 1) % arr.length]
+							: arr[(i - 1 + arr.length) % arr.length];
+					next.focus();
+					activate(tabs, next);
+				});
+			});
+		});
+
+		function activate(
+			tabs: NodeListOf<HTMLButtonElement>,
+			clickedTab: HTMLButtonElement,
+		) {
+			const target = clickedTab.dataset.target;
+			tabs.forEach((t) =>
+				t.setAttribute("aria-selected", t === clickedTab ? "true" : "false"),
+			);
+			tabs.forEach((t) => {
+				const id = t.dataset.target;
+				if (!id) return;
+				const panel = document.getElementById(id);
+				if (panel) {
+					panel.setAttribute(
+						"aria-hidden",
+						id === target ? "false" : "true",
+					);
+				}
+			});
+		}
+	})();
+</script>
