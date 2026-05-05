@@ -13,6 +13,8 @@ const chapters = defineCollection({
 		sig: z.enum(["cyan", "magenta", "lime", "orange"]),
 		status: z.enum(["live", "wip", "meta"]),
 		tagline: z.string(),
+		shipped: z.string(),
+		platform: z.string(),
 		prevChapter: z.string().optional(),
 		nextChapter: z.string().optional(),
 	}),
