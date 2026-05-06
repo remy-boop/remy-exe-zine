@@ -1,0 +1,61 @@
+---
+type Status = "live" | "wip" | "meta";
+
+interface Props {
+	num: string;
+	title: string;
+	tagline: string;
+	status: Status;
+	shipped: string;
+	platform: string;
+}
+
+const { num, title, tagline, status, shipped, platform } = Astro.props;
+
+/*
+  Number-to-word kicker: "01" -> "ONE". Pixel font has no built-in pluralizer,
+  so the word form is hardcoded. Issues 02+ extend the table as new chapter
+  numbers ship.
+*/
+const numToWord: Record<string, string> = {
+	"01": "ONE",
+	"02": "TWO",
+	"03": "THREE",
+	"04": "FOUR",
+	"05": "FIVE",
+	"06": "SIX",
+	"07": "SEVEN",
+	"08": "EIGHT",
+	"09": "NINE",
+	"10": "TEN",
+};
+const kickerWord = numToWord[num] ?? num;
+const titleLines = title.split("|");
+const statusLabel = status.toUpperCase();
+---
+
+<section class="chapter-cover">
+	<div class="chapter-kicker">
+		<span class="chapter-num">{num}</span>
+		CHAPTER {kickerWord}
+	</div>
+
+	<h1 class="chapter-title">
+		{titleLines.map((line, i) => (
+			<>
+				{line}
+				{i < titleLines.length - 1 && <br />}
+			</>
+		))}
+	</h1>
+
+	<p class="chapter-tagline">{tagline}</p>
+
+	<div class="chapter-meta">
+		<span class={`status-badge ${status}`}>{statusLabel}</span>
+		<span class="sep">·</span>
+		<span class="meta-txt"><b>shipped:</b> {shipped}</span>
+		<span class="sep">·</span>
+		<span class="meta-txt"><b>platform:</b> {platform}</span>
+	</div>
+</section>

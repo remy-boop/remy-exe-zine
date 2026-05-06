@@ -1,0 +1,603 @@
+---
+chapter: 5
+title: "REMY.EXE|ZINE"
+sig: cyan
+status: live
+tagline: "The chapter about this site. The color system, the typography rules, the 8-bit critter. Why any of this looks the way it does."
+shipped: "Apr 2026"
+platform: "web"
+prevChapter: "app-script-reports"
+---
+
+import Panel from "../../components/Panel.astro";
+import PullQuote from "../../components/PullQuote.astro";
+import Gotcha from "../../components/Gotcha.astro";
+import Win from "../../components/Win.astro";
+import Chip from "../../components/Chip.astro";
+
+<Panel id="p-origin" num="01" title="LEVEL 1 START" open>
+
+I needed a site to document all my AI projects. But I wasn't going to build a run-of-the-mill site. I needed something that oozes personality and my taste, where I could provide creative direction in collaboration with AI to create it.
+
+This is the proof I can not only build functional stuff, but also awesome-looking design.
+
+<PullQuote>
+A site without a point of view is a CV in different fonts.
+</PullQuote>
+
+The framing landed quickly: a zine. Not a portfolio, not a blog, not a Notion page. A digital magazine, with me as editor, writer, designer, and developer. Issues come out at the cadence the work ships. Each chapter documents one project with the same template (LEVEL 1 START / BOSS FIGHT / INVENTORY / XP GAINED) and a different signature color. The whole site is one of the projects. This chapter is the one about how it got built.
+
+</Panel>
+
+<Panel id="p-fix" num="02" title="BOSS FIGHT">
+
+Most websites get built around a content model. You decide what kinds of things go on the site (posts, projects, products), then design a layout that makes those things look right.
+
+This one went the other way. The design language landed first. I wanted the site to feel like a videogame-flavored digital magazine. Pixel fonts where they could carry weight, a serif for body copy, a monospace terminal font for system messages. Signature colors per chapter, like a magazine using a different ink for each section. A pixel-art mascot, because of course.
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ ASTRO + TAILWIND</span>
+  <div class="divider-line"></div>
+</div>
+
+The stack picked itself once the framing was clear.
+
+Astro because the site is content-driven, not app-driven. Each chapter is a markdown document with components inline. Static output, fast loads, no client-side framework runtime to ship. The site is a magazine, not a SPA. Astro is the closest thing to "publishing platform that respects HTML."
+
+Tailwind because the design system needed tokens (signature colors, type scale, spacing rhythm) and Tailwind is the cleanest way to lock those tokens at the config level and reuse them across components without writing CSS files for every variant. The static version of the site was a 60KB single HTML file with a 1,000-line <code>&lt;style&gt;</code> block. Migrating to Tailwind let the same design tokens live in one config file and propagate everywhere.
+
+Other things considered: Next.js (overkill, app-shaped not content-shaped), plain HTML/CSS (the static version, fine until I needed to scale to multiple chapters), Eleventy (good fit, but Astro's component model felt closer to where I wanted the chapter templates to live).
+
+<Gotcha tag="▸ GOTCHA">
+Press Start 2P, the pixel-art font that does most of the loud typography on the site, doesn't have accented character glyphs. When the credits roll spelled my name as <code>RÉMY</code> in the pixel font, the <code>É</code> rendered as a smaller lowercase <code>é</code> from the browser's fallback font, sitting between an uppercase <code>R</code> and <code>MY</code>. It looked like the accent had been dropped in mid-render. The fix was to drop the accent in pixel-font contexts (the credits roll uses <code>REMY</code>) and keep it in body-text contexts where Fraunces handles diacritics fine. Real takeaway: pixel fonts encode the language they're designed for, usually English-only ASCII. Worth checking before falling in love with one.
+</Gotcha>
+
+<Gotcha tag="▸ GOTCHA">
+The first four chapters were built one at a time, each with its full design system embedded in a <code>&lt;style&gt;</code> block at the top of the HTML file. By chapter five, the same 800 lines of CSS had been duplicated five times. Changing the cyan signature color now meant editing five files. Adding a new component meant five edits. The mistake wasn't writing it that way once. The mistake was not stopping at chapter two and pulling the shared rules into a single <code>shared/style.css</code>. The fix was a single extraction pass after all five chapters were homologated, when the design system was finally locked. Lesson: the cost of duplication grows linearly. The cost of extraction stays roughly flat. Extract early, even when "early" feels premature.
+</Gotcha>
+
+</Panel>
+
+<Panel id="p-stack" num="03" title="INVENTORY">
+
+Other chapters' INVENTORY documents the tech behind the project. This one documents the design system the site is built on.
+
+<div class="stack-section">
+  <div class="stack-label">▸ STACK</div>
+  <div class="stack-grid">
+    <Chip role="framework" name="Astro" detail="content-driven · static" cost="Free" costTier="free" />
+    <Chip role="styling" name="Tailwind" detail="design tokens · utility" cost="Free" costTier="free" />
+    <Chip role="dev partner" name="Claude Code" detail="Max plan 5×" cost="Subscription" costTier="paid" />
+    <Chip role="deploy" name="GitHub Pages" detail="push to publish" cost="Free" costTier="free" />
+    <Chip role="source control" name="GitHub" detail="private repo" cost="Free" costTier="free" />
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ CONTENT AND DESIGN SEPARATED</div>
+
+  Every chapter's design lives in one shared stylesheet (<code>shared/style.css</code>). Every chapter's content lives in its own HTML file. Changing a color is a one-line edit in the stylesheet and every chapter, current and future, picks it up. Authoring a new chapter is a content task, not a styling task.
+
+  This separation is the architecture. The marginal cost of adding a new chapter is the cost of writing its content. There's no system-rebuilding tax.
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ TYPOGRAPHY</div>
+  <div class="stack-grid">
+    <div class="chip">
+      <span class="chip-role">display</span>
+      <span class="chip-name" style="font-family: 'Press Start 2P', monospace; font-size: 13px;">PRESS START 2P</span>
+      <span class="chip-detail">pixel · structural</span>
+    </div>
+    <div class="chip">
+      <span class="chip-role">body</span>
+      <span class="chip-name">Fraunces</span>
+      <span class="chip-detail">serif · long-form</span>
+    </div>
+    <div class="chip">
+      <span class="chip-role">system</span>
+      <span class="chip-name" style="font-family: 'VT323', monospace; font-size: 19px;">VT323</span>
+      <span class="chip-detail">mono · captions</span>
+    </div>
+  </div>
+  <p class="comp-caption">Three families, three registers. Pixel for structural elements, serif for body copy, mono for system messages and code.</p>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ SIGNATURE INK</div>
+  <div class="stack-grid">
+    <div class="chip" style="border-top: 4px solid #22d3ee;">
+      <span class="chip-role" style="color: #22d3ee;">cyan</span>
+      <span class="chip-name">Chapters 01, 05</span>
+      <span class="chip-detail">#22d3ee</span>
+    </div>
+    <div class="chip" style="border-top: 4px solid #ff3d8f;">
+      <span class="chip-role" style="color: #ff3d8f;">magenta</span>
+      <span class="chip-name">Chapter 02</span>
+      <span class="chip-detail">#ff3d8f</span>
+    </div>
+    <div class="chip" style="border-top: 4px solid #a3e635;">
+      <span class="chip-role" style="color: #a3e635;">lime</span>
+      <span class="chip-name">Chapter 03</span>
+      <span class="chip-detail">#a3e635</span>
+    </div>
+    <div class="chip" style="border-top: 4px solid #fb923c;">
+      <span class="chip-role" style="color: #fb923c;">orange</span>
+      <span class="chip-name">Chapter 04</span>
+      <span class="chip-detail">#fb923c</span>
+    </div>
+  </div>
+  <p class="comp-caption">Four signature colors used as "ink" per chapter. Cyan repeats across chapters 01 and 05 because there are five chapters and four colors.</p>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ COVER COMPONENTS</div>
+
+  Cover-only UI: components that live on the index page and don't appear inside chapters.
+
+  <div class="comp-block">
+    <span class="comp-tag">MASTHEAD</span>
+    <div class="mast-demo">REMY<br/>.EXE<span class="mast-blink"></span></div>
+    <p class="comp-caption">The giant blocky title with cyan + purple drop-shadow stack and a yellow blinking cursor. Cover-only. Sets the issue's nameplate.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">TLDR-TAG + BIO</span>
+    <div class="tldr-demo">
+      <span class="tldr-tag">TL;DR:</span> <span class="bio-hl">Rémy</span>. Human. Product leader 10+ years. Smash the flashing buttons below for the long version.
+    </div>
+    <p class="comp-caption">Pixel-font yellow <code>TL;DR:</code> tag inline with serif bio prose. Yellow <code>bio-hl</code> spans highlight key terms.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">YELLOW ACCENTS</span>
+    <div class="yellow-accent-demo">
+      The site's argument is that <span class="hl-yellow">taste is the input</span>. AI is the new
+      <em class="hl-yellow-italic">creative technologist</em>. <span class="hl-yellow-bold">The bar moved.</span> This is what crossing it looks like.
+    </div>
+    <p class="comp-caption">Three inline-text variants used inside cover panels. <code>hl-yellow</code> for emphasis, <code>hl-yellow-italic</code> for italic terms, <code>hl-yellow-bold</code> for closer beats with a soft glow.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">YELLOW PULL-QUOTE</span>
+    <div class="pull-quote-yellow">
+      The yellow-bordered variant of the standard pull-quote, used inside cover panels where the cover's accent is yellow instead of a chapter signature ink.
+    </div>
+    <p class="comp-caption">Same shape as the chapter PULL-QUOTE. Yellow border replaces signature-color border. Subtle yellow wash background.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">COVER PANEL BUTTON</span>
+    <div style="padding: 8px 0;">
+      <button class="cover-btn">▸ SAMPLE LABEL</button>
+    </div>
+    <p class="comp-caption">Chunky pixel button with purple chassis and a 3px drop shadow. Idle state pulses subtly via brightness + drop-shadow filter (not box-shadow, so the chassis volume stays intact). On the cover, three of these flash in staggered sequence.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">PILL ROW</span>
+    <div class="pill-row-demo">
+      <a href="#" class="pill active"><span class="num">▸ ISSUE 01</span></a>
+      <span class="pill soon">
+        <span class="num">ISSUE 02</span>
+        <span class="sep">·</span>
+        <span class="label">SOON</span>
+      </span>
+    </div>
+    <p class="comp-caption">Issue selector above the table of contents. Active state filled yellow with a small drop-marker (▾). Soon state ghosted with no hover behavior. Scrolls horizontally if more issues are added.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">YELLOW STRIP</span>
+    <div class="yellow-strip-demo">
+      <span>▸ IN THIS ISSUE</span>
+      <span>05 CHAPTERS</span>
+    </div>
+    <p class="comp-caption">Loud yellow divider above the table of contents. The cover's equivalent of the chapter-level SECTION-DIVIDER, but louder and reserved for one job.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">TASTE-CARD</span>
+    <div class="taste-card-demo">
+      <span class="taste-label">▸ TASTE LABEL</span>
+      <p class="taste-list">A short list of items, separated by periods. Three or four entries usually.</p>
+    </div>
+    <p class="comp-caption">Small card used inside the WHO IS THIS GUY panel for the films / video games / music / books grid. Yellow pixel-label above a serif list.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">GAME BOY VISUALIZER</span>
+    <div style="padding: 18px 0 8px;">
+      <div class="gameboy-demo">
+        <div class="gameboy-screen">
+          <div class="critter"></div>
+        </div>
+      </div>
+    </div>
+    <p class="comp-caption">Static representation. The cover version is a 16×16 dot-matrix grid hosting a 5×5 pixel critter that walks toward the cursor. Built as a canvas animation. The chassis label is baked into the device border.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">INSERT COIN PROMPT</span>
+    <div class="insert-coin-demo">
+      <div class="insert-coin-text">INSERT COIN TO CONTINUE</div>
+      <div class="insert-coin-sub">▸ click anywhere</div>
+    </div>
+    <p class="comp-caption">Boot-prompt overlay that appears the first time the WHY THIS EXISTS panel is opened. Yellow pixel text with a blinking attract-mode animation. Click anywhere to dismiss.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">KONAMI TOAST</span>
+    <div style="padding: 14px 0;">
+      <div class="konami-toast-demo">★ EXTRA LIFE GRANTED</div>
+    </div>
+    <p class="comp-caption">Notification that fires when the Konami code is entered. Slides down from the top of the viewport, holds for ~2s, slides back up.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">ROLL CREDITS BUTTON</span>
+    <div style="padding: 14px 0;">
+      <button class="roll-credits-btn-demo">▸ ROLL CREDITS</button>
+    </div>
+    <p class="comp-caption">The single button at the bottom of the cover. Same chunky pixel-button language as the cover panel buttons. On click, hides the button and plays the credits roll.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">CREDITS ROLL</span>
+    <div style="padding: 14px 0;">
+      <div class="credits-roll-demo">
+        <div class="ch">★ &nbsp; REMY.EXE &nbsp; ★</div>
+        <div class="spc"></div>
+        <div><span class="role">WRITTEN BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+        <div><span class="role">DESIGNED BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+        <div><span class="role">BUILT BY</span> <span class="arrow">▸</span> <span class="name">RÉMY</span></div>
+      </div>
+    </div>
+    <p class="comp-caption">Static frozen frame. The cover version scrolls vertically over 16 seconds with credits, build stack, and special thanks. Loops back to the ROLL CREDITS button when complete.</p>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ CHAPTER COMPONENTS</div>
+
+  The components used inside chapter tabs. Same vocabulary across all chapters, swapping the signature ink per chapter.
+
+  <div class="comp-block">
+    <span class="comp-tag">STAT-ROW</span>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">42%</div>
+        <div class="stat-label">A METRIC<br/>WITH UNITS</div>
+        <div class="stat-context">a one-line context note about where this number comes from</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">3.5×</div>
+        <div class="stat-label">ANOTHER<br/>METRIC</div>
+        <div class="stat-context">describes what the number measures and why it matters</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">~7d</div>
+        <div class="stat-label">A TIME<br/>VALUE</div>
+        <div class="stat-context">duration with a tilde when the number is approximate</div>
+      </div>
+    </div>
+    <p class="comp-caption">Three stat cards in a row. Used in LEVEL 1 START to anchor an industry claim with data.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">CAUSE-GRID</span>
+    <div class="cause-grid">
+      <div class="cause-card">
+        <div class="cause-icon-tile">
+          <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+            <rect x="2" y="2" width="8" height="8" fill="currentColor"/>
+            <rect x="3" y="3" width="6" height="6" fill="var(--bg-deep)"/>
+            <rect x="4" y="4" width="4" height="1" fill="currentColor"/>
+            <rect x="4" y="6" width="4" height="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cause-title">FIRST CAUSE</div>
+          <div class="cause-desc">A short description of one structural reason the problem exists.</div>
+        </div>
+      </div>
+      <div class="cause-card">
+        <div class="cause-icon-tile">
+          <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+            <rect x="1" y="1" width="3" height="3" fill="currentColor"/>
+            <rect x="8" y="1" width="3" height="3" fill="currentColor"/>
+            <rect x="1" y="8" width="3" height="3" fill="currentColor"/>
+            <rect x="8" y="8" width="3" height="3" fill="currentColor"/>
+            <rect x="5" y="5" width="2" height="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cause-title">SECOND CAUSE</div>
+          <div class="cause-desc">Another root cause, explained in one or two short sentences.</div>
+        </div>
+      </div>
+      <div class="cause-card">
+        <div class="cause-icon-tile">
+          <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+            <rect x="2" y="3" width="8" height="6" fill="currentColor"/>
+            <rect x="3" y="4" width="6" height="4" fill="var(--bg-deep)"/>
+            <rect x="5" y="9" width="2" height="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cause-title">THIRD CAUSE</div>
+          <div class="cause-desc">Each card carries a tiny pixel-art icon, a title, and a short description.</div>
+        </div>
+      </div>
+      <div class="cause-card">
+        <div class="cause-icon-tile">
+          <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+            <rect x="5" y="1" width="2" height="10" fill="currentColor"/>
+            <rect x="1" y="5" width="10" height="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cause-title">FOURTH CAUSE</div>
+          <div class="cause-desc">Used in LEVEL 1 START to break a problem into its load-bearing reasons.</div>
+        </div>
+      </div>
+    </div>
+    <p class="comp-caption">2×2 grid with pixel-art icons. Names the structural causes behind the problem the chapter solves.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">FIX-GRID</span>
+    <div class="fix-grid">
+      <div class="fix-card before">
+        <span class="fix-tag">✗ BEFORE</span>
+        The state of the world before the project shipped. Slow, manual, error-prone, expensive, or all four.
+      </div>
+      <div class="fix-card after">
+        <span class="fix-tag">✓ AFTER</span>
+        The state after the project shipped. Faster, lighter, cleaner, automated, or some combination.
+      </div>
+    </div>
+    <p class="comp-caption">A BEFORE/AFTER pair used in BOSS FIGHT. Two cards, one red-bordered, one green-bordered.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">PULL-QUOTE</span>
+    <div class="pull-quote">
+      A line that earned its place. Used at most once per panel. Not every section gets one.
+    </div>
+    <p class="comp-caption">Italic serif callout with a signature-color left border. Reserved for sentences that carry the section.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">SECTION-DIVIDER</span>
+    <div class="section-divider-sample">
+      <div class="divider-line"></div>
+      <span class="divider-label">▸ SECTION LABEL</span>
+      <div class="divider-line"></div>
+    </div>
+    <p class="comp-caption">A horizontal beat with a leading triangle. Breaks long sections into navigable parts. The labels you see throughout this section are SECTION-DIVIDERs.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">GOTCHA</span>
+    <div class="gotcha">
+      <span class="gotcha-tag">▸ GOTCHA</span>
+      <p>A yellow-bordered callout for things that broke in unexpected ways. Used in BOSS FIGHT to flag a non-obvious failure mode and how it got resolved.</p>
+    </div>
+    <p class="comp-caption">The "I didn't see that coming" callout. Yellow border, terminal-monospace tag.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">WIN</span>
+    <div class="win">
+      <span class="win-tag">▸ WIN</span>
+      <p>A green-bordered callout for things that landed well. The mirror of GOTCHA: same shape, opposite mood.</p>
+    </div>
+    <p class="comp-caption">For shipped fixes that worked the first time. Used sparingly, otherwise it loses meaning.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">WALK-STEP</span>
+    <div class="walk-step">
+      <div class="walk-num">1</div>
+      <div>
+        <div class="walk-title">A NUMBERED STEP</div>
+        <div class="walk-desc">A procedural step with a numbered tile, a title in pixel font, and a body in serif. Used when a chapter needs a step-by-step walkthrough.</div>
+        <span class="walk-code">example: terminal command or code line</span>
+      </div>
+    </div>
+    <p class="comp-caption">For ordered procedures. Numbered tile in signature color.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">KB-BLOCK</span>
+    <div style="padding: 8px 0;">
+      <span class="kb-block">
+        <span class="kb">⌘</span>
+        <span class="kb-plus">+</span>
+        <span class="kb">SHIFT</span>
+        <span class="kb-plus">+</span>
+        <span class="kb">P</span>
+      </span>
+    </div>
+    <p class="comp-caption">Keyboard shortcut renders. Skeuomorphic pixel-key style. Used inline in walkthroughs and tips.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">OAUTH-PILLS</span>
+    <div class="oauth-pills">
+      <span class="oauth-pill">App</span>
+      <span class="oauth-arrow">▸</span>
+      <span class="oauth-pill">Provider</span>
+      <span class="oauth-arrow">▸</span>
+      <span class="oauth-pill">Token</span>
+      <span class="oauth-arrow">▸</span>
+      <span class="oauth-pill">API</span>
+    </div>
+    <p class="comp-caption">A horizontal chain of provider pills with arrows. Used to show auth flows or service handoff sequences.</p>
+  </div>
+
+  <div class="comp-block">
+    <span class="comp-tag">DATA-TABLE</span>
+    <table class="data-table-demo">
+      <thead>
+        <tr>
+          <th>COLUMN A</th>
+          <th>COLUMN B</th>
+          <th>COLUMN C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>row one</td><td>value</td><td>note</td></tr>
+        <tr><td>row two</td><td>value</td><td>note</td></tr>
+        <tr><td>row three</td><td>value</td><td>note</td></tr>
+      </tbody>
+    </table>
+    <p class="comp-caption">For tabular data. Pixel-font headers in signature color, serif rows. Has a <code>.sources</code> variant for crediting where the numbers came from.</p>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ EDITORIAL RULES</div>
+  <ul class="personality-list">
+    <li><b>No em-dashes.</b> Anywhere in body copy. Periods, commas, parentheses, semicolons instead. Em-dashes are a known AI-writing tell.</li>
+    <li><b>First-person singular.</b> Everything written from "I." No "we," no "the team."</li>
+    <li><b>Tab subtitles are fixed.</b> <em>the why</em> / <em>the fix</em> / <em>the stack</em> / <em>learnings</em>. Same in every chapter.</li>
+    <li><b>Industry-then-project structure</b> in LEVEL 1 START when applicable. Industry framing first, then <code>▸ AT [PROJECT]</code> divider, then project-specific framing.</li>
+    <li><b>Status tags.</b> <code>LIVE</code> for everything currently shipping. <code>WIP</code> for genuinely in-progress chapters that should be readable but flagged.</li>
+  </ul>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ PERSONALITY</div>
+  <ul class="personality-list">
+    <li><b>The 5×5 pixel critter</b> on the cover, walking around its dot-matrix display when the cursor moves. Built as a canvas animation.</li>
+    <li><b>The staggered button flash</b> on the cover, cycling left to right through the three panel buttons. Game Boy boot-attract-mode vibe.</li>
+    <li><b>The issue pill row</b> above the contents. <code>▸ ISSUE 01</code> active, <code>ISSUE 02 · SOON</code> ghosted.</li>
+    <li><b>The INSERT COIN prompt</b> that appears the first time you click into WHY THIS EXISTS. Click anywhere to dismiss.</li>
+    <li><b>The Konami code easter egg</b> (<code>↑ ↑ ↓ ↓ ← → ← → B A</code>) hinted at the bottom of the WHO IS THIS GUY panel. Triggers an <code>EXTRA LIFE GRANTED</code> toast.</li>
+    <li><b>The ROLL CREDITS button</b> at the bottom of the cover. Scrolls a 16-second pixel-art credits roll.</li>
+  </ul>
+  <p class="comp-caption">Optional layer. The site works without any of it. They're there because a magazine without personality is a directory.</p>
+</div>
+
+</Panel>
+
+<Panel id="p-xp" num="04" title="XP GAINED">
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+    <div class="xp-subhead">building with ai</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">MOCKUPS BEFORE PROMPTS</div>
+        <p class="xp-learning-desc">When building visual UI with AI, sketching the screen as text-only first (just labels and arrows on a page, no pixels) gets dramatically better results than describing it in prose. The AI can see the information architecture before it has to invent layout. Skip the IA step and the AI fills the gap with whatever generic SaaS pattern is statistically average.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">DESIGN LANGUAGE AS A BRIEF</div>
+        <p class="xp-learning-desc">Loading the AI with the design tokens, font choices, signature colors, and editorial rules upfront means every component request lands in the same visual register. Without that, components drift toward whatever framework the AI saw most often. Front-load the brief, save hours of back-and-forth corrections.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">SHOW, DON'T TELL</div>
+        <p class="xp-learning-desc">Pasting an existing component as a reference produces faster, more accurate variants than describing one from scratch. The AI is much better at "make this but for that case" than at "build me a card with these properties." Use the components you already have as the language.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">AI WON'T VOLUNTEER ARCHITECTURE</div>
+        <p class="xp-learning-desc">When you're shipping fast with AI, it ships fast with you. It will happily duplicate a 1,000-line stylesheet across five files if you ask it to build five files. It will not interrupt the flow to say "this is going to be painful in three months." That's the human's job. The lesson: at every milestone (second chapter, third feature, second similar component), pause and explicitly ask the AI to flag any structural decisions you're about to lock in by default. Otherwise you'll keep shipping and accumulate debt that only becomes visible when scale forces a refactor.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+    <div class="xp-subhead">product thinking</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">THE WRAPPER IS A PRODUCT</div>
+        <p class="xp-learning-desc">Most PMs treat their portfolio as a packaging exercise: pick a template, drop in case studies, ship. Treating the wrapper as one of the projects forces the same product thinking on it (audience, frame, point of view) and that thinking is what makes the difference between a fungible site and a memorable one.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">A SYSTEM IS CHEAPER THAN A PAGE</div>
+        <p class="xp-learning-desc">Building chapter 01 took longer than chapters 02-05 combined, because the first chapter had to invent the template every other chapter would inherit. The right unit of work was always the system, not the page. Same lesson that applies to building products: the second feature is cheap if the first one was built right.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+    <div class="xp-subhead">development learnings</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">SEPARATE FORMAT FROM CONTENT</div>
+        <p class="xp-learning-desc">Tailwind utility classes locked the design tokens at the config level so individual components don't carry their own styling state. Migrating from a 1,000-line <code>&lt;style&gt;</code> block to Tailwind config wasn't refactoring. It was finally putting the design system in its own layer, where editing tokens means everything downstream updates without touching component markup.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">MARKDOWN IS THE RIGHT BACKEND</div>
+        <p class="xp-learning-desc">Each chapter as a markdown file with components inline is the right separation. The writing lives in plain text. The styling lives in components. Authoring a new chapter doesn't require touching CSS, and refactoring a component doesn't require touching prose. Every CMS gets re-invented to recover this property.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">CLAUDE CODE FOR REPETITION, ME FOR DECISIONS</div>
+        <p class="xp-learning-desc">Once the design system was locked, building a new chapter was a Claude Code task: feed the existing template, paste the chapter's content, run. The hours that would have gone into typing went into the decisions that mattered: which fonts, which colors, which copy, which gotcha to document. Right division of labor.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+    <div class="xp-subhead">future iterations</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">ISSUE 02 AS THE TEST</div>
+        <p class="xp-learning-desc">The real test of whether the system works is shipping issue 02. If new chapters in issue 02 take meaningfully less time than chapters in issue 01, the system earned itself. If not, the design language is doing less work than it looks like.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">DARK MODE / LIGHT MODE SWITCHER</div>
+        <p class="xp-learning-desc">Currently dark-mode-only. A light-mode variant would test how robust the design tokens really are. Most design systems break under inversion because too many components hardcode their colors instead of referencing tokens. Worth shipping as a forcing function on cleanup.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">A REAL MASCOT NAME</div>
+        <p class="xp-learning-desc">Still no name for the critter. Submission rules are out (LinkedIn, under 8 chars, pronounceable). When the right one shows up, ship it.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">INTERACTIVE COMPONENT DOCS</div>
+        <p class="xp-learning-desc">This INVENTORY section is a static documentation page. A version where each component is editable in-place, with the prop interface visible, would make handoff to a real dev team trivial. Storybook-shaped, but living inside the zine.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+</Panel>

@@ -1,0 +1,38 @@
+---
+interface Props {
+	prevHref?: string;
+	prevLabel?: string;
+	prevDir?: string;
+	nextHref?: string;
+	nextLabel?: string;
+	nextDir?: string;
+}
+
+const {
+	prevHref,
+	prevLabel,
+	prevDir = "PREV CHAPTER",
+	nextHref,
+	nextLabel,
+	nextDir = "NEXT CHAPTER",
+} = Astro.props;
+---
+
+<nav class="chapter-nav" aria-label="Chapter navigation">
+	{prevHref ? (
+		<a href={prevHref} class="prev">
+			<span class="nav-dir">{prevDir}</span>
+			<span><span class="nav-arrow">◂</span> {prevLabel}</span>
+		</a>
+	) : (
+		<span></span>
+	)}
+	{nextHref ? (
+		<a href={nextHref} class="next">
+			<span class="nav-dir">{nextDir}</span>
+			<span>{nextLabel} <span class="nav-arrow">▸</span></span>
+		</a>
+	) : (
+		<span></span>
+	)}
+</nav>

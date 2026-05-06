@@ -1,0 +1,620 @@
+---
+chapter: 3
+title: "WAVELENGTH"
+sig: lime
+status: live
+tagline: "A longitudinal RAG that builds a running model of your music taste, week over week, using behavioral signals instead of manual inputs."
+shipped: "Apr 2026"
+platform: "web"
+prevChapter: "horoscope-roast-bot"
+nextChapter: "app-script-reports"
+---
+
+import Panel from "../../components/Panel.astro";
+import PullQuote from "../../components/PullQuote.astro";
+import Gotcha from "../../components/Gotcha.astro";
+import Win from "../../components/Win.astro";
+import Shot from "../../components/Shot.astro";
+import Chip from "../../components/Chip.astro";
+import CauseIconTile from "../../components/CauseIconTile.astro";
+
+<Panel id="p-origin" num="01" title="LEVEL 1 START" open>
+
+After shipping the Roast Bot, I was figuring out what to build next. Claude pushed back: stop building tools that wrap AI and build something that *is* the AI. Not a chatbot with a clever prompt. A system that learns about a specific person over time, updates its own assumptions, and gets measurably smarter each week. The kind of thing most people say AI can do but almost nobody actually builds.
+
+That challenge came with a framework for thinking about where it sits relative to what most "AI products" actually are.
+
+<div class="ai-stages">
+  <div class="ai-stage">
+    <div class="ai-stage-num">01</div>
+    <div class="ai-stage-label">DUMB PROMPT</div>
+    <div class="ai-stage-desc">ask AI, get answer. no memory, no learning, no feedback loop</div>
+    <div class="ai-stage-arrow">▶</div>
+  </div>
+  <div class="ai-stage active">
+    <div class="ai-stage-num">02</div>
+    <div class="ai-stage-label">LONGITUDINAL RAG</div>
+    <div class="ai-stage-desc">behavioral data feeds a model that persists and updates week over week</div>
+    <div class="ai-stage-arrow">▶</div>
+  </div>
+  <div class="ai-stage">
+    <div class="ai-stage-num">03</div>
+    <div class="ai-stage-label">CLOSED LOOP</div>
+    <div class="ai-stage-desc">system measures against targets and adjusts its own strategy when it fails</div>
+    <div class="ai-stage-arrow">▶</div>
+  </div>
+  <div class="ai-stage">
+    <div class="ai-stage-num">04</div>
+    <div class="ai-stage-label">AGENTIC</div>
+    <div class="ai-stage-desc">fully autonomous optimization. the system rewrites its own directives</div>
+  </div>
+</div>
+
+Most products calling themselves "AI" live at stage one. The goal was to build stage two and understand what that actually requires in practice. Music was the right domain for that, since I work in the music industry and the problem was visible every day.
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ HOW RECOMMENDATIONS WORK TODAY</span>
+  <div class="divider-line"></div>
+</div>
+
+Every major music app runs a version of the same approach. Either collaborative filtering ("users like you are listening to this") or a dumb prompt that asks an AI what fits a genre label. Both put you in a bucket. Neither builds a model of you.
+
+The bucket knows what people in your cluster stream. It doesn't know that you skipped the third track at 9% completion, then went looking for that same artist three days later on your own. It doesn't know that you replay certain tracks eleven times in a row at midnight on headphones and never touch them again the next morning. It doesn't update when it's wrong about you.
+
+<div class="stat-row">
+  <div class="stat-card">
+    <div class="stat-num">~70%</div>
+    <div class="stat-label">OF STREAMS ARE ALGORITHM-DRIVEN</div>
+    <div class="stat-context">on major platforms, leaving little room for genuine discovery</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">10x</div>
+    <div class="stat-label">MORE SIGNAL IN A SKIP THAN A COMPLETE</div>
+    <div class="stat-context">a skip at 9% tells you more than a passive background completion</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">0</div>
+    <div class="stat-label">PLATFORMS THAT MODEL WHY YOU REPLAYED</div>
+    <div class="stat-context">repeat behavior is the clearest taste signal and nobody tracks it</div>
+  </div>
+</div>
+
+<div class="cause-grid">
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1"/>
+        <rect x="3" y="3" width="6" height="6" fill="currentColor" opacity="0.4"/>
+        <rect x="5" y="5" width="2" height="2" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">POPULATION MODELS</div>
+      <p class="cause-desc">Collaborative filtering finds people like you. It doesn't model you. Your taste gets averaged into a cluster, not understood as an individual.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <line x1="1" y1="11" x2="4" y2="5" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="4" y1="5" x2="7" y2="8" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="7" y1="8" x2="11" y2="2" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="1" cy="11" r="1" fill="currentColor"/>
+        <circle cx="11" cy="2" r="1" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">NO LONGITUDINAL MEMORY</div>
+      <p class="cause-desc">Each week's playlist is generated fresh. The system doesn't know that you rejected last week's picks but loved the post-hardcore track buried at position 9.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="4" width="3" height="7" fill="currentColor" opacity="0.5"/>
+        <rect x="5" y="2" width="3" height="9" fill="currentColor" opacity="0.7"/>
+        <rect x="9" y="6" width="2" height="5" fill="currentColor" opacity="0.4"/>
+        <line x1="1" y1="3" x2="11" y2="1" stroke="currentColor" stroke-width="1" stroke-dasharray="2 1"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">GENRE AS THE UNIT</div>
+      <p class="cause-desc">Genre labels are the wrong abstraction. A listener who loves Caribou and Dance Gavin Dance doesn't share a genre. They share a production relationship to complexity and texture.</p>
+    </div>
+  </div>
+  <div class="cause-card">
+    <CauseIconTile>
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="6" cy="6" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="6" y1="6" x2="6" y2="2" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="6" y1="6" x2="9" y2="7" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="6" cy="6" r="1" fill="currentColor"/>
+      </svg>
+    </CauseIconTile>
+    <div class="cause-body">
+      <div class="cause-title">CONTEXT BLINDNESS</div>
+      <p class="cause-desc">Platforms don't model listening context. The same person listens differently at midnight on headphones versus a weekend afternoon on a speaker. Same taste, different formula.</p>
+    </div>
+  </div>
+</div>
+
+<PullQuote>"You can't always put words to why a track hit. Wavelength doesn't need you to. It tracks the behavioral patterns — what you played, skipped, replayed, and came back to on your own — and builds its model from those."</PullQuote>
+
+The model doesn't learn from amounts of data. It learns from contrasts. You always listen to this type of track at 11pm. You complete these artists organically but skip them when they're recommended. You replayed that track nine times last Tuesday and haven't touched it since. Those contrasts are the signal. Genre labels are not.
+
+</Panel>
+
+<Panel id="p-fix" num="02" title="BOSS FIGHT">
+
+I was building a longitudinal RAG system (retrieval-augmented generation: the AI reads your actual behavioral data at generation time instead of relying on training knowledge alone). The question wasn't what to build. It was what that actually requires to work: a behavioral data layer that captures more than completions, a hypothesis layer that persists and updates across weeks, and an evaluation layer that makes it possible to tell if week 3 is actually better than week 1.
+
+Longitudinal means that data accumulates across weeks, not just sessions. Each generation reads everything that came before it and updates a standing model of who you are as a listener.
+
+<div class="fix-grid">
+  <div class="fix-card before">
+    <span class="fix-tag">✗ BEFORE</span>
+    Recommendation engines that generate fresh picks each week with no memory of what was rejected, no model of why things worked, and no way to tell if week 3 is actually better than week 1.
+  </div>
+  <div class="fix-card after">
+    <span class="fix-tag">✓ AFTER</span>
+    A longitudinal RAG pipeline that extracts behavioral signals, updates a hypothesis set that persists and refines across weeks, verifies every track against an external music database, and measures performance per generated playlist.
+  </div>
+</div>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">▸ THE BUILD</span>
+  <div class="divider-line"></div>
+</div>
+
+The first constraint was practical: no music catalog, no player. Building a streaming player was out of scope. The goal was the recommendation engine. So the first thing built was a way to simulate listening behavior without one.
+
+<div class="shot-section">
+  <div class="shot-label">▸ THE INTERFACE</div>
+  <div class="shot-grid">
+    <Shot
+      src="ch03-main-page.png"
+      alt="Wavelength main page — playlist view with week navigation and generate button"
+      label="MAIN PAGE"
+      caption="playlist view, week navigation, generate button. the entry point to the whole system."
+    />
+  </div>
+</div>
+
+The solution was a parser system. A structured plain text format was defined with 25 event types covering plays, skips, completes, replays, likes, and session context. A listening week could be authored as a text document and ingested through the log page. The parser validates every line, assigns session references by slot number, and writes to the database. No player needed.
+
+<div class="shot-section">
+  <div class="shot-label">▸ THE PARSER</div>
+  <div class="shot-grid">
+    <Shot
+      src="ch03-log-input.png"
+      alt="Log page session input — structured text format with event types per line"
+      label="SESSION INPUT"
+      caption="structured text format with 25 event types. timestamps, device, source, and events per line."
+    />
+    <Shot
+      src="ch03-log-parsed.png"
+      alt="Log page after parsing — session validated, events counted, errors flagged"
+      label="PARSED AND CONFIRMED"
+      caption="session validated, events counted, errors flagged. confirm to write to database."
+    />
+  </div>
+</div>
+
+With behavioral data ingested, the generation pipeline could run. Seven stages, one button. Extract reads all player events and produces behavioral signals. Hypotheses takes those signals and updates the standing model. Constraints builds the exclusion lists. Select makes two Claude calls: one to nominate 20 artists, one curator call to pick the single best track per artist. Verify checks every candidate against MusicBrainz. Sequence arranges the final 10 as an emotional arc. Snapshot writes the closing week metrics.
+
+<div class="shot-section">
+  <div class="shot-grid">
+    <Shot
+      src="ch03-playlist-week.png"
+      alt="Generated playlist for a week with 10 tracks and curator reasoning per track"
+      label="GENERATED PLAYLIST"
+      caption="10 tracks, position, curator reasoning per track. week navigation across all generated playlists."
+    />
+  </div>
+</div>
+
+The curator call is where the product thinking lives. Rather than picking the most popular track by an artist, the system asks: given that this listener replays tracks with a slow build and a hard payoff, given they listen on headphones late at night, given they skipped the obvious single, which specific track by this artist actually fits? Claude is briefed with the full behavioral profile and held accountable for the pick.
+
+The hypothesis layer is the core of what makes this different from a dumb prompt. Before any generation, the system updates a set of falsifiable claims about the listener: "prefers post-hardcore in focused late-night sessions." Each claim has a status (active, confirmed, disconfirmed, or refined) and gets tested against what the listener actually did the following week. Eight structured directives determine how those updates fire, in what order, and when evidence overrides assumption. The directives are the architecture: they determine what gets prioritized, what gets ignored, and what constitutes a contradiction. Getting them wrong shows up as subtle drift, weeks later, in the wrong direction.
+
+<div class="shot-section">
+  <div class="shot-label">▸ THE DEBUG MODE</div>
+  <div class="shot-grid">
+    <Shot
+      src="ch03-debug-week1.png"
+      alt="Debug page for week 1 — extracted signals, hypothesis state, candidates before sequencing"
+      label="WEEK 1 DEBUG"
+      caption="extracted signals, hypothesis state at generation time, candidates before sequencing."
+    />
+    <Shot
+      src="ch03-debug-week3.png"
+      alt="Debug page for week 3 — hypotheses now confirmed, refined, or disconfirmed"
+      label="WEEK 3 EVOLUTION"
+      caption="same hypotheses now confirmed, refined, or disconfirmed. the model has updated its beliefs."
+    />
+  </div>
+</div>
+
+The analytics page closed the loop. Completion rate, replay rate, save rate, and hypothesis confirmation rate per generated week. If week 3 is actually better than week 1, these numbers show it.
+
+<div class="shot-section">
+  <div class="shot-grid">
+    <Shot
+      src="ch03-eval-metrics.png"
+      alt="Eval page — week-over-week metrics with trend deltas"
+      label="EVAL PAGE"
+      caption="week-over-week metrics with trend deltas. the model's self-assessment made visible."
+    />
+  </div>
+</div>
+
+<Gotcha tag="⚠ GOTCHA · THE SELECT CALL WAS DOING TWO JOBS">
+The first build used a single Claude call to generate 20 candidate tracks, artist and track title in one shot. The result was correct artists with hallucinated track titles for niche acts. Dance Gavin Dance appeared with track names that don't exist. Propaganda appeared with fabricated titles. The fix was splitting the call in two: Call 1a nominates artists, Call 1b is a separate curator call that picks the specific track per artist from its own musical knowledge, held accountable for the pick. Hallucinations dropped by over 75%.
+</Gotcha>
+
+<Gotcha tag="⚠ GOTCHA · RECOMMENDED AFFINITY VS ARTIST SELECTION">
+When a track from the generated playlist gets replayed, that's a curatorial win. The first build fed those signals back into the artist selection call. The problem showed up in later weeks: signals showing the model working in indie electronic kept nominating more indie electronic artists, while post-hardcore and hip hop signals were growing stronger in organic sessions and never breaking through into the playlist. The fix was separating the concerns. Recommended affinity only informs which track to pick for an already-nominated artist. Artist nomination is driven by organic behavior and skip signals only.
+</Gotcha>
+
+<Win tag="✓ WIN · HYPOTHESIS CONFIRMATION RATE SHIPPED">
+The eval page tracks hypothesis confirmation rate alongside completion, replay, and save rate. When the rate trends up, the model's assumptions about the listener are getting more accurate. When it drops, the model got something wrong and the directives correct it in the next generation. A recommendation engine that measures whether its beliefs about you are improving is a different product than one that just keeps predicting.
+</Win>
+
+</Panel>
+
+<Panel id="p-stack" num="03" title="INVENTORY">
+
+Free-tier where it works, paid for what matters.
+
+<div class="stack-section">
+  <div class="stack-label">▸ EQUIPMENT</div>
+  <div class="stack-grid">
+    <Chip role="server" name="Render" detail="Node.js 18 + TypeScript" cost="Free" costTier="free" />
+    <Chip role="database" name="Neon" detail="Postgres 17 · 9 tables" cost="Free" costTier="free" />
+    <Chip role="ai" name="Anthropic" detail="Claude Sonnet · 3 calls/run" cost="~$0.05/week" costTier="paid" />
+    <Chip role="verification" name="MusicBrainz" detail="track verification · free API" cost="Free" costTier="free" />
+    <Chip role="source control" name="GitHub" detail="push to auto deploy" cost="Free" costTier="free" />
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ PIPELINE ARCHITECTURE</div>
+  <div class="diagram-container">
+    <svg viewBox="0 0 680 860" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <rect x="200" y="20" width="280" height="48" rx="6" fill="#12102a" stroke="#3d3560" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="40" text-anchor="middle">player_events</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#8e86ae" x="340" y="58" text-anchor="middle">plays · skips · replays · likes</text>
+      <line x1="340" y1="68" x2="340" y2="94" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="96" width="360" height="56" rx="6" fill="#4d7c0f" fill-opacity="0.2" stroke="#a3e635" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="118" text-anchor="middle">1 · extract.ts</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#a3e635" x="340" y="138" text-anchor="middle">Claude reads events → 5–15 behavioral signals</text>
+      <line x1="340" y1="152" x2="340" y2="178" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="180" width="360" height="56" rx="6" fill="#4d7c0f" fill-opacity="0.2" stroke="#a3e635" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="202" text-anchor="middle">2 · hypotheses.ts</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#a3e635" x="340" y="222" text-anchor="middle">signals + DB → confirmed / disconfirmed / refined</text>
+      <line x1="340" y1="236" x2="340" y2="262" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="264" width="360" height="56" rx="6" fill="#2a2450" stroke="#7c6fcd" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="286" text-anchor="middle">3 · constraints.ts</text>
+      <text font-family="VT323, monospace" font-size="14" fill="#a89cf0" x="340" y="306" text-anchor="middle">blocklists · skip threshold · anchor track</text>
+      <line x1="340" y1="320" x2="340" y2="346" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="348" width="360" height="76" rx="6" fill="#0e7490" fill-opacity="0.2" stroke="#22d3ee" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="370" text-anchor="middle">4 · select.ts</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="340" y="388" text-anchor="middle">Call 1a: signals → 20 artists nominated</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="340" y="406" text-anchor="middle">Call 1b: curator picks best track per artist</text>
+      <line x1="340" y1="424" x2="340" y2="450" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="452" width="360" height="68" rx="6" fill="#78350f" fill-opacity="0.3" stroke="#f59e0b" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="474" text-anchor="middle">5 · verify.ts</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#f59e0b" x="340" y="492" text-anchor="middle">MusicBrainz · score ≥80 · 20 candidates in</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#f59e0b" x="340" y="508" text-anchor="middle">{`fail → getAlternativeTrack() → retry once`}</text>
+      <line x1="340" y1="520" x2="340" y2="546" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="548" width="360" height="68" rx="6" fill="#0e7490" fill-opacity="0.2" stroke="#22d3ee" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="570" text-anchor="middle">6 · sequence.ts</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="340" y="588" text-anchor="middle">verified pool → 10 tracks as emotional arc</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#22d3ee" x="340" y="606" text-anchor="middle">DJ logic · ISO phase · max 2 per artist</text>
+      <line x1="340" y1="616" x2="340" y2="642" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="200" y="644" width="280" height="48" rx="6" fill="#12102a" stroke="#3d3560" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="664" text-anchor="middle">recommendations</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#8e86ae" x="340" y="682" text-anchor="middle">10 tracks · position · reasoning · week_of</text>
+      <line x1="340" y1="692" x2="340" y2="718" stroke="#beb4d8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+      <rect x="160" y="720" width="360" height="56" rx="6" fill="#7c2d12" fill-opacity="0.3" stroke="#ef4444" stroke-width="1.5"/>
+      <text font-family="Press Start 2P, monospace" font-size="10" font-weight="700" fill="#ece4ff" x="340" y="742" text-anchor="middle">7 · snapshot.ts</text>
+      <text font-family="VT323, monospace" font-size="13" fill="#ef4444" x="340" y="762" text-anchor="middle">completion · replay · save · hyp_confirmation</text>
+      <path d="M160 748 L80 748 L80 44 L200 44" fill="none" stroke="#3d3560" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowW)"/>
+      <text font-family="VT323, monospace" font-size="13" fill="#55507a" x="40" y="400" text-anchor="middle" transform="rotate(-90 40 400)">longitudinal loop · week N+1 reads slot N</text>
+      <text font-family="Press Start 2P, monospace" font-size="8" fill="#55507a" x="340" y="840" text-anchor="middle">WAVELENGTH · PIPELINE ARCHITECTURE</text>
+    </svg>
+  </div>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-swatch" style="background:#a3e635"></span> Claude analysis</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#22d3ee"></span> Claude generation</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#f59e0b"></span> External API</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#ef4444"></span> DB write</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:#2a2450;border:2px solid #7c6fcd"></span> Data / blocklist</span>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ STEP-BY-STEP WALKTHROUGH</div>
+
+  End-to-end from player events to a verified, sequenced playlist.
+
+  <div class="walkthrough">
+    <div class="walk-step">
+      <div class="walk-num">1</div>
+      <div class="walk-body">
+        <div class="walk-title">USER LOGS A WEEK OF LISTENING</div>
+        <div class="walk-desc">Player events are submitted through the log page using a structured plain text format. Each session block has a timestamp, device, and source. The parser validates all 25 event types and assigns <code>session_ref</code> by slot number, not date.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">25 event types</span>
+          <span class="walk-tag">source: recommended / organic / playlist</span>
+          <span class="walk-tag">device: headphones / speaker</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">2</div>
+      <div class="walk-body">
+        <div class="walk-title">EXTRACT READS ALL EVENTS AND PRODUCES SIGNALS</div>
+        <div class="walk-desc">Claude reads the full event log including seed and live sessions. Output is 5-15 behavioral signals. Skip signals name specific artists and tracks. Non-English affinity and era signals are protected and cannot be dropped when the list is trimmed.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">skip_pattern</span>
+          <span class="walk-tag">recommended_affinity</span>
+          <span class="walk-tag">non_english_affinity</span>
+          <span class="walk-tag">era_affinity</span>
+          <span class="walk-tag">repeat_behaviour</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">3</div>
+      <div class="walk-body">
+        <div class="walk-title">HYPOTHESES UPDATES THE LONGITUDINAL MODEL</div>
+        <div class="walk-desc">Eight directives fire in order before any update. Skip signals override completion signals. Organic behavior confirms; recommended behavior tests. A genre hypothesis can only be disconfirmed if the listener rejects it in organic sessions, not just on recommended tracks. Multi-genre listeners get a meta-hypothesis instead of competing per-genre claims.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">confirmed</span>
+          <span class="walk-tag">disconfirmed</span>
+          <span class="walk-tag">refined</span>
+          <span class="walk-tag">meta-hypothesis</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">4</div>
+      <div class="walk-body">
+        <div class="walk-title">SELECT MAKES TWO CLAUDE CALLS</div>
+        <div class="walk-desc">Call 1a nominates 20 artists using strict behavioral directives. Recommended affinity signals are excluded here to prevent the model from doubling down on what already worked and ignoring underserved organic preferences. Call 1b is the curator: given the 20 artists and the listener's full behavioral profile, it picks the single best track per artist. No era bias. No popularity defaults.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">skip signals first</span>
+          <span class="walk-tag">organic over recommended</span>
+          <span class="walk-tag">era and language both required</span>
+          <span class="walk-tag">max 2 per artist</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">5</div>
+      <div class="walk-body">
+        <div class="walk-title">VERIFY CHECKS EVERY CANDIDATE AGAINST MUSICBRAINZ</div>
+        <div class="walk-desc">Each of the 20 candidates is checked against the MusicBrainz recordings API. Score threshold is 80. 1100ms rate limit between calls. If a track fails, <code>getAlternativeTrack()</code> calls Claude for a different known track by the same artist and retries once before dropping the artist entirely. All failures are logged to <code>hallucination_log</code>.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">score ≥80 to pass</span>
+          <span class="walk-tag">cached in tracks table</span>
+          <span class="walk-tag">retry helper on fail</span>
+          <span class="walk-tag">pipeline fails if verified &lt; 10</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">6</div>
+      <div class="walk-body">
+        <div class="walk-title">SEQUENCE BUILDS THE EMOTIONAL ARC</div>
+        <div class="walk-desc">Claude takes the verified pool (typically 16-20 tracks) and selects and orders the final 10 as a playlist arc. ISO phase principle: the opening matches the listener's current energy, then moves them. Skipped artists from recommended sessions go to positions 6-10. Max two tracks per artist.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">DJ logic</span>
+          <span class="walk-tag">ISO phase</span>
+          <span class="walk-tag">skips to positions 6-10</span>
+        </div>
+      </div>
+    </div>
+    <div class="walk-step">
+      <div class="walk-num">7</div>
+      <div class="walk-body">
+        <div class="walk-title">SNAPSHOT WRITES CLOSING WEEK METRICS</div>
+        <div class="walk-desc">After hypotheses update and before sequencing, <code>snapshot.ts</code> writes the closing week eval metrics to <code>pipeline_snapshots</code>. Slot-scoped logic: <code>session_ref week-N</code> matches slot N recommendations, not a date window. The eval page reads directly from snapshots.</div>
+        <div class="walk-tags">
+          <span class="walk-tag">completion_rate</span>
+          <span class="walk-tag">replay_rate</span>
+          <span class="walk-tag">save_rate</span>
+          <span class="walk-tag">hypothesis_confirmation_rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ THE PIPELINE FILES</div>
+
+  The AI behavior in Wavelength isn't in a single model or a single prompt. It lives across seven TypeScript files, each responsible for one stage of the generation. These are the documents the system reads, writes, and updates to know who you are as a listener.
+
+  <div class="kb-block">
+    <div class="kb-title">extract.ts</div>
+    <div class="kb-desc">Reads all player events and asks Claude to extract 5-15 behavioral signals. Skip signals name specific artists and tracks. Non-English affinity and era affinity are protected signal types; they can never be dropped when the list is trimmed. This file determines what the system notices about you.</div>
+  </div>
+
+  <div class="kb-block">
+    <div class="kb-title">hypotheses.ts</div>
+    <div class="kb-desc">Takes the extracted signals and updates the standing model of the listener. Eight structured directives determine how updates fire: what counts as a contradiction, when to disconfirm versus refine, how multi-genre listeners get represented. This file determines what the system believes about you and how willing it is to change its mind.</div>
+  </div>
+
+  <div class="kb-block">
+    <div class="kb-title">select.ts</div>
+    <div class="kb-desc">Two Claude calls. The first nominates 20 artists using a strict behavioral hierarchy: skip signals first, organic sessions over recommended, language and era both required for non-English picks. The second is the curator call: given the 20 artists and the listener's full profile, it picks the single best track per artist with no era bias and no popularity defaults. This file determines what you hear.</div>
+  </div>
+
+  <div class="kb-block">
+    <div class="kb-title">verify.ts</div>
+    <div class="kb-desc">Checks every candidate against the MusicBrainz public API. Score threshold of 80 to pass. When a title fails, a helper calls Claude for a different track by the same artist that it's certain about, then retries once before dropping the artist. All failures are logged with the exact strings that failed. This file keeps the system honest.</div>
+  </div>
+
+  <div class="kb-block">
+    <div class="kb-title">sequence.ts</div>
+    <div class="kb-desc">Takes the verified pool (typically 16-20 tracks) and sequences the final 10 as an emotional arc. ISO phase principle: the opening matches the listener's current energy, then moves them. Skipped artists from recommended sessions go to positions 6-10. Max two tracks per artist. This file determines the listening experience.</div>
+  </div>
+
+  <div class="kb-block">
+    <div class="kb-title">snapshot.ts</div>
+    <div class="kb-desc">Written after hypotheses update and before sequencing. Stores the closing week eval metrics: completion rate, replay rate, save rate, hypothesis confirmation rate. Uses slot-scoped logic, no date arithmetic. The eval page reads directly from snapshots. This file measures whether any of it is working.</div>
+  </div>
+</div>
+
+<div class="stack-section">
+  <div class="stack-label">▸ NEON DB SCHEMA</div>
+  <table class="data-table">
+    <thead><tr><th>TABLE</th><th>WHAT IT STORES</th></tr></thead>
+    <tbody>
+      <tr><td>users</td><td>email, password hash, onboarding_complete, active_recommendation_week</td></tr>
+      <tr><td>player_events</td><td>every behavioral event with source, device, session_ref, is_recommended flag, completion_pct</td></tr>
+      <tr><td>recommendations</td><td>generated tracks per week with position, reasoning, iso_phase, week_of</td></tr>
+      <tr><td>user_signals</td><td>extracted behavioral signals per session_ref with confidence level and source</td></tr>
+      <tr><td>user_hypotheses</td><td>longitudinal taste hypotheses with status, weeks_tested, evidence JSON array</td></tr>
+      <tr><td>pipeline_snapshots</td><td>eval metrics per slot: completion, replay, save, hypothesis confirmation, hallucinations</td></tr>
+      <tr><td>tracks</td><td>MusicBrainz verification cache with musicbrainz_id and verified_at</td></tr>
+      <tr><td>hallucination_log</td><td>failed verification attempts with call_stage and the exact strings that failed</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</Panel>
+
+<Panel id="p-xp" num="04" title="XP GAINED">
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ AI POWER-UPS</h3>
+    <div class="xp-subhead">building with ai</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">HITTING THE TOKEN CEILING</div>
+        <p class="xp-learning-desc">Wavelength was the project where I hit the upper limit of what Claude Pro could handle. The pipeline is context-heavy: signals, hypotheses, blocklists, full behavioral history. Running generation cycles across multiple test users pushed token usage past the daily limit. That's when the upgrade to Claude MAX happened. Productive constraint: when you start hitting token limits on a personal project, it usually means the system is doing something real.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">PROMPT DIRECTIVES ARE ARCHITECTURE</div>
+        <p class="xp-learning-desc">The hypothesis prompt has eight directives that run in a fixed order before any update fires. These aren't instructions: they're control flow. A directive that says "skip signals override completion signals" is doing the same job as an <code>if/else</code> in code. When you get it wrong in a prompt, the failure mode is subtle: the model hedges when it should commit, and the playlist drifts in the wrong direction for weeks before you notice.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">TWO-CALL SPLIT FOR SELECTION</div>
+        <p class="xp-learning-desc">Splitting candidate generation into two calls (one for artist nomination, one for track curation) produced measurably better playlists than a single call doing both jobs. The curator call works because Claude has genuine track-level musical knowledge. It knows which Propaganda track fits a late-night headphone listener who replays slow builds. It just needs to be asked to use that knowledge explicitly against the listener's profile, not asked to do both jobs simultaneously.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">HARDCODED EXAMPLES BIAS THE MODEL</div>
+        <p class="xp-learning-desc">Specific artist names and genres in system prompts create implicit preferences that leak across all users. A directive using a real artist name bakes in one user's data into a universal prompt. The fix was replacing all concrete examples with behavioral descriptions. Rules become: same language and same era, both required. Same source context, required. No named artists or tracks in prompts that serve every user of the system.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ PRODUCT SPECIAL MOVES</h3>
+    <div class="xp-subhead">product thinking</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">THE HYPOTHESIS IS THE PRODUCT</div>
+        <p class="xp-learning-desc">The playlist is the output, but the hypothesis set is the actual product. A system that generates a playlist and forgets it is a one-shot tool. A system that maintains a standing model of the listener, confirms or disconfirms its own assumptions, and gets provably more accurate week over week is a different category. The eval metrics exist to make that distinction visible and measurable.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">ORGANIC LISTENING IS GROUND TRUTH</div>
+        <p class="xp-learning-desc">What someone chooses to listen to when nothing is recommending anything to them is a different quality of signal than what they complete on a generated playlist. A listener who deep-dives eleven tracks at midnight on headphones, unprompted, is telling you something completion data cannot. The system weights organic and self-directed sessions as primary evidence, recommended sessions as hypothesis tests.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">THE SYSTEM LEARNS FROM CONTRASTS</div>
+        <p class="xp-learning-desc">The model doesn't need large amounts of data. It needs meaningful contrasts in a small dataset. You always listen to this type of track at 11pm. You complete these artists organically but skip them when recommended. You replayed that track nine times last Tuesday and haven't touched it since. Each contrast is a signal that a population model can never capture. It requires knowing your specific sequence of decisions, not the aggregate behavior of people who stream similar music.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ DEV SECRETS DISCOVERED</h3>
+    <div class="xp-subhead">development learnings</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">APIS TIME OUT</div>
+        <p class="xp-learning-desc">Any external API call needs a timeout strategy and a failure path, not just a happy path. The MusicBrainz verification loop runs 20 calls per generation at 1100ms between each. A single slow response without a ceiling could stall the entire pipeline. The fix was wrapping every call in an <code>AbortController</code> with a 5-second limit, routing timeouts to the same hallucination log used for failed matches, and continuing rather than blocking. The pipeline proceeds, the failure is recorded, no single API response can take down the rest.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">SCOPE BY SLOT, NOT BY DATE</div>
+        <p class="xp-learning-desc">Scoping data queries by date windows creates a hidden dependency on real-time consistency between when sessions are logged and when they happened. The backfill that flags <code>is_recommended</code> on player events originally used an 8-day date window. It broke whenever test sessions used real past dates while recommendations had synthetic future dates. Scoping by slot number instead: <code>week-0</code> maps to slot 0's <code>week_of</code> via <code>OFFSET</code> on the recommendations table. That removed all date arithmetic and the hidden dependency with it.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">HALLUCINATION IS A DATA PROBLEM</div>
+        <p class="xp-learning-desc">LLMs confabulate track titles for niche artists because they have incomplete training data for them, not because they're failing at reasoning. The right fix wasn't better prompting for caution. It was a verification layer against an external music database plus a retry mechanism: when a title fails verification, ask the model for a different track by the same artist that it's certain about, then retry once. External ground truth plus a structured fallback is more reliable than trying to make the model more careful.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="xp-section">
+  <div class="xp-heading-row">
+    <h3 class="xp-heading">▸ SIDE QUESTS</h3>
+    <div class="xp-subhead">future iterations</div>
+  </div>
+  <ul class="xp-learnings">
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">CLOSED LOOP WITH KPI TARGETS</div>
+        <p class="xp-learning-desc">Wavelength today is open-loop: it observes and adapts but has no target it's optimizing toward. The next stage is closed-loop: if completion rate drops below 80%, the pipeline injects a directive into the next generation: prioritize tracks that establish their character before the skip threshold. The model knows when it's failing and corrects toward a goal, not just toward more of what it observed.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">TRACK ATTRIBUTE LAYER</div>
+        <p class="xp-learning-desc">The curator call picks tracks from Claude's musical knowledge, which is deep but uneven for niche artists. The gap is matching the listener's behavioral formula to track-level sonic properties (tempo, energy, danceability) because no free API provides that at scale. A local attribute cache built from already-verified tracks, supplemented by Last.fm tags, would close the gap between curator's best guess and data-driven track match.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <div class="xp-learning-title">WHEN IS THIS WORTH BUILDING</div>
+        <p class="xp-learning-desc">A longitudinal RAG system has real costs: initial development, ongoing infra, AI API calls, and the maintenance overhead of a pipeline that fails in subtle ways. It's only worth it when the product has a recommendation loop that directly drives retention or monetization, and when the user base engages with that loop repeatedly over time.</p>
+        <p class="xp-learning-desc">A useful framework is to think through it like RFM applied to recommendation behavior. <em>Recency</em>: does the user return to the recommendation surface frequently enough that a better playlist next week actually matters? <em>Frequency</em>: are there enough behavioral events per session to extract meaningful signals, or is the data too sparse? <em>Monetary</em>: is there a clear line between recommendation quality and a conversion or retention outcome that pays for the system?</p>
+        <p class="xp-learning-desc">If all three are true: users return often, generate rich behavioral data, and their engagement with recommendations ties to a business outcome, a longitudinal closed-loop system has a strong ROI case. If only one or two are true, a well-designed dumb prompt or a simpler collaborative filter is almost certainly the better investment.</p>
+      </div>
+    </li>
+    <li class="xp-learning">
+      <div class="xp-learning-body">
+        <p class="xp-learning-desc">The stage beyond closed loop: a system that detects its own failures, rewrites its own directives, runs experiments across variants, and decides when to self-correct versus escalate. No fixed prompt. No fixed strategy. The agent owns the full optimization loop. Wavelength's modular pipeline is already structured for this: each stage is a function. The agentic layer would be the orchestrator that decides how those functions get configured based on observed outcomes.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+</Panel>

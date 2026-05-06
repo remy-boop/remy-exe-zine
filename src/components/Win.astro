@@ -1,0 +1,12 @@
+---
+interface Props {
+	tag?: string;
+}
+
+const { tag = "▸ WIN" } = Astro.props;
+---
+
+<div class="win">
+	<span class="win-tag">{tag}</span>
+	<slot />
+</div>

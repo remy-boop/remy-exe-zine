@@ -1,0 +1,23 @@
+---
+interface Props {
+	num: string;
+	label: string;
+	sub: string;
+	target: string;
+	open?: boolean;
+}
+
+const { num, label, sub, target, open = false } = Astro.props;
+---
+
+<button
+	class="tab"
+	role="tab"
+	aria-selected={open ? "true" : "false"}
+	aria-controls={target}
+	data-target={target}
+>
+	<span class="tab-num">{num}</span>
+	<span class="tab-label">{label}</span>
+	<span class="tab-sub">{sub}</span>
+</button>

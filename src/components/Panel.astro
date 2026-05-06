@@ -1,0 +1,26 @@
+---
+interface Props {
+	id?: string;
+	num?: string;
+	title?: string;
+	open?: boolean;
+}
+
+const { id, num, title, open = false } = Astro.props;
+const isTabPanel = !!id;
+---
+
+<section
+	class="panel"
+	id={id}
+	role={isTabPanel ? "tabpanel" : undefined}
+	aria-hidden={isTabPanel ? (open ? "false" : "true") : undefined}
+>
+	{(num || title) && (
+		<div class="panel-h">
+			{num && <span class="p-num">{num}</span>}
+			{title && <h2>{title}</h2>}
+		</div>
+	)}
+	<slot />
+</section>

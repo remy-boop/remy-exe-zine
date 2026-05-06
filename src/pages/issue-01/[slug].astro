@@ -1,0 +1,111 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ChapterCover from "../../components/ChapterCover.astro";
+import Tabs from "../../components/Tabs.astro";
+import Tab from "../../components/Tab.astro";
+import ChapterNav from "../../components/ChapterNav.astro";
+
+export async function getStaticPaths() {
+	const chapters = await getCollection("chapters");
+	return chapters.map((chapter) => ({
+		params: { slug: chapter.id },
+		props: { chapter },
+	}));
+}
+
+interface Props {
+	chapter: CollectionEntry<"chapters">;
+}
+
+const { chapter } = Astro.props;
+const { Content } = await render(chapter);
+const data = chapter.data;
+const num = String(data.chapter).padStart(2, "0");
+
+const stripPipes = (s: string) => s.replaceAll("|", " ");
+
+const allChapters = await getCollection("chapters");
+const prevChap = data.prevChapter
+	? allChapters.find((c) => c.id === data.prevChapter)
+	: undefined;
+const nextChap = data.nextChapter
+	? allChapters.find((c) => c.id === data.nextChapter)
+	: undefined;
+
+/*
+  Resolve labels for the prev/next nav. If the referenced chapter is loaded
+  in the collection, use its actual title. If it's referenced in frontmatter
+  but not yet migrated (mid-migration state), fall back to a slug-derived label
+  so the link still renders. If no chapter is referenced at all, the slot
+  becomes a "BACK / TO ISSUE" link to the issue cover.
+*/
+const slugToLabel = (slug: string) => slug.replaceAll("-", " ").toUpperCase();
+
+// Relative hrefs throughout. Chapter pages live at issue-01/{slug}.html,
+// so sibling chapters resolve as `{slug}.html` (no leading slash, no
+// `/issue-01/` prefix). Keeps the site base-agnostic: works at the bare
+// localhost root, at /remy-exe-zine/ on GitHub Pages, or under any other
+// subpath without code changes.
+const prevHref = prevChap
+	? `${prevChap.id}.html`
+	: data.prevChapter
+		? `${data.prevChapter}.html`
+		: "../index.html";
+const prevLabel = prevChap
+	? stripPipes(prevChap.data.title).toUpperCase()
+	: data.prevChapter
+		? slugToLabel(data.prevChapter)
+		: "TO ISSUE";
+const prevDir = prevChap || data.prevChapter ? "PREV CHAPTER" : "BACK";
+
+const nextHref = nextChap
+	? `${nextChap.id}.html`
+	: data.nextChapter
+		? `${data.nextChapter}.html`
+		: "../index.html";
+const nextLabel = nextChap
+	? stripPipes(nextChap.data.title).toUpperCase()
+	: data.nextChapter
+		? slugToLabel(data.nextChapter)
+		: "TO ISSUE";
+const nextDir = nextChap || data.nextChapter ? "NEXT CHAPTER" : "BACK";
+
+const docTitle = `${stripPipes(data.title).toLowerCase()} · remy.exe`;
+---
+
+<BaseLayout
+	title={docTitle}
+	sigColor={data.sig}
+	chapterNum={num}
+	backHref="../index.html"
+>
+	<ChapterCover
+		num={num}
+		title={data.title}
+		tagline={data.tagline}
+		status={data.status}
+		shipped={data.shipped}
+		platform={data.platform}
+	/>
+
+	<Tabs>
+		<Tab num="01" label="LEVEL 1 START" sub="the why" target="p-origin" open />
+		<Tab num="02" label="BOSS FIGHT" sub="the fix" target="p-fix" />
+		<Tab num="03" label="INVENTORY" sub="the stack" target="p-stack" />
+		<Tab num="04" label="XP GAINED" sub="learnings" target="p-xp" />
+	</Tabs>
+
+	<div class="panels">
+		<Content />
+	</div>
+
+	<ChapterNav
+		prevHref={prevHref}
+		prevLabel={prevLabel}
+		prevDir={prevDir}
+		nextHref={nextHref}
+		nextLabel={nextLabel}
+		nextDir={nextDir}
+	/>
+</BaseLayout>

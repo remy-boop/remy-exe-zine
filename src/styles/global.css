@@ -1,0 +1,2088 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-bg: #1a1530;
+  --color-bg-elev: #252046;
+  --color-bg-card: #2f2955;
+  --color-bg-deep: #12102a;
+
+  /* Foregrounds */
+  --color-fg: #ece4ff;
+  --color-fg-soft: #beb4d8;
+  --color-fg-mid: #8e86ae;
+  --color-fg-faint: #55507a;
+
+  /* Purple accent */
+  --color-purple: #8b5cf6;
+  --color-purple-deep: #6d28d9;
+
+  /* Yellow accent */
+  --color-yellow: #fdf203;
+
+  /* Signature inks (per chapter) */
+  --color-sig-cyan: #22d3ee;
+  --color-sig-magenta: #ff3d8f;
+  --color-sig-lime: #a3e635;
+  --color-sig-orange: #fb923c;
+
+  /* Status */
+  --color-ok: #10b981;
+  --color-wip: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Borders */
+  --color-border: #3d3560;
+  --color-border-strong: #5a4d85;
+
+  /* Font families */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-mono: 'VT323', monospace;
+}
+
+/*
+  Runtime signature variables. These are NOT Tailwind tokens.
+  Each chapter overrides --sig, --sig-deep, --sig-glow, --sig-wash
+  in its own scoped style block to flip the chapter's accent color.
+  Default below is cyan (chapters 01 and 05, plus the cover).
+*/
+:root {
+  --sig: var(--color-sig-cyan);
+  --sig-deep: #0e7490;
+  --sig-glow: rgba(34, 211, 238, 0.35);
+  --sig-wash: rgba(34, 211, 238, 0.12);
+
+  /* Helper variables (derived, not Tailwind tokens) */
+  --ok-wash: rgba(16, 185, 129, 0.15);
+  --danger-wash: rgba(239, 68, 68, 0.15);
+  --purple-glow: rgba(139, 92, 246, 0.4);
+  --yellow-deep: #b8a800;
+  --yellow-glow: rgba(253, 242, 3, 0.4);
+
+  /*
+    Legacy aliases. Chapter content (esp. inline-style attributes inside SVGs)
+    references the original short var names like --bg-deep, --fg, --border.
+    These point at the new --color-* tokens so MDX bodies can stay byte-faithful
+    to the source HTML without having to mass-rename every SVG fill attribute.
+  */
+  --bg: var(--color-bg);
+  --bg-elev: var(--color-bg-elev);
+  --bg-card: var(--color-bg-card);
+  --bg-deep: var(--color-bg-deep);
+  --fg: var(--color-fg);
+  --fg-soft: var(--color-fg-soft);
+  --fg-mid: var(--color-fg-mid);
+  --fg-faint: var(--color-fg-faint);
+  --purple: var(--color-purple);
+  --purple-deep: var(--color-purple-deep);
+  --yellow: var(--color-yellow);
+  --ok: var(--color-ok);
+  --wip: var(--color-wip);
+  --danger: var(--color-danger);
+  --border: var(--color-border);
+  --border-strong: var(--color-border-strong);
+}
+
+/*
+  Per-chapter sig palettes. Set [data-sig="..."] on <html> (BaseLayout does this
+  via the sigColor prop) to flip all four sig variables together. Values match
+  the existing chapter overrides in the legacy HTML byte for byte.
+*/
+[data-sig="cyan"] {
+  --sig: var(--color-sig-cyan);
+  --sig-deep: #0e7490;
+  --sig-glow: rgba(34, 211, 238, 0.35);
+  --sig-wash: rgba(34, 211, 238, 0.12);
+}
+[data-sig="magenta"] {
+  --sig: var(--color-sig-magenta);
+  --sig-deep: #c71560;
+  --sig-glow: rgba(255, 61, 143, 0.35);
+  --sig-wash: rgba(255, 61, 143, 0.12);
+}
+[data-sig="lime"] {
+  --sig: var(--color-sig-lime);
+  --sig-deep: #4d7c0f;
+  --sig-glow: rgba(163, 230, 53, 0.35);
+  --sig-wash: rgba(163, 230, 53, 0.12);
+}
+[data-sig="orange"] {
+  --sig: var(--color-sig-orange);
+  --sig-deep: #c2410c;
+  --sig-glow: rgba(251, 146, 60, 0.35);
+  --sig-wash: rgba(251, 146, 60, 0.12);
+}
+
+/*
+  Body shell. Two radial corner glows plus a fixed-position scanline overlay,
+  ported from shared/style.css lines 40-65. Applied via @layer base so utility
+  classes still win where they conflict.
+*/
+@layer base {
+  body {
+    background: var(--color-bg);
+    background-image:
+      radial-gradient(ellipse 40% 30% at -5% -5%, var(--sig-glow) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 105% 105%, rgba(59, 130, 246, 0.22) 0%, transparent 60%);
+    color: var(--color-fg);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 32px 16px 56px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.006) 0px,
+      rgba(255, 255, 255, 0.006) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+    z-index: 100;
+  }
+  ::selection {
+    background: var(--sig);
+    color: var(--color-bg-deep);
+  }
+}
+
+/*
+  Component animations live at the top level (not inside @layer) so they're
+  reachable from any layer that references them.
+*/
+@keyframes panel-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/*
+  Chapter components. Each block is a faithful port of the matching rules
+  in shared/style.css, with var(--*) names rewritten for the new theme:
+    var(--bg-*)     -> var(--color-bg-*)
+    var(--fg-*)     -> var(--color-fg-*)
+    var(--border)   -> var(--color-border)
+    var(--ok|--wip|--danger) -> var(--color-ok|--color-wip|--color-danger)
+    var(--yellow)   -> var(--color-yellow)
+  Sig variables (--sig, --sig-deep, --sig-glow, --sig-wash) and helper
+  vars (--ok-wash, etc.) keep their original names.
+*/
+@layer components {
+  /* Panel */
+  .panel {
+    padding: 36px 40px;
+    animation: panel-fade 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .panel[role="tabpanel"] {
+    display: none;
+  }
+  .panel[role="tabpanel"][aria-hidden="false"] {
+    display: block;
+  }
+  .panel-h {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .panel-h .p-num {
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    color: var(--sig);
+    background: var(--sig-wash);
+    padding: 6px 10px;
+    border: 1px solid var(--sig-deep);
+  }
+  .panel-h h2 {
+    font-family: var(--font-pixel);
+    font-size: 16px;
+    color: var(--color-fg);
+    letter-spacing: 0.02em;
+  }
+  .panel p {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-fg);
+    margin-bottom: 16px;
+    max-width: 62ch;
+    opacity: 0.92;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+  .panel p:first-of-type { opacity: 1; }
+  .panel em {
+    font-style: italic;
+    color: var(--sig);
+    font-weight: 500;
+  }
+  .panel code {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--sig);
+    background: var(--color-bg-deep);
+    padding: 1px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--color-border);
+  }
+
+  /* Gotcha */
+  .gotcha {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-yellow);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .gotcha-tag {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-yellow);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .gotcha p {
+    font-size: 16px;
+    margin-bottom: 0;
+    max-width: none;
+  }
+
+  /* PullQuote */
+  .pull-quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--color-fg);
+    margin: 24px 0;
+    padding: 18px 24px;
+    border-left: 4px solid var(--sig);
+    background: var(--sig-wash);
+    max-width: 56ch;
+  }
+
+  /* Shot */
+  .shot-section {
+    margin: 28px 0;
+  }
+  .shot-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 14px;
+    text-shadow: 0 0 6px var(--sig-glow);
+    letter-spacing: 0.02em;
+  }
+  .shot-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .shot {
+    background: var(--color-bg-deep);
+    border: 2px solid var(--color-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .shot-img-wrap {
+    background: #1a1d2b;
+    padding: 12px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+  .shot-caption {
+    padding: 12px 18px;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--color-fg-soft);
+    line-height: 1.4;
+  }
+  .shot-caption b {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Chip */
+  .chip {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.2s;
+    position: relative;
+  }
+  .chip:hover {
+    transform: translate(-1px, -1px);
+    border-color: var(--sig);
+    box-shadow: 2px 2px 0 var(--sig-deep);
+  }
+  .chip .chip-role {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--sig);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .chip .chip-name {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--color-fg);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .chip .chip-detail {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-fg-mid);
+    margin-top: 2px;
+  }
+  .chip .chip-cost {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    margin-top: 6px;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 2px;
+    display: inline-block;
+    align-self: flex-start;
+  }
+  .chip-cost.free {
+    color: var(--color-ok);
+    border-color: var(--color-ok);
+    background: var(--ok-wash);
+  }
+  .chip-cost.paid {
+    color: var(--color-wip);
+    border-color: var(--color-wip);
+    background: rgba(245, 158, 11, 0.15);
+  }
+
+  /* WalkCode */
+  .walk-code {
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--sig);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--sig);
+    margin: 8px 0;
+    word-break: break-all;
+  }
+
+  /* ChapterNav */
+  .chapter-nav {
+    margin-top: 32px;
+    padding: 20px 24px;
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .chapter-nav a {
+    color: var(--color-fg-soft);
+    text-decoration: none;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: color 0.15s;
+  }
+  .chapter-nav a:hover {
+    color: var(--sig);
+  }
+  .chapter-nav a.next {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .chapter-nav .nav-dir {
+    font-size: 8px;
+    color: var(--color-fg-faint);
+  }
+  .chapter-nav a:hover .nav-arrow {
+    transform: translateX(4px);
+  }
+  .chapter-nav a.prev:hover .nav-arrow {
+    transform: translateX(-4px);
+  }
+  .chapter-nav .nav-arrow {
+    display: inline-block;
+    transition: transform 0.2s;
+    margin: 0 6px;
+  }
+
+  /* CauseIconTile */
+  .cause-icon-tile {
+    width: 56px;
+    height: 56px;
+    background: var(--color-bg-deep);
+    border: 2px solid var(--sig);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sig);
+    position: relative;
+    flex-shrink: 0;
+    box-shadow:
+      inset 1px 1px 0 var(--sig-wash),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+  }
+  .cause-icon-tile svg {
+    width: 36px;
+    height: 36px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 4px var(--sig-glow));
+  }
+  .cause-icon-tile::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    background: var(--sig);
+    opacity: 0.7;
+  }
+  .cause-icon-tile::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
+    background: var(--sig);
+    opacity: 0.4;
+  }
+}
+
+@layer components {
+  /* Tabs */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    margin-bottom: -2px;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    color: var(--color-fg-mid);
+    cursor: pointer;
+    padding: 16px 10px 14px;
+    text-align: center;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    font-family: inherit;
+  }
+  .tab:last-child {
+    border-right: none;
+  }
+  .tab .tab-num {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.02em;
+  }
+  .tab .tab-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-fg-soft);
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .tab .tab-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .tab:hover {
+    background: var(--color-bg-card);
+  }
+  .tab:hover .tab-label {
+    color: var(--color-fg);
+  }
+  .tab:hover .tab-sub {
+    color: var(--color-fg-soft);
+  }
+  .tab:hover .tab-num {
+    color: var(--color-fg-soft);
+  }
+  .tab[aria-selected="true"] {
+    background: var(--sig-wash);
+  }
+  .tab[aria-selected="true"] .tab-num {
+    color: var(--sig);
+  }
+  .tab[aria-selected="true"] .tab-label {
+    color: var(--sig);
+  }
+  .tab[aria-selected="true"] .tab-sub {
+    color: var(--color-fg);
+    opacity: 0.9;
+  }
+  .tab[aria-selected="true"]::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--sig);
+    box-shadow: 0 0 12px var(--sig-glow);
+  }
+  .tab:focus-visible {
+    outline: 2px solid var(--color-yellow);
+    outline-offset: -2px;
+    z-index: 2;
+  }
+
+  /* Panels (the container around the four chapter panels) */
+  .panels {
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    min-height: 400px;
+  }
+
+  /* Win (sibling of Gotcha, green-bordered) */
+  .win {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--ok-wash);
+    border: 1px solid var(--color-ok);
+    border-left: 4px solid var(--color-ok);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .win-tag {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-ok);
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .win p {
+    font-size: 16px;
+    margin-bottom: 0;
+    max-width: none;
+  }
+
+  /* XPSection / XPLearning */
+  .xp-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px dashed var(--color-border);
+  }
+  .xp-section:first-of-type {
+    margin-top: 16px;
+    padding-top: 0;
+    border-top: none;
+  }
+  .xp-heading-row {
+    margin-bottom: 18px;
+  }
+  .xp-heading {
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    color: var(--sig);
+    text-shadow: 0 0 8px var(--sig-glow);
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .xp-subhead {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--color-fg-soft);
+    letter-spacing: 0.01em;
+  }
+  .xp-learnings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .xp-learning {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px dotted var(--color-border);
+  }
+  .xp-learning:last-child {
+    border-bottom: none;
+  }
+  .xp-learning::before {
+    content: '▸';
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 12px;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .xp-learning-body {
+    min-width: 0;
+  }
+  .xp-learning-title {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-fg);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  /* Body paragraphs: covers both legacy <p class="xp-learning-desc">
+     and plain <p> rendered from MDX markdown inside <XPLearning>. */
+  .xp-learning-body p,
+  .xp-learning-desc {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin: 0;
+  }
+  .xp-learning-body p code,
+  .xp-learning-desc code {
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+  .xp-learning-body p em,
+  .xp-learning-desc em {
+    font-style: italic;
+    color: var(--sig);
+    font-weight: 500;
+  }
+
+  /* DataTable. Dual selectors so .data-table-wrap > table (used by the
+     <DataTable> component when wrapping markdown tables) gets the same
+     treatment as a hand-written <table class="data-table">. */
+  .data-table,
+  .data-table-wrap > table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    color: var(--color-fg);
+  }
+  .data-table thead th,
+  .data-table-wrap > table thead th {
+    text-align: left;
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    padding: 0 14px 12px 0;
+    border-bottom: 2px solid var(--sig-deep);
+  }
+  .data-table tbody tr,
+  .data-table-wrap > table tbody tr {
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .data-table tbody tr:last-child,
+  .data-table-wrap > table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .data-table tbody td,
+  .data-table-wrap > table tbody td {
+    padding: 14px 14px 14px 0;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .data-table tbody td:first-child,
+  .data-table-wrap > table tbody td:first-child {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--sig);
+    font-weight: 700;
+    white-space: nowrap;
+    padding-right: 24px;
+  }
+  /* "sources" variant — only triggers on hand-written class="data-table sources". */
+  .data-table.sources tbody td {
+    font-size: 14px;
+    padding: 12px 12px 12px 0;
+  }
+  .data-table.sources tbody td:first-child {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg);
+    font-weight: 700;
+  }
+  .data-table.sources tbody td.cell-mono {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--color-fg-soft);
+  }
+}
+
+/* === M6: chapter-shell components, a11y, view-transitions, mobile === */
+
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @media (max-width: 720px) {
+    body {
+      padding: 16px 10px 32px;
+      font-size: 17px;
+    }
+  }
+}
+
+/*
+  View transitions for cover ↔ chapter navigation. Top-level so they apply
+  outside any layer cascade. Mirrors shared/style.css lines 1075-1080.
+*/
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.strip {
+  view-transition-name: masthead;
+}
+
+@layer components {
+  /* ChapterCover */
+  .chapter-cover {
+    background: var(--color-bg-elev);
+    border: 2px solid var(--color-border);
+    border-left: 4px solid var(--sig);
+    padding: 40px 36px 36px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--sig) 8%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--sig) 8%, transparent) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .chapter-cover > * {
+    position: relative;
+    z-index: 2;
+  }
+  .chapter-kicker {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 16px;
+    text-shadow: 0 0 8px var(--sig-glow);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chapter-num {
+    background: var(--sig);
+    color: var(--color-bg-deep);
+    padding: 4px 8px;
+    font-weight: 700;
+  }
+  .chapter-title {
+    font-family: var(--font-pixel);
+    font-size: 38px;
+    line-height: 1.05;
+    color: var(--color-fg);
+    margin-bottom: 18px;
+    text-shadow:
+      3px 3px 0 var(--sig),
+      6px 6px 0 var(--color-purple);
+    word-break: break-word;
+  }
+  .chapter-tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--color-fg);
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+  .chapter-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 18px;
+    border-top: 1px dashed var(--color-border);
+  }
+  .status-badge {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    padding: 6px 10px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-badge.live {
+    color: var(--color-ok);
+    background: var(--ok-wash);
+  }
+  .status-badge.wip {
+    color: var(--color-wip);
+    background: rgba(245, 158, 11, 0.15);
+  }
+  .status-badge.meta {
+    color: var(--color-fg-mid);
+    background: var(--color-bg-card);
+  }
+  .status-badge::before {
+    content: '●';
+    font-size: 10px;
+  }
+  .chapter-meta .sep {
+    color: var(--color-fg-faint);
+    font-family: var(--font-mono);
+    font-size: 18px;
+  }
+  .chapter-meta .meta-txt {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--color-fg-soft);
+  }
+  .chapter-meta .meta-txt b {
+    color: var(--color-fg);
+    font-weight: 700;
+  }
+
+  /* Stat row */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 28px 0 32px;
+  }
+  .stat-card {
+    background: var(--color-bg-deep);
+    border: 2px solid var(--color-border);
+    border-top: 3px solid var(--sig);
+    padding: 22px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .stat-num {
+    font-family: var(--font-pixel);
+    font-size: 28px;
+    color: var(--sig);
+    text-shadow: 0 0 12px var(--sig-glow);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg-soft);
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .stat-context {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--color-fg-mid);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+
+  /* Cause grid + body (CauseIconTile already shipped) */
+  .cause-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+  .cause-card {
+    background: var(--color-bg-card);
+    border: 2px solid var(--color-border);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: start;
+    position: relative;
+    transition: border-color 0.15s, box-shadow 0.2s, transform 0.12s;
+  }
+  .cause-card:hover {
+    border-color: var(--sig);
+    box-shadow: 3px 3px 0 var(--sig-deep);
+    transform: translate(-1px, -1px);
+  }
+  .cause-body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cause-title {
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    color: var(--color-fg);
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+  .cause-desc {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    color: var(--color-fg-soft);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Fix grid (BEFORE/AFTER) */
+  .fix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .fix-card {
+    padding: 18px 20px;
+    border: 2px solid;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .fix-card.before {
+    background: var(--danger-wash);
+    border-color: var(--color-danger);
+    color: var(--color-fg);
+  }
+  .fix-card.after {
+    background: var(--ok-wash);
+    border-color: var(--color-ok);
+    color: var(--color-fg);
+  }
+  .fix-tag {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    padding: 4px 8px;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .fix-card.before .fix-tag {
+    background: var(--color-danger);
+    color: var(--color-fg);
+  }
+  .fix-card.after .fix-tag {
+    background: var(--color-ok);
+    color: var(--color-bg-deep);
+  }
+  .fix-card code {
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    padding: 1px 5px;
+    font-size: 15px;
+  }
+
+  /* Section divider */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 36px 0 24px;
+  }
+  .section-divider .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-border-strong),
+      transparent
+    );
+  }
+  .section-divider .divider-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 8px var(--sig-glow);
+  }
+
+  /* Stack section + label + grid (Inventory wrappers) */
+  .stack-section {
+    margin-bottom: 36px;
+  }
+  .stack-section:last-child {
+    margin-bottom: 0;
+  }
+  .stack-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 14px;
+    text-shadow: 0 0 6px var(--sig-glow);
+  }
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  /* Diagram + legend */
+  .diagram-container {
+    background: var(--color-bg-deep);
+    border: 2px dashed var(--color-border);
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .diagram-container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--color-fg-soft);
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 2px;
+  }
+
+  /* Walkthrough (walk-code already shipped) */
+  .walkthrough {
+    margin-top: 8px;
+  }
+  .walk-step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    padding: 20px 0;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .walk-step:last-child {
+    border-bottom: none;
+  }
+  .walk-num {
+    width: 32px;
+    height: 32px;
+    background: var(--sig);
+    color: var(--color-bg-deep);
+    font-family: var(--font-pixel);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+  .walk-body {
+    min-width: 0;
+  }
+  .walk-title {
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    color: var(--color-fg);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .walk-desc {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--color-fg-soft);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .walk-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .walk-tag {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-fg-soft);
+    padding: 3px 9px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+  }
+
+  /* KB block (knowledge-base callout) */
+  .kb-block {
+    background: var(--color-bg-card);
+    border: 2px solid var(--color-border-strong);
+    border-left: 4px solid var(--sig);
+    padding: 20px 22px;
+    margin-top: 8px;
+  }
+  .kb-block .kb-title {
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    color: var(--color-fg);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kb-block .kb-title::before {
+    content: '◇';
+    color: var(--sig);
+    font-size: 14px;
+  }
+  .kb-block .kb-desc {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--color-fg-soft);
+    line-height: 1.55;
+  }
+  .kb-block code {
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+
+  /* Scope pills (OAuth scopes) */
+  .scope-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .scope-pill {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    padding: 6px 12px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-fg-soft);
+  }
+  .scope-pill.new {
+    border-color: var(--sig);
+    color: var(--sig);
+    background: var(--sig-wash);
+  }
+  .scope-note {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--color-fg-mid);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scope-note::before {
+    content: '■';
+    color: var(--sig);
+    font-size: 12px;
+  }
+
+  /* Mobile responsive overrides for chapter-content components.
+     Mirrors shared/style.css lines 1023-1066. */
+  @media (max-width: 720px) {
+    .strip {
+      font-size: 9px;
+      padding: 10px 14px;
+    }
+    .chapter-cover {
+      padding: 28px 22px 24px;
+    }
+    .chapter-title {
+      font-size: 26px;
+    }
+    .chapter-tagline {
+      font-size: 18px;
+    }
+    .tabs {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .tab {
+      border-right: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: 14px 8px 12px;
+    }
+    .tab:nth-child(2) {
+      border-right: none;
+    }
+    .tab:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--color-border);
+    }
+    .tab:nth-last-child(-n + 2) {
+      border-bottom: none;
+    }
+    .tab:last-child {
+      border-right: none;
+    }
+    .tab .tab-label {
+      font-size: 9px;
+    }
+    .tab .tab-sub {
+      font-size: 12px;
+    }
+    .panel {
+      padding: 24px 20px;
+    }
+    .panel-h h2 {
+      font-size: 13px;
+    }
+    .panel-h .p-num {
+      font-size: 9px;
+      padding: 4px 8px;
+    }
+    .panel p {
+      font-size: 16px;
+    }
+    .pull-quote {
+      font-size: 18px;
+      padding: 14px 18px;
+    }
+    .stat-row {
+      grid-template-columns: 1fr;
+    }
+    .stat-num {
+      font-size: 26px;
+    }
+    .cause-grid {
+      grid-template-columns: 1fr;
+    }
+    .cause-card {
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      padding: 16px;
+    }
+    .cause-icon-tile {
+      width: 48px;
+      height: 48px;
+    }
+    .cause-icon-tile svg {
+      width: 32px;
+      height: 32px;
+    }
+    .fix-grid {
+      grid-template-columns: 1fr;
+    }
+    .walk-step {
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+    }
+    .walk-num {
+      width: 26px;
+      height: 26px;
+      font-size: 10px;
+    }
+    .xp-heading {
+      font-size: 11px;
+    }
+    .xp-subhead {
+      font-size: 15px;
+    }
+    .data-table {
+      font-size: 14px;
+    }
+    .data-table tbody td:first-child {
+      font-size: 14px;
+      padding-right: 14px;
+    }
+    .chapter-nav {
+      flex-direction: column;
+    }
+    .chapter-nav a.next {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+}
+
+/* === Chapter 02 specifics: Horoscope Roast Bot (chat-bubble layout) === */
+
+@layer components {
+  .convo-flow {
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 52ch;
+  }
+  .convo-msg {
+    padding: 10px 14px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .convo-msg.user {
+    background: var(--color-purple-deep);
+    border: 1px solid var(--color-purple);
+    color: var(--color-fg);
+    align-self: flex-end;
+    text-align: right;
+  }
+  .convo-msg.bot {
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg-soft);
+    align-self: flex-start;
+  }
+  .convo-msg.bot em {
+    color: var(--sig);
+    font-style: italic;
+  }
+  .convo-label {
+    font-family: var(--font-pixel);
+    font-size: 7px;
+    color: var(--color-fg-faint);
+    margin-bottom: 3px;
+    letter-spacing: 0.04em;
+  }
+  .convo-label.right {
+    text-align: right;
+  }
+}
+
+/* === Chapter 03 specifics: Wavelength (AI maturity stages) === */
+
+@layer components {
+  .ai-stages {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 24px 0 32px;
+    border: 2px solid var(--color-border);
+  }
+  .ai-stage {
+    background: var(--color-bg-deep);
+    padding: 16px 14px;
+    border-right: 1px solid var(--color-border);
+    position: relative;
+  }
+  .ai-stage:last-child {
+    border-right: none;
+  }
+  .ai-stage.active {
+    background: var(--sig-wash);
+    border-top: 3px solid var(--sig);
+  }
+  .ai-stage-num {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-faint);
+    margin-bottom: 8px;
+  }
+  .ai-stage-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg-soft);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .ai-stage.active .ai-stage-label {
+    color: var(--sig);
+  }
+  .ai-stage-desc {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-fg-mid);
+    line-height: 1.4;
+  }
+  .ai-stage.active .ai-stage-desc {
+    color: var(--color-fg-soft);
+  }
+  .ai-stage-arrow {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-border-strong);
+    font-size: 16px;
+    z-index: 2;
+  }
+  .ai-stage:last-child .ai-stage-arrow {
+    display: none;
+  }
+}
+
+/* === Chapter 04 specifics: App Script Reports (master-prompt visualization) === */
+
+@layer components {
+  .prompt-box {
+    background: var(--color-bg-deep);
+    border: 2px solid var(--sig-deep);
+    border-left: 4px solid var(--sig);
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .prompt-box-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    display: block;
+    margin-bottom: 18px;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 8px var(--sig-glow);
+  }
+  .prompt-io {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .prompt-io-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 16px 18px;
+  }
+  .prompt-io-label {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-io-label.input {
+    color: var(--color-wip);
+  }
+  .prompt-io-label.output {
+    color: var(--color-ok);
+  }
+  .prompt-io-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prompt-io-list li {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-fg-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .prompt-io-list li::before {
+    content: '→';
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .prompt-how {
+    border-top: 1px dashed var(--color-border);
+    padding-top: 16px;
+  }
+  .prompt-how-label {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-how p {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin-bottom: 10px;
+    max-width: none;
+    opacity: 1;
+  }
+  .prompt-how p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* === Chapter 05 specifics: REMY.EXE Zine (design-system showcase + demos) === */
+
+/* Animations used by the meta-chapter demos. Top-level so any layer can
+   reference them. */
+@keyframes mast-blink-anim {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes cover-btn-pulse {
+  0%,
+  100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: brightness(1.18) drop-shadow(0 0 12px rgba(253, 242, 3, 0.55));
+  }
+}
+@keyframes coin-blink-anim {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@layer components {
+  /* Component-block wrapper: tag + live demo + caption */
+  .comp-block {
+    margin: 28px 0 36px;
+  }
+  .comp-tag {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border: 1px solid var(--sig-deep);
+    background: var(--sig-wash);
+    letter-spacing: 0.04em;
+  }
+  .comp-caption {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin-top: 14px;
+    font-style: italic;
+    max-width: 62ch;
+  }
+
+  /* Section-divider sample (mini preview) */
+  .section-divider-sample {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-divider-sample .divider-line {
+    flex: 1;
+    height: 0;
+    border-top: 1px dashed var(--color-border);
+  }
+  .section-divider-sample .divider-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* Keyboard shortcut chip */
+  .kb {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    padding: 4px 10px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border-strong);
+    border-bottom: 2px solid var(--color-border-strong);
+    color: var(--color-fg);
+    border-radius: 3px;
+  }
+  .kb-plus {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg-mid);
+  }
+
+  /* OAuth-style pill chain (App ▸ Provider ▸ Token ▸ API) */
+  .oauth-pills {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .oauth-pill {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    padding: 6px 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-fg);
+    border-radius: 100px;
+  }
+  .oauth-arrow {
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+  }
+
+  /* Mini data-table preview */
+  .data-table-demo {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-serif);
+    font-size: 15px;
+  }
+  .data-table-demo th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--sig);
+  }
+  .data-table-demo td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-fg);
+  }
+  .data-table-demo tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Personality / editorial-rules list (▸ bulleted) */
+  .personality-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .personality-list li {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    padding: 10px 0 10px 22px;
+    border-bottom: 1px dashed var(--color-border);
+    position: relative;
+  }
+  .personality-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    top: 14px;
+  }
+  .personality-list li:last-child {
+    border-bottom: none;
+  }
+  .personality-list li b {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+
+  /* Cover masthead demo (giant pixel REMY.EXE preview) */
+  .mast-demo {
+    font-family: var(--font-pixel);
+    font-size: 38px;
+    line-height: 1.05;
+    color: var(--color-fg);
+    text-shadow: 3px 3px 0 var(--sig), 6px 6px 0 var(--color-purple);
+    word-break: break-word;
+    padding: 14px 0;
+  }
+  .mast-blink {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.85em;
+    background: var(--color-yellow);
+    margin-left: 6px;
+    vertical-align: -0.05em;
+    animation: mast-blink-anim 1s steps(2, start) infinite;
+  }
+
+  /* TL;DR + bio inline mock */
+  .tldr-demo {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--color-fg);
+    padding: 6px 0;
+  }
+  .tldr-tag {
+    color: var(--color-yellow);
+    font-family: var(--font-pixel);
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+  .bio-hl {
+    color: var(--color-yellow);
+    font-weight: 600;
+  }
+
+  /* Yellow-accent inline-text variants (used inside cover panels) */
+  .yellow-accent-demo {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-fg);
+    padding: 14px 18px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+  }
+  .hl-yellow {
+    color: var(--color-yellow);
+    font-weight: 600;
+  }
+  .hl-yellow-italic {
+    color: var(--color-yellow);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .hl-yellow-bold {
+    color: var(--color-yellow);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(253, 242, 3, 0.3);
+  }
+
+  /* Yellow-bordered pull-quote variant (cover panels) */
+  .pull-quote-yellow {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--color-fg);
+    padding: 16px 22px;
+    border-left: 3px solid var(--color-yellow);
+    background: rgba(253, 242, 3, 0.06);
+    max-width: 56ch;
+  }
+
+  /* Cover-panel button (chunky pixel button with idle pulse) */
+  .cover-btn {
+    background: var(--color-purple);
+    color: var(--color-fg);
+    padding: 12px 18px;
+    border: 2px solid var(--color-purple-deep);
+    box-shadow: 3px 3px 0 var(--color-purple-deep);
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    animation: cover-btn-pulse 2.7s ease-in-out infinite;
+  }
+
+  /* Issue-pill row (above the table of contents on the cover) */
+  .pill-row-demo {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 18px 0 8px;
+  }
+  .pill {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--color-yellow);
+    background: transparent;
+    border: 2px solid var(--color-yellow);
+    box-shadow:
+      inset 0 0 0 2px var(--color-bg-elev),
+      inset 0 0 0 4px var(--color-yellow);
+    white-space: nowrap;
+    position: relative;
+  }
+  .pill.active {
+    color: var(--color-bg);
+    background: var(--color-yellow);
+    box-shadow:
+      inset 0 0 0 2px var(--color-yellow),
+      inset 0 0 0 4px var(--color-bg),
+      0 0 24px rgba(253, 242, 3, 0.4);
+  }
+  .pill.active::before {
+    content: '▾';
+    position: absolute;
+    top: -16px;
+    left: 18px;
+    font-size: 10px;
+    color: var(--color-yellow);
+  }
+  .pill.soon {
+    color: #b8a800;
+    border-color: #b8a800;
+    box-shadow:
+      inset 0 0 0 2px var(--color-bg-elev),
+      inset 0 0 0 4px #b8a800;
+    opacity: 0.55;
+  }
+  .pill .sep {
+    opacity: 0.5;
+  }
+  .pill .label {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Yellow strip divider (cover only) */
+  .yellow-strip-demo {
+    background: var(--color-yellow);
+    color: var(--color-bg-deep);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Game Boy visualizer with critter (static demo of the cover canvas) */
+  .gameboy-demo {
+    background: #b8b2a0;
+    border: 2px solid #2b3a1f;
+    padding: 16px 14px 18px;
+    width: 200px;
+    position: relative;
+    box-shadow:
+      inset 2px 2px 0 #cfc8b3,
+      inset -2px -2px 0 #908a78,
+      6px 6px 0 rgba(43, 58, 31, 0.55);
+  }
+  .gameboy-demo::before {
+    content: '★ GAME BOY VISUALIZER WITH CRITTER';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #b8b2a0;
+    padding: 2px 8px;
+    font-family: var(--font-pixel);
+    font-size: 5px;
+    color: #2b3a1f;
+    letter-spacing: 0.06em;
+    border: 2px solid #2b3a1f;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .gameboy-screen {
+    background: #9bbc0f;
+    border: 3px solid #2b3a1f;
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+    position: relative;
+  }
+  .gameboy-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(43, 58, 31, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 58, 31, 0.12) 1px, transparent 1px);
+    background-size: calc(100% / 16) calc(100% / 16);
+    pointer-events: none;
+  }
+  .critter {
+    grid-column: 7 / span 5;
+    grid-row: 7 / span 5;
+    background: #2b3a1f;
+    clip-path: polygon(
+      0% 40%,
+      20% 40%,
+      20% 20%,
+      80% 20%,
+      80% 40%,
+      100% 40%,
+      100% 80%,
+      80% 80%,
+      80% 100%,
+      20% 100%,
+      20% 80%,
+      0% 80%
+    );
+  }
+
+  /* INSERT COIN attract-mode prompt */
+  .insert-coin-demo {
+    background: rgba(18, 16, 42, 0.94);
+    padding: 36px 24px 24px;
+    border: 1px solid var(--color-border);
+    text-align: center;
+    position: relative;
+  }
+  .insert-coin-text {
+    font-family: var(--font-pixel);
+    font-size: 18px;
+    color: var(--color-yellow);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 12px rgba(253, 242, 3, 0.6);
+    animation: coin-blink-anim 0.8s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  .insert-coin-sub {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.08em;
+  }
+
+  /* Konami EXTRA LIFE toast */
+  .konami-toast-demo {
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--color-yellow);
+    color: var(--color-bg);
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 32px rgba(253, 242, 3, 0.5);
+  }
+
+  /* ROLL CREDITS button */
+  .roll-credits-btn-demo {
+    background: var(--color-purple);
+    color: var(--color-fg);
+    padding: 14px 24px;
+    border: 2px solid var(--color-purple-deep);
+    box-shadow: 3px 3px 0 var(--color-purple-deep);
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  /* Credits roll mock */
+  .credits-roll-demo {
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    padding: 20px 16px;
+    text-align: center;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    line-height: 2;
+    color: var(--color-fg);
+    max-width: 360px;
+  }
+  .credits-roll-demo .ch {
+    color: var(--color-yellow);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .credits-roll-demo .role {
+    color: var(--color-fg-mid);
+    font-size: 9px;
+  }
+  .credits-roll-demo .name {
+    color: var(--color-yellow);
+    font-size: 9px;
+  }
+  .credits-roll-demo .arrow {
+    color: var(--color-yellow);
+    margin: 0 4px;
+    font-size: 8px;
+  }
+  .credits-roll-demo .spc {
+    height: 10px;
+  }
+
+  /* Taste card (used inside WHO IS THIS GUY panel grid on the cover) */
+  .taste-card-demo {
+    padding: 14px 16px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    max-width: 280px;
+  }
+  .taste-card-demo .taste-label {
+    display: block;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-yellow);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .taste-card-demo .taste-list {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-fg);
+    margin: 0;
+  }
+}
