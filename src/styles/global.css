@@ -1418,30 +1418,158 @@
   .convo-label.right {
     text-align: right;
   }
+}
 
-  /* Shot placeholder. Defined globally; ch02 inline style had these rules but
-     no markup uses them. Kept here for any future placeholder shots. */
-  .shot-placeholder {
-    background: var(--color-bg-card);
-    border: 2px dashed var(--color-border);
-    padding: 48px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    min-height: 180px;
+/* === Chapter 03 specifics: Wavelength (AI maturity stages) === */
+
+@layer components {
+  .ai-stages {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 24px 0 32px;
+    border: 2px solid var(--color-border);
   }
-  .shot-placeholder-label {
+  .ai-stage {
+    background: var(--color-bg-deep);
+    padding: 16px 14px;
+    border-right: 1px solid var(--color-border);
+    position: relative;
+  }
+  .ai-stage:last-child {
+    border-right: none;
+  }
+  .ai-stage.active {
+    background: var(--sig-wash);
+    border-top: 3px solid var(--sig);
+  }
+  .ai-stage-num {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-faint);
+    margin-bottom: 8px;
+  }
+  .ai-stage-label {
     font-family: var(--font-pixel);
     font-size: 9px;
-    color: var(--color-fg-faint);
-    letter-spacing: 0.06em;
+    color: var(--color-fg-soft);
+    line-height: 1.5;
+    margin-bottom: 6px;
   }
-  .shot-placeholder-sub {
-    font-family: var(--font-serif);
-    font-style: italic;
+  .ai-stage.active .ai-stage-label {
+    color: var(--sig);
+  }
+  .ai-stage-desc {
+    font-family: var(--font-mono);
     font-size: 14px;
-    color: var(--color-fg-faint);
+    color: var(--color-fg-mid);
+    line-height: 1.4;
+  }
+  .ai-stage.active .ai-stage-desc {
+    color: var(--color-fg-soft);
+  }
+  .ai-stage-arrow {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-border-strong);
+    font-size: 16px;
+    z-index: 2;
+  }
+  .ai-stage:last-child .ai-stage-arrow {
+    display: none;
+  }
+}
+
+/* === Chapter 04 specifics: App Script Reports (master-prompt visualization) === */
+
+@layer components {
+  .prompt-box {
+    background: var(--color-bg-deep);
+    border: 2px solid var(--sig-deep);
+    border-left: 4px solid var(--sig);
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .prompt-box-label {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--sig);
+    display: block;
+    margin-bottom: 18px;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 8px var(--sig-glow);
+  }
+  .prompt-io {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .prompt-io-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 16px 18px;
+  }
+  .prompt-io-label {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-io-label.input {
+    color: var(--color-wip);
+  }
+  .prompt-io-label.output {
+    color: var(--color-ok);
+  }
+  .prompt-io-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .prompt-io-list li {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-fg-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .prompt-io-list li::before {
+    content: '→';
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .prompt-how {
+    border-top: 1px dashed var(--color-border);
+    padding-top: 16px;
+  }
+  .prompt-how-label {
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .prompt-how p {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin-bottom: 10px;
+    max-width: none;
+    opacity: 1;
+  }
+  .prompt-how p:last-child {
+    margin-bottom: 0;
   }
 }

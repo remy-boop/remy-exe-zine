@@ -30,3 +30,6 @@ Thumbs.db
 
 # jetbrains setting folder
 .idea/
+
+# Claude Code local state (per-project agent runtime, not project content)
+.claude/
