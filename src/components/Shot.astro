@@ -8,10 +8,13 @@ interface Props {
 
 const { src, alt, label, caption } = Astro.props;
 
+// Relative path: chapter pages live at issue-01/{slug}.html, so
+// `images/{src}` resolves to issue-01/images/{src} alongside the chapter.
+// Keeps the site base-agnostic. Absolute or external URLs pass through.
 const resolvedSrc =
 	src.startsWith("/") || src.startsWith("http")
 		? src
-		: `/issue-01/images/${src}`;
+		: `images/${src}`;
 ---
 
 <div class="shot">

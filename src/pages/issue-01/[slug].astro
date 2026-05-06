@@ -42,10 +42,15 @@ const nextChap = data.nextChapter
 */
 const slugToLabel = (slug: string) => slug.replaceAll("-", " ").toUpperCase();
 
+// Relative hrefs throughout. Chapter pages live at issue-01/{slug}.html,
+// so sibling chapters resolve as `{slug}.html` (no leading slash, no
+// `/issue-01/` prefix). Keeps the site base-agnostic: works at the bare
+// localhost root, at /remy-exe-zine/ on GitHub Pages, or under any other
+// subpath without code changes.
 const prevHref = prevChap
-	? `/issue-01/${prevChap.id}.html`
+	? `${prevChap.id}.html`
 	: data.prevChapter
-		? `/issue-01/${data.prevChapter}.html`
+		? `${data.prevChapter}.html`
 		: "../index.html";
 const prevLabel = prevChap
 	? stripPipes(prevChap.data.title).toUpperCase()
@@ -55,9 +60,9 @@ const prevLabel = prevChap
 const prevDir = prevChap || data.prevChapter ? "PREV CHAPTER" : "BACK";
 
 const nextHref = nextChap
-	? `/issue-01/${nextChap.id}.html`
+	? `${nextChap.id}.html`
 	: data.nextChapter
-		? `/issue-01/${data.nextChapter}.html`
+		? `${data.nextChapter}.html`
 		: "../index.html";
 const nextLabel = nextChap
 	? stripPipes(nextChap.data.title).toUpperCase()
