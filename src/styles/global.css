@@ -1573,3 +1573,516 @@
     margin-bottom: 0;
   }
 }
+
+/* === Chapter 05 specifics: REMY.EXE Zine (design-system showcase + demos) === */
+
+/* Animations used by the meta-chapter demos. Top-level so any layer can
+   reference them. */
+@keyframes mast-blink-anim {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes cover-btn-pulse {
+  0%,
+  100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: brightness(1.18) drop-shadow(0 0 12px rgba(253, 242, 3, 0.55));
+  }
+}
+@keyframes coin-blink-anim {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@layer components {
+  /* Component-block wrapper: tag + live demo + caption */
+  .comp-block {
+    margin: 28px 0 36px;
+  }
+  .comp-tag {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    margin-bottom: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border: 1px solid var(--sig-deep);
+    background: var(--sig-wash);
+    letter-spacing: 0.04em;
+  }
+  .comp-caption {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    margin-top: 14px;
+    font-style: italic;
+    max-width: 62ch;
+  }
+
+  /* Section-divider sample (mini preview) */
+  .section-divider-sample {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-divider-sample .divider-line {
+    flex: 1;
+    height: 0;
+    border-top: 1px dashed var(--color-border);
+  }
+  .section-divider-sample .divider-label {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--sig);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* Keyboard shortcut chip */
+  .kb {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    padding: 4px 10px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border-strong);
+    border-bottom: 2px solid var(--color-border-strong);
+    color: var(--color-fg);
+    border-radius: 3px;
+  }
+  .kb-plus {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--color-fg-mid);
+  }
+
+  /* OAuth-style pill chain (App ▸ Provider ▸ Token ▸ API) */
+  .oauth-pills {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .oauth-pill {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    padding: 6px 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-fg);
+    border-radius: 100px;
+  }
+  .oauth-arrow {
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+  }
+
+  /* Mini data-table preview */
+  .data-table-demo {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-serif);
+    font-size: 15px;
+  }
+  .data-table-demo th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--color-bg-deep);
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--sig);
+  }
+  .data-table-demo td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-fg);
+  }
+  .data-table-demo tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Personality / editorial-rules list (▸ bulleted) */
+  .personality-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .personality-list li {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-fg-soft);
+    padding: 10px 0 10px 22px;
+    border-bottom: 1px dashed var(--color-border);
+    position: relative;
+  }
+  .personality-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--sig);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    top: 14px;
+  }
+  .personality-list li:last-child {
+    border-bottom: none;
+  }
+  .personality-list li b {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+
+  /* Cover masthead demo (giant pixel REMY.EXE preview) */
+  .mast-demo {
+    font-family: var(--font-pixel);
+    font-size: 38px;
+    line-height: 1.05;
+    color: var(--color-fg);
+    text-shadow: 3px 3px 0 var(--sig), 6px 6px 0 var(--color-purple);
+    word-break: break-word;
+    padding: 14px 0;
+  }
+  .mast-blink {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.85em;
+    background: var(--color-yellow);
+    margin-left: 6px;
+    vertical-align: -0.05em;
+    animation: mast-blink-anim 1s steps(2, start) infinite;
+  }
+
+  /* TL;DR + bio inline mock */
+  .tldr-demo {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--color-fg);
+    padding: 6px 0;
+  }
+  .tldr-tag {
+    color: var(--color-yellow);
+    font-family: var(--font-pixel);
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+  .bio-hl {
+    color: var(--color-yellow);
+    font-weight: 600;
+  }
+
+  /* Yellow-accent inline-text variants (used inside cover panels) */
+  .yellow-accent-demo {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-fg);
+    padding: 14px 18px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+  }
+  .hl-yellow {
+    color: var(--color-yellow);
+    font-weight: 600;
+  }
+  .hl-yellow-italic {
+    color: var(--color-yellow);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .hl-yellow-bold {
+    color: var(--color-yellow);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(253, 242, 3, 0.3);
+  }
+
+  /* Yellow-bordered pull-quote variant (cover panels) */
+  .pull-quote-yellow {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--color-fg);
+    padding: 16px 22px;
+    border-left: 3px solid var(--color-yellow);
+    background: rgba(253, 242, 3, 0.06);
+    max-width: 56ch;
+  }
+
+  /* Cover-panel button (chunky pixel button with idle pulse) */
+  .cover-btn {
+    background: var(--color-purple);
+    color: var(--color-fg);
+    padding: 12px 18px;
+    border: 2px solid var(--color-purple-deep);
+    box-shadow: 3px 3px 0 var(--color-purple-deep);
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    animation: cover-btn-pulse 2.7s ease-in-out infinite;
+  }
+
+  /* Issue-pill row (above the table of contents on the cover) */
+  .pill-row-demo {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 18px 0 8px;
+  }
+  .pill {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--color-yellow);
+    background: transparent;
+    border: 2px solid var(--color-yellow);
+    box-shadow:
+      inset 0 0 0 2px var(--color-bg-elev),
+      inset 0 0 0 4px var(--color-yellow);
+    white-space: nowrap;
+    position: relative;
+  }
+  .pill.active {
+    color: var(--color-bg);
+    background: var(--color-yellow);
+    box-shadow:
+      inset 0 0 0 2px var(--color-yellow),
+      inset 0 0 0 4px var(--color-bg),
+      0 0 24px rgba(253, 242, 3, 0.4);
+  }
+  .pill.active::before {
+    content: '▾';
+    position: absolute;
+    top: -16px;
+    left: 18px;
+    font-size: 10px;
+    color: var(--color-yellow);
+  }
+  .pill.soon {
+    color: #b8a800;
+    border-color: #b8a800;
+    box-shadow:
+      inset 0 0 0 2px var(--color-bg-elev),
+      inset 0 0 0 4px #b8a800;
+    opacity: 0.55;
+  }
+  .pill .sep {
+    opacity: 0.5;
+  }
+  .pill .label {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Yellow strip divider (cover only) */
+  .yellow-strip-demo {
+    background: var(--color-yellow);
+    color: var(--color-bg-deep);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Game Boy visualizer with critter (static demo of the cover canvas) */
+  .gameboy-demo {
+    background: #b8b2a0;
+    border: 2px solid #2b3a1f;
+    padding: 16px 14px 18px;
+    width: 200px;
+    position: relative;
+    box-shadow:
+      inset 2px 2px 0 #cfc8b3,
+      inset -2px -2px 0 #908a78,
+      6px 6px 0 rgba(43, 58, 31, 0.55);
+  }
+  .gameboy-demo::before {
+    content: '★ GAME BOY VISUALIZER WITH CRITTER';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #b8b2a0;
+    padding: 2px 8px;
+    font-family: var(--font-pixel);
+    font-size: 5px;
+    color: #2b3a1f;
+    letter-spacing: 0.06em;
+    border: 2px solid #2b3a1f;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .gameboy-screen {
+    background: #9bbc0f;
+    border: 3px solid #2b3a1f;
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+    position: relative;
+  }
+  .gameboy-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(43, 58, 31, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 58, 31, 0.12) 1px, transparent 1px);
+    background-size: calc(100% / 16) calc(100% / 16);
+    pointer-events: none;
+  }
+  .critter {
+    grid-column: 7 / span 5;
+    grid-row: 7 / span 5;
+    background: #2b3a1f;
+    clip-path: polygon(
+      0% 40%,
+      20% 40%,
+      20% 20%,
+      80% 20%,
+      80% 40%,
+      100% 40%,
+      100% 80%,
+      80% 80%,
+      80% 100%,
+      20% 100%,
+      20% 80%,
+      0% 80%
+    );
+  }
+
+  /* INSERT COIN attract-mode prompt */
+  .insert-coin-demo {
+    background: rgba(18, 16, 42, 0.94);
+    padding: 36px 24px 24px;
+    border: 1px solid var(--color-border);
+    text-align: center;
+    position: relative;
+  }
+  .insert-coin-text {
+    font-family: var(--font-pixel);
+    font-size: 18px;
+    color: var(--color-yellow);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 12px rgba(253, 242, 3, 0.6);
+    animation: coin-blink-anim 0.8s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  .insert-coin-sub {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-fg-mid);
+    letter-spacing: 0.08em;
+  }
+
+  /* Konami EXTRA LIFE toast */
+  .konami-toast-demo {
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--color-yellow);
+    color: var(--color-bg);
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 32px rgba(253, 242, 3, 0.5);
+  }
+
+  /* ROLL CREDITS button */
+  .roll-credits-btn-demo {
+    background: var(--color-purple);
+    color: var(--color-fg);
+    padding: 14px 24px;
+    border: 2px solid var(--color-purple-deep);
+    box-shadow: 3px 3px 0 var(--color-purple-deep);
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  /* Credits roll mock */
+  .credits-roll-demo {
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-border);
+    padding: 20px 16px;
+    text-align: center;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    line-height: 2;
+    color: var(--color-fg);
+    max-width: 360px;
+  }
+  .credits-roll-demo .ch {
+    color: var(--color-yellow);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .credits-roll-demo .role {
+    color: var(--color-fg-mid);
+    font-size: 9px;
+  }
+  .credits-roll-demo .name {
+    color: var(--color-yellow);
+    font-size: 9px;
+  }
+  .credits-roll-demo .arrow {
+    color: var(--color-yellow);
+    margin: 0 4px;
+    font-size: 8px;
+  }
+  .credits-roll-demo .spc {
+    height: 10px;
+  }
+
+  /* Taste card (used inside WHO IS THIS GUY panel grid on the cover) */
+  .taste-card-demo {
+    padding: 14px 16px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    max-width: 280px;
+  }
+  .taste-card-demo .taste-label {
+    display: block;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--color-yellow);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .taste-card-demo .taste-list {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-fg);
+    margin: 0;
+  }
+}
