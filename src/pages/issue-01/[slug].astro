@@ -71,11 +71,15 @@ const nextLabel = nextChap
 		: "TO ISSUE";
 const nextDir = nextChap || data.nextChapter ? "NEXT CHAPTER" : "BACK";
 
-const docTitle = `${stripPipes(data.title).toLowerCase()} · remy.exe`;
+// Pass the chapter display title (uppercase, pipe-stripped). BaseLayout
+// uses it as og:title and constructs the document <title> internally as
+// "{title} · remy.exe" via the chapterNum-aware helper.
+const chapterDisplayTitle = stripPipes(data.title);
 ---
 
 <BaseLayout
-	title={docTitle}
+	title={chapterDisplayTitle}
+	tagline={data.tagline}
 	sigColor={data.sig}
 	chapterNum={num}
 	backHref="../index.html"
