@@ -1303,6 +1303,10 @@
     }
     .panel {
       padding: 24px 20px;
+      /* Contain horizontal overflow from wide children (e.g. CH 01's
+         5-column data-table). Without this, content wider than the mobile
+         viewport widens the body and shifts the whole page layout. */
+      overflow-x: auto;
     }
     .panel-h h2 {
       font-size: 13px;
